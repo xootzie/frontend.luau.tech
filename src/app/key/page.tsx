@@ -1,10 +1,12 @@
 'use client';
 
+
 import { useEffect, useState, useCallback } from 'react';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import GridBackground from '@/components/gridgb';
 import ComingSoon from '@/components/comingsoon';
+import LoadingScreen from '@/components/loadingScreen';
 
 interface KeyVerifyResponse {
   success: boolean;
@@ -232,13 +234,16 @@ export default function KeySystem() {
 
   return (
     <>
+  
+
       <Navbar />
 
       <ComingSoon />
-
-      {/* Gradient overlay */}
       <GridBackground />
-      
+      <LoadingScreen onComplete={() => {
+            console.log('Page fully loaded');
+          }}/>
+
       {/* Main Content */}
       <div className="min-h-screen flex items-center justify-center pt-2 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">

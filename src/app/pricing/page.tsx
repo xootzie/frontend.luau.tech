@@ -4,7 +4,8 @@ import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import ComingSoon from '@/components/comingsoon';
 import { Check, Zap, Key, Crown } from 'lucide-react';
-  
+import LoadingScreen from '@/components/loadingScreen';
+
 interface PricingTier {
   name: string;
   price: string;
@@ -115,11 +116,16 @@ const PricingPage: React.FC = () => {
 
   return (
     <div className="bg-black text-white antialiased">
-      {/* Background gradient */}
+   
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,38,44,0.2),transparent_40%),radial-gradient(circle_at_top_right,rgba(37,38,44,0.2),transparent_40%)] pointer-events-none" />
 
     <Navbar />
+    <LoadingScreen onComplete={() => {
+            console.log('Page fully loaded');
+          }}/>
+          
 <ComingSoon/>
+
       {/* Hero Section */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <h1 className="text-5xl font-medium tracking-tight max-w-4xl">

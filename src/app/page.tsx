@@ -1,6 +1,7 @@
 'use client';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
+import LoadingScreen from '@/components/loadingScreen';
 import { useRef } from 'react';
 import { 
   ArrowRight, 
@@ -40,7 +41,7 @@ const HeroSection = () => (
         <Sparkles className="w-4 h-4 text-accent" />
         <span className="text-sm text-gray-400">New Features Released</span>
       </div>
-      <h1 className="text-6xl font-medium tracking-tight max-w-4xl text-white mb-6">
+      <h1 className="text-5xl font-medium tracking-tight max-w-4xl text-white mb-6">
         Elevate Your Roblox GamePlay with Starry
       </h1>
       <p className="mt-6 text-lg text-gray-400 max-w-2xl">
@@ -186,13 +187,12 @@ const SocialCard = ({ title, description, icon: Icon, gradient, link }: SocialCa
 );
 
 const HomePage = () => {
-  // Update ref type to explicitly include HTMLDivElement
+
   const carouselRef = useRef<HTMLDivElement | null>(null);
 
   const scroll = (direction: 'left' | 'right') => {
-    const scrollAmount = 416; // card width (400) + gap (16)
+    const scrollAmount = 416; 
     
-    // Type guard to ensure ref.current exists and is HTMLDivElement
     if (carouselRef.current instanceof HTMLDivElement) {
       const currentScroll = carouselRef.current.scrollLeft;
       const newScroll = direction === 'left' 
@@ -244,9 +244,13 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen text-white antialiased">
-      <GridBackground />
-      <Navbar />
+    
+        <div className="min-h-screen text-white antialiased">
+          <GridBackground />
+          <Navbar />
+          <LoadingScreen onComplete={() => {
+            console.log('Page fully loaded');
+          }}/>
 
       <HeroSection />
 
