@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "Starry ✨",
   description: "Official Starry Website for Starry Script Hub.",
   icons: {
-    icon: "/images/brand/icon.png",
+    icon: "/favicon.ico",
   },
 };
 
