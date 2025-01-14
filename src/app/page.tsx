@@ -18,7 +18,6 @@ import { FaDiscord } from "react-icons/fa";
 import GridBackground from '@/components/gridgb';
 import { IconType } from 'react-icons';
 
-// Interface definitions
 interface GameCardProps {
   image: string;
   title: string;
@@ -63,7 +62,7 @@ const HeroSection = () => (
 );
 
 const GameCard = ({ image, title, status, statusColor }: GameCardProps) => (
-  <div className="min-w-[400px] bg-zinc-900/50 rounded-xl p-6 border border-white/10 snap-start hover:border-white/20 transition-all duration-300 group">
+  <div className="min-w-[385px] bg-zinc-900/50 rounded-xl p-6 border border-white/10 snap-start hover:border-white/20 transition-all duration-300 group">
     <div 
       className="h-48 rounded-lg mb-6 bg-cover bg-center transform group-hover:scale-[1.02] transition-all duration-300" 
       style={{ backgroundImage: `url(${image})` }} 
@@ -99,7 +98,7 @@ const ScreenshotGallery = () => (
       </p>
     </div>
     <div className="space-y-16">
-      {/* First Screenshot */}
+    
       <div className="flex flex-col lg:flex-row gap-8 items-center">
         <div className="lg:w-2/3">
           <div className="relative group overflow-hidden rounded-xl">
@@ -133,7 +132,6 @@ const ScreenshotGallery = () => (
         </div>
       </div>
 
-      {/* Second Screenshot */}
       <div className="flex flex-col lg:flex-row-reverse gap-8 items-center">
         <div className="lg:w-2/3">
           <div className="relative group overflow-hidden rounded-xl">
@@ -170,20 +168,45 @@ const ScreenshotGallery = () => (
 );
 
 const SocialCard = ({ title, description, icon: Icon, gradient, link }: SocialCardProps) => (
+
   <a
+
     href={link}
+
     target="_blank"
+
     rel="noopener noreferrer"
+
     className="relative group overflow-hidden rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
+
     style={{ background: gradient }}
+
   >
-    <div className="relative z-10">
-      <Icon className="w-8 h-8 mb-4" />
-      <h3 className="text-xl font-medium mb-2">{title}</h3>
-      <p className="text-sm text-white/80">{description}</p>
+
+    <div className="relative z-10 transform transition-transform duration-500 group-hover:scale-105">
+
+      <Icon className="w-8 h-8 mb-4 transition-transform duration-500 group-hover:scale-110" />
+
+      <h3 className="text-xl font-medium mb-2 transition-transform duration-500 group-hover:translate-y-[-0.25rem]">
+
+        {title}
+
+      </h3>
+
+      <p className="text-sm text-white/80 transition-transform duration-500 group-hover:translate-y-[-0.25rem]">
+
+        {description}
+
+      </p>
+
     </div>
-    <div className="absolute inset-0 bg-gradient-to-br from-black/0 to-black/20" />
+
+    <div className="absolute inset-0 bg-gradient-to-br from-black/0 to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
   </a>
+
 );
 
 const HomePage = () => {
@@ -210,6 +233,9 @@ const HomePage = () => {
     { image: "/images/toh_banner.webp", title: "Tower of Hell", status: "Working", statusColor: "green" },
     { image: "/images/bi2_banner.webp", title: "Break In 2", status: "Working", statusColor: "green" },
     { image: "/images/mm2_banner.webp", title: "Murder Mystery 2", status: "Unreleased", statusColor: "blue" },
+    { image: "/images/mm2_banner.webp", title: "Murder Mystery 2", status: "Unreleased", statusColor: "blue" },
+    { image: "/images/mm2_banner.webp", title: "Murder Mystery 2", status: "Unreleased", statusColor: "blue" },
+    { image: "/images/mm2_banner.webp", title: "Murder Mystery 2", status: "Unreleased", statusColor: "blue" }
   ];
 
   const socials = [
@@ -285,8 +311,7 @@ const HomePage = () => {
         <div className="relative">
           <div 
             ref={carouselRef}
-            className="overflow-x-auto flex gap-6 pb-4 snap-x scrollbar-hide"
-          >
+            className="overflow-hidden flex gap-6 pb-4 snap-x scrollbar-hide ">
             {games.map((game, index) => (
               <GameCard key={index} {...game} />
             ))}
@@ -303,7 +328,7 @@ const HomePage = () => {
             Connect with fellow Starry users and stay updated with the latest features and scripts
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ">
           {socials.map((social, index) => (
             <SocialCard key={index} {...social} />
           ))}
