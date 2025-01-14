@@ -11,18 +11,14 @@ export default function ErrorPage() {
   const errorMessage = 'Page Not Found';
   return (
     <>
-      {/* Gradient overlay */}
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,38,44,0.2),transparent_40%),radial-gradient(circle_at_top_right,rgba(37,38,44,0.2),transparent_40%)] pointer-events-none"></div>
       <Navbar />
-      {/* Error Content */}
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full text-center">
-          {/* Error Card */}
           <div className="bg-zinc-900/50 rounded-xl p-8 border border-white/10">
-            {/* Cat GIF Container */}
             <div className="w-64 h-64 mx-auto mb-8 rounded-lg overflow-hidden bg-zinc-800/50">
               <Image
-                src="/images/404-animation-cat.gif"
+                src="/images/404.jpg"
                 alt="404 Cat"
                 width={256}
                 height={256}
