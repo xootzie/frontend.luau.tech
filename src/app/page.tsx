@@ -241,31 +241,31 @@ const HomePage = () => {
   const socials = [
     {
       title: "ScriptBlox",
-      description: "Browse and share Starry scripts with the community",
+      description: "Browse & Follow our Script Blox Account.",
       icon: Globe,
       gradient: "linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)",
-      link: "https://scriptblox.com"
+      link: "https://scriptblox.com/u/starry"
     },
     {
       title: "GitHub",
-      description: "Check out our open-source projects and contribute",
+      description: "Check out our open-source projects and help by giving us a Star!",
       icon: Github,
       gradient: "linear-gradient(135deg, #64748B 0%, #1E293B 100%)",
-      link: "https://github.com"
+      link: "https://github.com/starry-proj"
     },
     {
       title: "RScripts",
-      description: "Access our premium script collection",
+      description: "Browse & Follow our RScripts Account",
       icon: Globe,
       gradient: "linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)",
-      link: "https://rscripts.net"
+      link: "https://rscripts.net/@starry"
     },
     {
       title: "Discord",
       description: "Join our community for support and updates",
       icon: FaDiscord,
       gradient: "linear-gradient(135deg, #5865F2 0%, #404EED 100%)",
-      link: "https://discord.gg"
+      link: "https://luau.tech/d?server=luau"
     }
   ];
 
