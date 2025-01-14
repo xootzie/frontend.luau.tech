@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Sparkles } from 'lucide-react';
 import GridBackground from '@/components/gridgb';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,16 +13,17 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-
     const checkPageReadiness = () => {
-
       const isDocumentReady = document.readyState === 'complete';
       const hasNavigationTiming = performance.getEntriesByType('navigation').length > 0;
 
       if (isDocumentReady && hasNavigationTiming) {
+        // Use explicit function call instead of conditional execution
         setTimeout(() => {
           setIsLoading(false);
-          onComplete && onComplete();
+          if (onComplete) {
+            onComplete();
+          }
         }, 500);
       } else {
         setTimeout(checkPageReadiness, 100);
@@ -34,10 +34,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
 
     const maxLoadingTimer = setTimeout(() => {
       setIsLoading(false);
-      onComplete && onComplete();
+      if (onComplete) {
+        onComplete();
+      }
     }, 3000);
 
-    // Cleanup
     return () => {
       clearTimeout(maxLoadingTimer);
     };
