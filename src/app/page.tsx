@@ -98,21 +98,21 @@ const ScreenshotGallery = () => (
       </p>
     </div>
     <div className="space-y-16">
-    
+      {/* First Screenshot Section */}
       <div className="flex flex-col lg:flex-row gap-8 items-center">
-        <div className="lg:w-2/3">
+        <div className="w-full lg:w-2/3">
           <div className="relative group overflow-hidden rounded-xl">
             <div 
-              className=" h-[400px] bg-cover bg-center transform group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-[250px] md:h-[300px] lg:h-[400px] bg-cover bg-center transform group-hover:scale-105 transition-transform duration-500"
               style={{ backgroundImage: `url(/images/screenshots/temp_screenshot.png)` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
           </div>
         </div>
-        <div className="lg:w-1/3 space-y-4">
+        <div className="w-full lg:w-1/3 space-y-4">
           <h3 className="text-2xl font-medium">Why Starry?</h3>
           <p className="text-gray-400">
-          Elevate your gameplay with Starry✨ - the best script you will ever need, featuring premium features and constant updates supporting popular games like Doors, Murder Mystery 2, and many more. Join thousands of players experiencing features today!
+            Elevate your gameplay with Starry✨ - the best script you will ever need, featuring premium features and constant updates supporting popular games like Doors, Murder Mystery 2, and many more. Join thousands of players experiencing features today!
           </p>
           <ul className="space-y-2 text-gray-400">
             <li className="flex items-center gap-2">
@@ -127,22 +127,22 @@ const ScreenshotGallery = () => (
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
               Quick Support
             </li>
-            
           </ul>
         </div>
       </div>
 
+      {/* Second Screenshot Section */}
       <div className="flex flex-col lg:flex-row-reverse gap-8 items-center">
-        <div className="lg:w-2/3">
+        <div className="w-full lg:w-2/3">
           <div className="relative group overflow-hidden rounded-xl">
             <div 
-              className="h-[400px] bg-cover bg-center transform group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-[250px] md:h-[300px] lg:h-[400px] bg-cover bg-center transform group-hover:scale-105 transition-transform duration-500"
               style={{ backgroundImage: `url(/images/screenshots/temp_screenshot2.png)` }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
           </div>
         </div>
-        <div className="lg:w-1/3 space-y-4">
+        <div className="w-full lg:w-1/3 space-y-4">
           <h3 className="text-2xl font-medium">Optiminal Performance</h3>
           <p className="text-gray-400">
             Starry is built with performance in mind, ensuring that your gameplay experience is smooth and responsive. With optimized code and efficient algorithms, you can enjoy a seamless and uninterrupted exploiting experience.
