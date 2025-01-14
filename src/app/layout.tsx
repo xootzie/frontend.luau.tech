@@ -14,11 +14,42 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+
   title: "Starry ✨",
+
   description: "Official Starry Website for Starry Script Hub.",
+
   icons: {
+
     icon: "/favicon.ico",
+
   },
+
+  openGraph: {
+
+    title: "Starry ✨",
+    description: "Official Website for Starry!",
+    images: [
+      {
+        url: "/frontpage_screenshot.png",
+        width: 1200,
+        height: 630,
+        alt: "luau.tech homepage screenshot"
+      }
+    ],
+    type: "website",
+    url: "https://luau.tech"
+
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Starry ✨",
+    description: "Official Website for Starry!",
+    images: ["/frontpage_screenshot.png"]
+
+  }
+
 };
 
 export default function RootLayout({
