@@ -3,7 +3,7 @@ import React from 'react';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import ComingSoon from '@/components/comingsoon';
-import { Check, Zap, Key, Crown, Github } from 'lucide-react';
+import { Check, Zap, Key, Crown } from 'lucide-react';
   
 interface PricingTier {
   name: string;
@@ -140,7 +140,7 @@ const PricingPage: React.FC = () => {
 
           {/* Pricing Grid */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {pricingTiers.map((tier, index) => (
+            {pricingTiers.map((tier) => (
               <div
                 key={tier.name}
                 className={`bg-zinc-900 rounded-lg p-6 flex flex-col ${
@@ -187,7 +187,7 @@ const PricingPage: React.FC = () => {
                     Custom Enterprise Solution
                   </h3>
                   <p className="text-zinc-400">
-                    Need a custom solution? Let's create a plan that works for you.
+                    Need a custom solution? Let&apos;s create a plan that works for you.
                   </p>
                 </div>
                 <button

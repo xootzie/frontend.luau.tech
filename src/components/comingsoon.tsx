@@ -28,12 +28,12 @@ const ComingSoon = ({
   return (
     <div className="fixed inset-0 z-30 bg-black/30 backdrop-blur-sm flex items-center justify-center">
       <div className="text-center relative px-4 sm:px-6 lg:px-8">
-        <div className="space-y-8 bg-zinc-900/30 p-12 rounded-xl border border-white/10 hover:border-white/20 transition-all">
-          <h1 className="text-5xl font-medium tracking-tight text-white animate-pulse">
+        <div className="space-y-8 bg-black/80 p-12 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+          <h1 className="text-5xl font-medium tracking-tight text-white ">
             {title}
           </h1>
           
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto animate-pulse">
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto ">
             {description}
           </p>
           

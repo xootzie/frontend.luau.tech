@@ -1,12 +1,10 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Github } from 'lucide-react';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import GridBackground from '@/components/gridgb';
+import ComingSoon from '@/components/comingsoon';
 
 interface KeyVerifyResponse {
   success: boolean;
@@ -20,12 +18,18 @@ interface ExistingKeyResponse {
   message?: string;
 }
 
+interface TurnstileOptions {
+  sitekey: string;
+  theme?: 'light' | 'dark';
+  callback?: (token: string) => void;
+}
+
 declare global {
   interface Window {
     turnstile?: {
-      render: (container: string | HTMLElement, options: any) => void;
-      getResponse: (widgetId?: string) => string | undefined;
-      reset: (widgetId?: string) => void;
+      render: (container: string | HTMLElement, options: TurnstileOptions) => string;
+      getResponse: (widgetId: string) => string | undefined;
+      reset: (widgetId: string) => void;
     };
   }
 }
@@ -36,11 +40,10 @@ export default function KeySystem() {
   const [verifiedKey, setVerifiedKey] = useState<string | null>(null);
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
   const [isTurnstileMounted, setIsTurnstileMounted] = useState(false);
-  const [turnstileWidget, setTurnstileWidget] = useState<string | null>(null);
+  const [turnstileWidget, setTurnstileWidget] = useState<string>('');
 
   const handleTurnstileCallback = useCallback((token: string) => {
     setStatusMessage('Waiting for authentication...');
-
 
     const cloudflareTurnstile = document.getElementById("turnstileContainer") as HTMLDivElement;
     if (cloudflareTurnstile instanceof HTMLDivElement) {
@@ -49,9 +52,10 @@ export default function KeySystem() {
     
     const discordAuthButton = document.getElementById("discord-auth-button");
     if (discordAuthButton instanceof HTMLButtonElement) {
-  discordAuthButton.classList.remove("opacity-50");
-  discordAuthButton.classList.remove("cursor-not-allowed");
-}
+      discordAuthButton.classList.remove("opacity-50");
+      discordAuthButton.classList.remove("cursor-not-allowed");
+    }
+    
     if (token) {
       sessionStorage.setItem('turnstileToken', token);
     }
@@ -85,9 +89,9 @@ export default function KeySystem() {
       if (data.success && data.key) {
         const sb = document.getElementById('status-box') as HTMLElement;
         const cloudflareTurnstile = document.getElementById("turnstileContainer") as HTMLDivElement;
-    if (cloudflareTurnstile instanceof HTMLDivElement) {
-      cloudflareTurnstile.classList.add("hidden");
-    }
+        if (cloudflareTurnstile instanceof HTMLDivElement) {
+          cloudflareTurnstile.classList.add("hidden");
+        }
         sb.classList.add("hidden");
         setStatusMessage('');
         window.dispatchEvent(new MessageEvent('message', {
@@ -137,20 +141,8 @@ export default function KeySystem() {
     }
   };
 
+  // Effect for handling messages and initialization
   useEffect(() => {
-    setIsTurnstileMounted(true);
-    checkExistingKey();
-
-    // Initialize Turnstile
-    if (window.turnstile && isTurnstileMounted) {
-      const widgetId = window.turnstile.render('#turnstileContainer', {
-        sitekey: "1x00000000000000000000AA",
-        theme: 'dark',
-        callback: handleTurnstileCallback
-      });
-      setTurnstileWidget(widgetId);
-    }
-
     const handleMessage = async (event: MessageEvent) => {
       const allowedOrigins = [
         'http://localhost:3001',
@@ -174,32 +166,49 @@ export default function KeySystem() {
     window.addEventListener('message', handleMessage);
     return () => {
       window.removeEventListener('message', handleMessage);
-      if (turnstileWidget && window.turnstile) {
-        window.turnstile.reset(turnstileWidget);
-      }
     };
+  }, []);
+
+  useEffect(() => {
+    setIsTurnstileMounted(true);
+    checkExistingKey();
+
+    if (window.turnstile && isTurnstileMounted) {
+      const widgetId = window.turnstile.render('#turnstileContainer', {
+        sitekey: "1x00000000000000000000AA",
+        theme: 'dark',
+        callback: handleTurnstileCallback
+      });
+      setTurnstileWidget(widgetId);
+
+      // Cleanup function
+      return () => {
+        if (widgetId && window.turnstile) {
+          window.turnstile.reset(widgetId);
+        }
+      };
+    }
   }, [isTurnstileMounted, handleTurnstileCallback]);
 
-
-
   const handleDiscordAuth = () => {
+    if (!turnstileWidget) {
+      setStatusMessage('Turnstile not properly initialized');
+      return;
+    }
+    
     const turnstileToken = window.turnstile?.getResponse(turnstileWidget);
     if (!turnstileToken) {
       setStatusMessage('Please complete the Turnstile challenge first');
       return;
     }
     
-    // Open Discord auth in popup
     const popup = window.open(
       `http://localhost:3001/api/auth/license/authorize?action=redirect&turnstile=${turnstileToken}`, 
       'Discord Auth', 
       'width=500,height=800'
-    ); 
-
-
+    );
 
     window.addEventListener('message', async function(event) {
-
       if (event.data && event.data.key) {
         await verifyKey(event.data.key);
         if (popup) popup.close();
@@ -211,8 +220,6 @@ export default function KeySystem() {
       }
     }, false);
   };
-
-
 
   const copyKey = async () => {
     if (!verifiedKey) return;
@@ -227,8 +234,11 @@ export default function KeySystem() {
     <>
       <Navbar />
 
+      <ComingSoon />
+
       {/* Gradient overlay */}
       <GridBackground />
+      
       {/* Main Content */}
       <div className="min-h-screen flex items-center justify-center pt-2 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">

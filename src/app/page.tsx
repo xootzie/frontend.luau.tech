@@ -9,11 +9,29 @@ import {
   Github, 
   Sparkles, 
   ArrowUpRight, 
-  Globe 
+  Globe, 
+  LucideIcon
 } from "lucide-react";
 
-import { FaDiscord, FaGlobe, FaGithub } from "react-icons/fa";
+import { FaDiscord } from "react-icons/fa";
 import GridBackground from '@/components/gridgb';
+import { IconType } from 'react-icons';
+
+// Interface definitions
+interface GameCardProps {
+  image: string;
+  title: string;
+  status: string;
+  statusColor: string;
+}
+
+interface SocialCardProps {
+  title: string;
+  description: string;
+  icon: IconType | LucideIcon;
+  gradient: string;
+  link: string;
+}
 
 const HeroSection = () => (
   <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
@@ -43,7 +61,7 @@ const HeroSection = () => (
   </section>
 );
 
-const GameCard = ({ image, title, status, statusColor }) => (
+const GameCard = ({ image, title, status, statusColor }: GameCardProps) => (
   <div className="min-w-[400px] bg-zinc-900/50 rounded-xl p-6 border border-white/10 snap-start hover:border-white/20 transition-all duration-300 group">
     <div 
       className="h-48 rounded-lg mb-6 bg-cover bg-center transform group-hover:scale-[1.02] transition-all duration-300" 
@@ -150,7 +168,7 @@ const ScreenshotGallery = () => (
   </section>
 );
 
-const SocialCard = ({ title, description, icon: Icon, gradient, link }) => (
+const SocialCard = ({ title, description, icon: Icon, gradient, link }: SocialCardProps) => (
   <a
     href={link}
     target="_blank"
@@ -168,11 +186,14 @@ const SocialCard = ({ title, description, icon: Icon, gradient, link }) => (
 );
 
 const HomePage = () => {
-  const carouselRef = useRef(null);
+  // Update ref type to explicitly include HTMLDivElement
+  const carouselRef = useRef<HTMLDivElement | null>(null);
 
-  const scroll = (direction: string) => {
-    if (carouselRef.current) {
-      const scrollAmount = 416; // card width (400) + gap (16)
+  const scroll = (direction: 'left' | 'right') => {
+    const scrollAmount = 416; // card width (400) + gap (16)
+    
+    // Type guard to ensure ref.current exists and is HTMLDivElement
+    if (carouselRef.current instanceof HTMLDivElement) {
       const currentScroll = carouselRef.current.scrollLeft;
       const newScroll = direction === 'left' 
         ? currentScroll - scrollAmount 
@@ -180,7 +201,7 @@ const HomePage = () => {
       
       carouselRef.current.scrollTo({
         left: newScroll,
-        behavior: 'smooth'
+        behavior: 'smooth' as ScrollBehavior
       });
     }
   };
