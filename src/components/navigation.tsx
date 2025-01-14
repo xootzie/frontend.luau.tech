@@ -3,7 +3,6 @@ import { Home, CreditCard, Newspaper, MessageCircle, Key, LucideIcon } from "luc
 import Link from 'next/link';
 import Image from 'next/image';
 
-// Interface definitions
 interface NavLinkProps {
   href: string;
   children: React.ReactNode;
@@ -39,7 +38,7 @@ const Navigation: React.FC = () => {
       <nav className="rounded-full border border-white/10 bg-black/5 backdrop-blur-xl shadow-lg">
         <div className="px-6 py-3">
           <div className="flex items-center">
-            {/* Logo Section */}
+          
             <div className="flex-none w-48">
   <Link
     href="/"
@@ -56,7 +55,6 @@ const Navigation: React.FC = () => {
   </Link>
 </div>
             
-            {/* Navigation Links */}
             <div className="flex-1 flex justify-center">
               <div className="flex space-x-2">
                 {navItems.map((item) => (
@@ -67,7 +65,6 @@ const Navigation: React.FC = () => {
               </div>
             </div>
             
-            {/* Action Buttons */}
             <div className="flex-none w-48 flex items-center justify-end space-x-4">
               <Link
                 href="/key"

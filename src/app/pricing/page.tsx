@@ -126,7 +126,6 @@ const PricingPage: React.FC = () => {
           
 <ComingSoon/>
 
-      {/* Hero Section */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <h1 className="text-5xl font-medium tracking-tight max-w-4xl">
           Get Starry Premium
@@ -136,7 +135,6 @@ const PricingPage: React.FC = () => {
         </p>
       </section>
 
-      {/* Pricing Section */}
       <section className="bg-black min-h-screen py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -144,7 +142,6 @@ const PricingPage: React.FC = () => {
             <p className="mt-4 text-zinc-400">Choose the perfect plan for your needs</p>
           </div>
 
-          {/* Pricing Grid */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {pricingTiers.map((tier) => (
               <div
@@ -184,7 +181,6 @@ const PricingPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Enterprise Section */}
           <div className="mt-8">
             <div className="bg-zinc-900 rounded-lg p-8">
               <div className="flex flex-col md:flex-row items-center justify-between">
@@ -208,7 +204,6 @@ const PricingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Premium Features Section */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <h2 className="text-3xl font-medium mb-12">Premium Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -225,7 +220,6 @@ const PricingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <h2 className="text-3xl font-medium mb-12">Frequently Asked Questions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

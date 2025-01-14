@@ -244,17 +244,15 @@ export default function KeySystem() {
             console.log('Page fully loaded');
           }}/>
 
-      {/* Main Content */}
       <div className="min-h-screen flex items-center justify-center pt-2 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
-          {/* Key System Card */}
+        
           <div className="bg-black bg-opacity-50  rounded-xl p-8 border border-white/10 backdrop-blur-xl shadow-lg">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-medium text-white mb-2">Key System</h2>
               <p className="text-gray-400">Authorized with your Discord account to get a key</p>
             </div>
 
-            {/* Status Box */}
             <div id="status-box" className="bg-zinc-800/50 rounded-lg p-4 mb-6">
               <div className="flex items-center justify-center space-x-3">
                 {isLoading && (
@@ -264,7 +262,6 @@ export default function KeySystem() {
               </div>
             </div>
 
-            {/* Turnstile */}
             <div className="">
               <div id="turnstileContainer" />
             </div>
@@ -310,7 +307,6 @@ export default function KeySystem() {
             )}
           </div>
 
-          {/* Additional Information */}
           <div className="bg-zinc-900/50 rounded-xl p-6 border border-white/10">
             <div className="flex items-center space-x-3 text-gray-400">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

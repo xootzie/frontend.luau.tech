@@ -9,9 +9,9 @@ const Footer: React.FC = () => {
   return (
     <footer className="w-full bg-blend-darken">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Top section with logo, description, and social links */}
+    
         <div className="flex flex-col md:flex-row justify-between items-start mb-12">
-          {/* Logo and description section */}
+       
           <div className="mb-8 md:mb-0 max-w-md">
             <Link href="/" className="flex items-center space-x-3 mb-4">
               <Image
@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
               Experience the future of communication with Starry.
               Connect, collaborate, and create in a seamless digital environment.
             </p>
-            {/* Legal links */}
+    
             <div className="flex space-x-8 text-sm text-gray-400">
               <Link
                 href="/terms"
@@ -49,7 +49,6 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Social links section */}
           <div className="flex flex-col items-end space-y-4">
             <div className="flex space-x-6">
               <a
@@ -72,13 +71,11 @@ const Footer: React.FC = () => {
 
         <div className="w-full border-t border-white/5 mb-8" />
 
-        {/* Bottom section */}
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <span className="text-sm text-gray-400">
             &copy; {currentYear} Starry. All rights reserved.
           </span>
 
-          {/* Vercel logo */}
           <a
             href="https://vercel.com?utm_source=starry&utm_campaign=oss"
             target="_blank"

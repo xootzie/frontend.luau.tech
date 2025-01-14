@@ -18,7 +18,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
       const hasNavigationTiming = performance.getEntriesByType('navigation').length > 0;
 
       if (isDocumentReady && hasNavigationTiming) {
-        // Use explicit function call instead of conditional execution
+       
         setTimeout(() => {
           setIsLoading(false);
           if (onComplete) {

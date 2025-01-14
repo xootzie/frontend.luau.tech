@@ -3,7 +3,7 @@ import React from 'react';
 const GridBackground = () => {
   return (
     <div className="absolute inset-0 min-h-screen w-full pointer-events-none -z-10" style={{ height: '100%' }}>
-      {/* Grid background with horizontal fade effect */}
+
       <div
         className="absolute inset-0"
         style={{
