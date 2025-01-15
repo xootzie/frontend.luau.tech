@@ -12,12 +12,10 @@ import {
   Sparkles, 
   ArrowUpRight, 
   Globe, 
-  LucideIcon
 } from "lucide-react";
 
 import { FaDiscord } from "react-icons/fa";
 import GridBackground from '@/components/gridgb';
-import { IconType } from 'react-icons';
 
 interface GameCardProps {
   image: string;

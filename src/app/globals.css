@@ -29,7 +29,7 @@
 }
 
 .custom-cursor .loading {
-  cursor: url('/cursors/wait.cur'), wait !important;
+  cursor: url('/cursors/wait.ani'), wait !important;
 }
 
 .custom-cursor .opacity-50.cursor-not-allowed,
