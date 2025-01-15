@@ -91,7 +91,6 @@ const ScreenshotGallery = () => (
       </p>
     </div>
     <div className="space-y-16">
-      {/* First Screenshot Section */}
       <div className="flex flex-col lg:flex-row gap-8 items-center">
         <div className="w-full lg:w-2/3">
           <div className="relative group overflow-hidden rounded-xl">
@@ -204,21 +203,21 @@ const HomePage = () => {
       description: "Check out our open-source projects and help by giving us a Star!",
       icon: Github,
       link: "https://github.com/starry-proj",
-      glowColor: "rgba(255, 255, 255, 0.1)" // White with low opacity
+      glowColor: "rgba(255, 255, 255, 0.1)"
     },
     {
       title: "RScripts",
       description: "Browse & Follow our RScripts Account",
       icon: Globe,
       link: "https://rscripts.net/@starry",
-      glowColor: "rgba(59, 130, 246, 0.15)" // Blue
+      glowColor: "rgba(59, 130, 246, 0.15)" 
     },
     {
       title: "Discord",
       description: "Join our community for support and updates",
       icon: FaDiscord,
       link: "https://luau.tech/d?server=luau",
-      glowColor: "rgba(88, 101, 242, 0.15)" // Discord blurple
+      glowColor: "rgba(88, 101, 242, 0.15)"
     }
   ];
 
