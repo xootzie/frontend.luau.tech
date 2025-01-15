@@ -7,8 +7,8 @@ interface LoadingScreenProps {
   onComplete?: () => void;
 }
 
-const LoadingScreen: React.FC<LoadingScreenProps> = ({ 
-  onComplete 
+const LoadingScreen: React.FC<LoadingScreenProps> = ({
+  onComplete
 }) => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -16,7 +16,6 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
     const checkPageReadiness = () => {
       const isDocumentReady = document.readyState === 'complete';
       const hasNavigationTiming = performance.getEntriesByType('navigation').length > 0;
-
       if (isDocumentReady && hasNavigationTiming) {
        
         setTimeout(() => {
@@ -29,16 +28,13 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         setTimeout(checkPageReadiness, 100);
       }
     };
-
     checkPageReadiness();
-
     const maxLoadingTimer = setTimeout(() => {
       setIsLoading(false);
       if (onComplete) {
         onComplete();
       }
     }, 3000);
-
     return () => {
       clearTimeout(maxLoadingTimer);
     };
@@ -47,39 +43,39 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   return (
     <AnimatePresence>
       {isLoading && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 1, scale: 1 }}
-          exit={{ 
-            opacity: 0, 
+          exit={{
+            opacity: 0,
             scale: 1.1,
-            transition: { 
+            transition: {
               duration: 0.5,
               ease: "easeInOut"
             }
           }}
-          className="fixed inset-0 z-[49] flex items-center justify-center min-h-screen bg-black"
+          className="loading fixed inset-0 z-[49] flex items-center justify-center min-h-screen bg-black"
         >
           <GridBackground />
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="relative z-10 text-center"
+            className="loading relative z-10 text-center"
           >
-            <h1 className="text-5xl font-medium tracking-tight text-white mb-6">
+            <h1 className="loading text-5xl font-medium tracking-tight text-white mb-6">
               Starry ✨
             </h1>
-            
-            <p className="mt-6 text-lg text-gray-400 max-w-2xl mx-auto">
+           
+            <p className="loading mt-6 text-lg text-gray-400 max-w-2xl mx-auto">
               Preparing your experience...
             </p>
-            
-            <div className="mt-6 flex justify-center space-x-2">
+           
+            <div className="loading mt-6 flex justify-center space-x-2">
               {[...Array(3)].map((_, i) => (
-                <div 
-                  key={i} 
-                  className="w-2 h-2 bg-gray-600 rounded-full animate-pulse"
-                  style={{ 
+                <div
+                  key={i}
+                  className="loading w-2 h-2 bg-gray-600 rounded-full animate-pulse"
+                  style={{
                     animationDelay: `${i * 0.2}s`,
                     animationDuration: '1.5s'
                   }}

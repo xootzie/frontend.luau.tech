@@ -46,7 +46,6 @@ const Navigation: React.FC = () => {
         <nav className="rounded-full border border-white/10 bg-black/5 backdrop-blur-xl shadow-lg">
           <div className="px-6 py-3">
             <div className="flex items-center justify-between md:justify-start">
-              {/* Logo section */}
               <div className="flex-none w-48">
                 <Link
                   href="/"

@@ -2,3 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+::selection {
+    background-color: #7ca8f5;
+    color: black;
+  }
+  
+  ::-moz-selection {
+    background-color: #7ca8f5;
+    color: black;
+  }
+
+.custom-cursor, 
+.custom-cursor * {
+  cursor: url('/cursors/default.cur'), auto !important;
+}
+
+.custom-cursor a,
+.custom-cursor button:not(.opacity-50):not(.cursor-not-allowed),
+.custom-cursor [role="button"]:not(.opacity-50):not(.cursor-not-allowed) {
+  cursor: url('/cursors/pointer.cur'), pointer !important;
+}
+
+.custom-cursor input[type="text"],
+.custom-cursor textarea {
+  cursor: url('/cursors/text.cur'), text !important;
+}
+
+.custom-cursor .loading {
+  cursor: url('/cursors/wait.cur'), wait !important;
+}
+
+.custom-cursor .opacity-50.cursor-not-allowed,
+.custom-cursor button.opacity-50.cursor-not-allowed,
+.custom-cursor [role="button"].opacity-50.cursor-not-allowed {
+  cursor: url('/cursors/not-allowed.cur'), not-allowed !important;
+}

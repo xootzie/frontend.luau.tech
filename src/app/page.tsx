@@ -2,6 +2,7 @@
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import LoadingScreen from '@/components/loadingScreen';
+import SocialCard from '@/components/SocialCard';
 import { useRef } from 'react';
 import { 
   ArrowRight, 
@@ -25,13 +26,7 @@ interface GameCardProps {
   statusColor: string;
 }
 
-interface SocialCardProps {
-  title: string;
-  description: string;
-  icon: IconType | LucideIcon;
-  gradient: string;
-  link: string;
-}
+
 
 const HeroSection = () => (
   <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
@@ -48,7 +43,7 @@ const HeroSection = () => (
         Powerful features, seamless execution, unmatched performance.
       </p>
       <div className="mt-10 flex flex-wrap gap-4 justify-center">
-        <button className="px-6 py-2.5 rounded-full bg-midnight text-white text-sm hover:bg-opacity-75 transition-all duration-200 flex items-center gap-2">
+        <button className="hover:cursor-pointer px-6 py-2.5 rounded-full bg-midnight text-white text-sm hover:bg-opacity-75 transition-all duration-200 flex items-center gap-2">
           Get Started
           <ArrowRight className="w-4 h-4" />
         </button>
@@ -167,47 +162,7 @@ const ScreenshotGallery = () => (
   </section>
 );
 
-const SocialCard = ({ title, description, icon: Icon, gradient, link }: SocialCardProps) => (
 
-  <a
-
-    href={link}
-
-    target="_blank"
-
-    rel="noopener noreferrer"
-
-    className="relative group overflow-hidden rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
-
-    style={{ background: gradient }}
-
-  >
-
-    <div className="relative z-10 transform transition-transform duration-500 group-hover:scale-105">
-
-      <Icon className="w-8 h-8 mb-4 transition-transform duration-500 group-hover:scale-110" />
-
-      <h3 className="text-xl font-medium mb-2 transition-transform duration-500 group-hover:translate-y-[-0.25rem]">
-
-        {title}
-
-      </h3>
-
-      <p className="text-sm text-white/80 transition-transform duration-500 group-hover:translate-y-[-0.25rem]">
-
-        {description}
-
-      </p>
-
-    </div>
-
-    <div className="absolute inset-0 bg-gradient-to-br from-black/0 to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-  </a>
-
-);
 
 const HomePage = () => {
 
@@ -243,49 +198,45 @@ const HomePage = () => {
       title: "ScriptBlox",
       description: "Browse & Follow our Script Blox Account.",
       icon: Globe,
-      gradient: "linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)",
-      link: "https://scriptblox.com/u/starry"
+      link: "https://scriptblox.com/u/starry",
+      glowColor: "rgba(139, 92, 246, 0.15)" // Purple
     },
     {
       title: "GitHub",
       description: "Check out our open-source projects and help by giving us a Star!",
       icon: Github,
-      gradient: "linear-gradient(135deg, #64748B 0%, #1E293B 100%)",
-      link: "https://github.com/starry-proj"
+      link: "https://github.com/starry-proj",
+      glowColor: "rgba(255, 255, 255, 0.1)" // White with low opacity
     },
     {
       title: "RScripts",
       description: "Browse & Follow our RScripts Account",
       icon: Globe,
-      gradient: "linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)",
-      link: "https://rscripts.net/@starry"
+      link: "https://rscripts.net/@starry",
+      glowColor: "rgba(59, 130, 246, 0.15)" // Blue
     },
     {
       title: "Discord",
       description: "Join our community for support and updates",
       icon: FaDiscord,
-      gradient: "linear-gradient(135deg, #5865F2 0%, #404EED 100%)",
-      link: "https://luau.tech/d?server=luau"
+      link: "https://luau.tech/d?server=luau",
+      glowColor: "rgba(88, 101, 242, 0.15)" // Discord blurple
     }
   ];
 
   return (
-    
-        <div className="min-h-screen text-white antialiased">
-          <GridBackground />
-          <Navbar />
-          <LoadingScreen onComplete={() => {
-            console.log('Page fully loaded');
-          }}/>
+    <div className=" min-h-screen text-white antialiased">
+      <GridBackground />
+      <Navbar />
+      <LoadingScreen onComplete={() => {
+        console.log('Page fully loaded');
+      }}/>
 
       <HeroSection />
 
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zinc-900/50 border border-white/10 mb-6">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="-mt-0.5 text-sm text-gray-400">Live Status Updates</span>
-          </div>
+          
           <h2 className="text-4xl font-medium mb-4">Supported Experiences</h2>
           <div className="flex items-center justify-between">
             <p className="text-gray-400 max-w-2xl">
@@ -328,10 +279,10 @@ const HomePage = () => {
             Connect with fellow Starry users and stay updated with the latest features and scripts
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ">
-          {socials.map((social, index) => (
-            <SocialCard key={index} {...social} />
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {socials.map((social, index) => (
+  <SocialCard key={index} {...social} />
+))}
         </div>
       </section>
 
