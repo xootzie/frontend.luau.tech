@@ -1,4 +1,3 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -63,9 +62,18 @@ export default function RootLayout({
             `,
           }}
         />
+        <style>
+          {`
+            * {
+              -webkit-user-select: none;
+              -ms-user-select: none;
+              user-select: none;
+            }
+          `}
+        </style>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-black text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-black text-white select-none`}
       >
         <div className="fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,38,44,0.2),transparent_40%),radial-gradient(circle_at_top_right,rgba(37,38,44,0.2),transparent_40%)] pointer-events-none" />
         <div className="relative">

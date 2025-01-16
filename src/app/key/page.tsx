@@ -177,13 +177,12 @@ export default function KeySystem() {
 
     if (window.turnstile && isTurnstileMounted) {
       const widgetId = window.turnstile.render('#turnstileContainer', {
-        sitekey: "1x00000000000000000000AA",
+        sitekey: "0x4AAAAAAA4tVIa8BO3ZNLCH",
         theme: 'dark',
         callback: handleTurnstileCallback
       });
       setTurnstileWidget(widgetId);
 
-      // Cleanup function
       return () => {
         if (widgetId && window.turnstile) {
           window.turnstile.reset(widgetId);

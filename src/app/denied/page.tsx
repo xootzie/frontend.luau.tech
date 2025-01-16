@@ -1,49 +1,42 @@
 'use client';
 
 import React from 'react';
+import { useSearchParams } from 'next/navigation';
 import { XCircle, Copy, Check } from "lucide-react";
 import GridBackground from '@/components/gridgb';
 import Navbar from '@/components/navigation';
 import Footer from '@/components/footer';
 
-
-
-
 const DeniedPage = () => {
   const [copied, setCopied] = React.useState(false);
-  const [errorDetails, setErrorDetails] = React.useState({
-    code: '',
-    message: '',
-    details: '',
-    urlLocation: ''
-  });
-  if (errorDetails.code === 'No code provided') {
-    window.location.href = "/"
- }
+  const [mounted, setMounted] = React.useState(false);
+  const [timestamp, setTimestamp] = React.useState('');
+  const searchParams = useSearchParams();
+  
+  const errorDetails = React.useMemo(() => ({
+    code: searchParams.get('code') || 'No code provided',
+    message: decodeURIComponent(searchParams.get('message') || 'No message provided'),
+    details: decodeURIComponent(searchParams.get('details') || 'No details provided'),
+    urlLocation: decodeURIComponent(searchParams.get('location') || '')
+  }), [searchParams]);
 
   React.useEffect(() => {
-    const getCookieValue = (name: string) => {
-      const match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-      if (match) {
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-        return decodeURIComponent(match[2]);
-      }
-      return '';
-    };
-
-    setErrorDetails({
-      code: getCookieValue('errorCode') || 'No code provided',
-      message: getCookieValue('errorMessage') || 'No message provided',
-      details: getCookieValue('errorDetails') || 'No details provided',
-      urlLocation: getCookieValue('errorLocation') || window.location.href
-    });
-  }, []);
- 
- 
-  const timestamp = new Date().toLocaleString();
+    setMounted(true);
+    setTimestamp(new Date().toLocaleString());
+    
+    if (errorDetails.code === 'No code provided') {
+      window.location.href = "/";
+    }
+  }, [errorDetails.code]);
 
   const copyToClipboard = async () => {
-    const textToCopy = `Status: ${errorDetails.code}\nMessage: ${errorDetails.message}\nDetails: ${errorDetails.details}\nTime: ${timestamp}\nLocation: ${errorDetails.urlLocation}`;
+    if (!mounted) return;
+    
+    const textToCopy = `Status: ${errorDetails.code}
+Message: ${errorDetails.message}
+Details: ${errorDetails.details}
+Time: ${timestamp}
+Location: ${errorDetails.urlLocation || window.location.href}`;
     
     try {
       await navigator.clipboard.writeText(textToCopy);
@@ -53,6 +46,19 @@ const DeniedPage = () => {
       console.error('Failed to copy text: ', err);
     }
   };
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen text-white antialiased">
+        <GridBackground />
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-pulse">Loading...</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen text-white antialiased">
@@ -107,7 +113,7 @@ const DeniedPage = () => {
 Message: ${errorDetails.message}
 Details: ${errorDetails.details}
 Time: ${timestamp}
-Location: ${errorDetails.urlLocation}`}
+Location: ${errorDetails.urlLocation || window.location.href}`}
                 </pre>
               </div>
             </div>
