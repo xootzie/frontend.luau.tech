@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { Home, CreditCard, Newspaper, MessageCircle, Key, Menu, X, LucideIcon } from "lucide-react";
 import Link from 'next/link';
@@ -17,16 +18,30 @@ interface NavItem {
   icon: LucideIcon;
 }
 
-const NavLink: React.FC<NavLinkProps> = ({ href, children, icon: Icon, className = "", onClick }) => (
-  <Link
-    href={href}
-    onClick={onClick}
-    className={`flex items-center gap-2 text-sm text-gray-400 hover:text-accent transition-colors duration-200 px-3 py-2 rounded-md hover:bg-white/5 ${className}`}
-  >
-    {Icon && <Icon className="w-4 h-4" />}
-    {children}
-  </Link>
-);
+const NavLink: React.FC<NavLinkProps> = ({ href, children, icon: Icon, className = "", onClick }) => {
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleClick = () => {
+    setIsClicked(true);
+    setTimeout(() => setIsClicked(false), 200);
+    if (onClick) onClick();
+  };
+
+  return (
+    <Link
+      href={href}
+      onClick={handleClick}
+      className={`flex items-center gap-2 text-sm text-gray-400 transition-all duration-200 px-3 py-2 rounded-md
+        hover:text-accent hover:bg-white/5
+        transform hover:scale-105 active:scale-95
+        ${isClicked ? 'scale-95' : ''}
+        ${className}`}
+    >
+      {Icon && <Icon className="w-4 h-4 transition-transform group-hover:scale-110" />}
+      {children}
+    </Link>
+  );
+};
 
 const Navigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -49,7 +64,7 @@ const Navigation: React.FC = () => {
               <div className="flex-none w-48">
                 <Link
                   href="/"
-                  className="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200"
+                  className="flex items-center space-x-2 hover:opacity-80 transition-all duration-200 transform hover:scale-105 active:scale-95"
                 >
                   <Image
                     src="/images/brand/icon.png"
@@ -65,7 +80,8 @@ const Navigation: React.FC = () => {
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 rounded-md hover:bg-white/5 relative z-50"
+                className="md:hidden p-2 rounded-md hover:bg-white/5 relative z-50 transition-all duration-200
+                  transform hover:scale-110 active:scale-95"
               >
                 {isMenuOpen ? (
                   <X className="w-6 h-6 text-gray-400" />
@@ -85,11 +101,12 @@ const Navigation: React.FC = () => {
                 </div>
               </div>
 
-              {/* Desktop license key button */}
               <div className="hidden md:flex flex-none w-48 items-center justify-end space-x-4">
                 <Link
                   href="/key"
-                  className="px-4 py-1.5 rounded-full bg-midnight text-white text-sm hover:bg-opacity-75 transition-colors flex items-center gap-2 transform duration-200"
+                  className="px-4 py-1.5 rounded-full bg-midnight text-white text-sm 
+                    hover:bg-opacity-75 transition-all duration-200 flex items-center gap-2
+                    transform hover:scale-110 active:scale-95 hover:shadow-lg "
                 >
                   <Key className="w-4 h-4" />
                   License Key
@@ -122,7 +139,9 @@ const Navigation: React.FC = () => {
             <Link
               href="/key"
               onClick={closeMenu}
-              className="mt-8 px-6 py-2 rounded-full bg-midnight text-white text-lg hover:bg-opacity-75 transition-colors flex items-center gap-2 justify-center"
+              className="mt-8 px-6 py-2 rounded-full bg-midnight text-white text-lg
+                hover:bg-opacity-75 transition-all duration-200 flex items-center gap-2 justify-center
+                transform hover:scale-110 active:scale-95 hover:shadow-lg hover:shadow-blue-500/25"
             >
               <Key className="w-5 h-5" />
               License Key

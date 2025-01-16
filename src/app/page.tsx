@@ -3,19 +3,18 @@ import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import LoadingScreen from '@/components/loadingScreen';
 import SocialCard from '@/components/SocialCard';
+import HeroSection from '@/components/hero';
 import { useRef, useState } from 'react';
 import { 
-  ArrowRight, 
   ChevronLeft, 
   ChevronRight, 
   Github, 
-  Sparkles, 
+
   ArrowUpRight, 
   Globe,
   X 
 } from "lucide-react";
 import { FaDiscord } from "react-icons/fa";
-import GridBackground from '@/components/gridgb';
 
 interface GameCardProps {
   image: string;
@@ -28,33 +27,33 @@ interface GameCardProps {
 
 
 
-const HeroSection = () => (
-  <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
-    <div className="flex flex-col items-center text-center">
-      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/50 border border-white/10 mb-8">
-        <Sparkles className="w-4 h-4 text-accent" />
-        <span className="text-sm text-gray-400">New Features Released</span>
-      </div>
-      <h1 className="text-5xl font-medium tracking-tight max-w-4xl text-white mb-6">
-        Elevate Your Roblox GamePlay with Starry
-      </h1>
-      <p className="mt-6 text-lg text-gray-400 max-w-2xl">
-        Meet the next generation of Roblox exploiting.
-        Powerful features, seamless execution, unmatched performance.
-      </p>
-      <div className="mt-10 flex flex-wrap gap-4 justify-center">
-        <button className="hover:cursor-pointer px-6 py-2.5 rounded-full bg-midnight text-white text-sm hover:bg-opacity-75 transition-all duration-200 flex items-center gap-2">
-          Get Started
-          <ArrowRight className="w-4 h-4" />
-        </button>
-        <button className="px-6 py-2.5 rounded-full text-sm text-gray-400 hover:text-white transition-colors group flex items-center gap-2">
-          Learn More
-          <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
-        </button>
-      </div>
-    </div>
-  </section>
-);
+// const HeroSection = () => (
+//   <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+//     <div className="flex flex-col items-center text-center">
+//       <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/50 border border-white/10 mb-8">
+//         <Sparkles className="w-4 h-4 text-accent" />
+//         <span className="text-sm text-gray-400">New Features Released</span>
+//       </div>
+//       <h1 className="text-5xl font-medium tracking-tight max-w-4xl text-white mb-6">
+//         Elevate Your Roblox GamePlay with Starry
+//       </h1>
+//       <p className="mt-6 text-lg text-gray-400 max-w-2xl">
+//         Meet the next generation of Roblox exploiting.
+//         Powerful features, seamless execution, unmatched performance.
+//       </p>
+//       <div className="mt-10 flex flex-wrap gap-4 justify-center">
+//         <button className="hover:cursor-pointer px-6 py-2.5 rounded-full bg-midnight text-white text-sm hover:bg-opacity-75 transition-all duration-200 flex items-center gap-2">
+//           Get Started
+//           <ArrowRight className="w-4 h-4" />
+//         </button>
+//         <button className="px-6 py-2.5 rounded-full text-sm text-gray-400 hover:text-white transition-colors group flex items-center gap-2">
+//           Learn More
+//           <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
+//         </button>
+//       </div>
+//     </div>
+//   </section>
+// );
 
 const GameCard = ({ image, title, status, statusColor, url, onShowFeatures }: GameCardProps & { onShowFeatures: () => void }) => (
   <div className="min-w-[385px] bg-zinc-900/50 rounded-xl p-6 border border-white/10 snap-start hover:border-white/20 transition-all duration-300 group">
@@ -88,7 +87,7 @@ const GameCard = ({ image, title, status, statusColor, url, onShowFeatures }: Ga
 );
 
 const ScreenshotGallery = () => (
-  <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+  <section id="features-section" className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
     <div className="text-center mb-12">
       <h2 className="text-4xl font-medium mb-4">Powerful Features in Action</h2>
       <p className="text-gray-400 max-w-2xl mx-auto">
@@ -279,7 +278,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen text-white antialiased">
-      <GridBackground />
+     
       <Navbar />
       <LoadingScreen onComplete={() => {
         console.log('Page fully loaded');
