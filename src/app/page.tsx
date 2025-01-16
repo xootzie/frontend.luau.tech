@@ -56,7 +56,7 @@ const HeroSection = () => (
   </section>
 );
 
-const GameCard = ({ image, title, status, statusColor, url, features, onShowFeatures }: GameCardProps & { onShowFeatures: () => void }) => (
+const GameCard = ({ image, title, status, statusColor, url, onShowFeatures }: GameCardProps & { onShowFeatures: () => void }) => (
   <div className="min-w-[385px] bg-zinc-900/50 rounded-xl p-6 border border-white/10 snap-start hover:border-white/20 transition-all duration-300 group">
     <div 
       className="h-48 rounded-lg mb-6 bg-cover bg-center transform group-hover:scale-[1.02] transition-all duration-300" 
