@@ -59,7 +59,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
             className="loading relative z-10 text-center"
           >
             <h1 className="loading text-5xl font-medium tracking-tight text-white mb-6">
@@ -76,8 +76,8 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
                   key={i}
                   className="loading w-2 h-2 bg-gray-600 rounded-full animate-pulse"
                   style={{
-                    animationDelay: `${i * 0.2}s`,
-                    animationDuration: '1.5s'
+                    animationDelay: `${i * 0}s`,
+                    animationDuration: '0.5s'
                   }}
                 />
               ))}
