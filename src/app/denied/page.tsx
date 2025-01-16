@@ -1,13 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { XCircle, Copy, Check } from "lucide-react";
 import GridBackground from '@/components/gridgb';
 import Navbar from '@/components/navigation';
 import Footer from '@/components/footer';
+import LoadingScreen from '@/components/loadingScreen';
 
-const DeniedPage = () => {
+
+
+const DeniedContent = () => {
   const [copied, setCopied] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
   const [timestamp, setTimestamp] = React.useState('');
@@ -49,22 +52,14 @@ Location: ${errorDetails.urlLocation || window.location.href}`;
 
   if (!mounted) {
     return (
-      <div className="min-h-screen text-white antialiased">
-        <GridBackground />
-        <Navbar />
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-pulse">Loading...</div>
-        </div>
-        <Footer />
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen text-white antialiased">
-      <GridBackground />
-      <Navbar />
-      
+    <>
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
         <div className="flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/50 border border-red-500/20 mb-8">
@@ -120,6 +115,25 @@ Location: ${errorDetails.urlLocation || window.location.href}`}
           </div>
         </div>
       </section>
+    </>
+  );
+};
+
+const DeniedPage = () => {
+  return (
+    <div className="min-h-screen text-white antialiased">
+        <LoadingScreen onComplete={() => {
+        console.log('Page fully loaded');
+      }}/>
+      <GridBackground />
+      <Navbar />
+      <Suspense fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-pulse">Loading...</div>
+        </div>
+      }>
+        <DeniedContent />
+      </Suspense>
       <Footer />
     </div>
   );
