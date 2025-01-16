@@ -3,7 +3,7 @@ import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import LoadingScreen from '@/components/loadingScreen';
 import SocialCard from '@/components/SocialCard';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { 
   ArrowRight, 
   ChevronLeft, 
@@ -11,9 +11,9 @@ import {
   Github, 
   Sparkles, 
   ArrowUpRight, 
-  Globe, 
+  Globe,
+  X 
 } from "lucide-react";
-
 import { FaDiscord } from "react-icons/fa";
 import GridBackground from '@/components/gridgb';
 
@@ -22,6 +22,8 @@ interface GameCardProps {
   title: string;
   status: string;
   statusColor: string;
+  url: string;
+  features: string[];
 }
 
 
@@ -54,7 +56,7 @@ const HeroSection = () => (
   </section>
 );
 
-const GameCard = ({ image, title, status, statusColor }: GameCardProps) => (
+const GameCard = ({ image, title, status, statusColor, url, features, onShowFeatures }: GameCardProps & { onShowFeatures: () => void }) => (
   <div className="min-w-[385px] bg-zinc-900/50 rounded-xl p-6 border border-white/10 snap-start hover:border-white/20 transition-all duration-300 group">
     <div 
       className="h-48 rounded-lg mb-6 bg-cover bg-center transform group-hover:scale-[1.02] transition-all duration-300" 
@@ -67,11 +69,14 @@ const GameCard = ({ image, title, status, statusColor }: GameCardProps) => (
     <div className="flex items-center justify-between">
       <h3 className="text-lg font-medium">{title}</h3>
       <div className="flex items-center gap-2">
-        <button className="px-4 py-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors text-sm">
+        <button 
+          onClick={onShowFeatures}
+          className="px-4 py-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors text-sm"
+        >
           Features
         </button>
         <a 
-          href="https://roblox.com" 
+          href={url} 
           target="_blank" 
           className="p-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors"
         >
@@ -123,7 +128,6 @@ const ScreenshotGallery = () => (
         </div>
       </div>
 
-      {/* Second Screenshot Section */}
       <div className="flex flex-col lg:flex-row-reverse gap-8 items-center">
         <div className="w-full lg:w-2/3">
           <div className="relative group overflow-hidden rounded-xl">
@@ -162,32 +166,84 @@ const ScreenshotGallery = () => (
 
 
 const HomePage = () => {
-
   const carouselRef = useRef<HTMLDivElement | null>(null);
+  const [selectedGame, setSelectedGame] = useState<GameCardProps | null>(null);
+  const [isModalClosing, setIsModalClosing] = useState(false);
 
   const scroll = (direction: 'left' | 'right') => {
-    const scrollAmount = 416; 
+    const scrollAmount = 416;
     
-    if (carouselRef.current instanceof HTMLDivElement) {
+    if (carouselRef.current) {
       const currentScroll = carouselRef.current.scrollLeft;
-      const newScroll = direction === 'left' 
-        ? currentScroll - scrollAmount 
-        : currentScroll + scrollAmount;
-      
       carouselRef.current.scrollTo({
-        left: newScroll,
-        behavior: 'smooth' as ScrollBehavior
+        left: direction === 'left' ? currentScroll - scrollAmount : currentScroll + scrollAmount,
+        behavior: 'smooth'
       });
     }
   };
 
+  const handleCloseModal = () => {
+    setIsModalClosing(true);
+    setTimeout(() => {
+      setSelectedGame(null);
+      setIsModalClosing(false);
+    }, 200);
+  };
+
   const games = [
-    { image: "/images/toh_banner.webp", title: "Tower of Hell", status: "Working", statusColor: "green" },
-    { image: "/images/bi2_banner.webp", title: "Break In 2", status: "Working", statusColor: "green" },
-    { image: "/images/mm2_banner.webp", title: "Murder Mystery 2", status: "Unreleased", statusColor: "blue" },
-    { image: "/images/mm2_banner.webp", title: "Murder Mystery 2", status: "Unreleased", statusColor: "blue" },
-    { image: "/images/mm2_banner.webp", title: "Murder Mystery 2", status: "Unreleased", statusColor: "blue" },
-    { image: "/images/mm2_banner.webp", title: "Murder Mystery 2", status: "Unreleased", statusColor: "blue" }
+    { 
+      image: "/images/toh_banner.webp", 
+      title: "Tower of Hell", 
+      status: "Working", 
+      statusColor: "green", 
+      url: "https://www.roblox.com/games/1962086868",
+      features: [
+        "Auto Win",
+        "Infinite Jump",
+        "Speed Modifier",
+        "God Mode",
+        "Much more!"
+      ]
+    },
+    { 
+      image: "/images/doors_banner.webp", 
+      title: "Doors", 
+      status: "Working", 
+      statusColor: "green", 
+      url: "https://www.roblox.com/games/6516141723",
+      features: [
+        "Entity ESP",
+        "Item ESP",
+        "Auto Complete",
+        "Walking Speed Modifier",
+        "Entity Spawner",
+        "Entity Notifier"
+      ]
+    },
+    { 
+      image: "/images/mm2_banner.webp", 
+      title: "Murder Mystery 2", 
+      status: "Unreleased", 
+      statusColor: "blue", 
+      url: "https://www.roblox.com/games/142823291",
+      features: [
+        "Role ESP",
+        "Kill All",
+        "AutoFarm",
+        "Become Sheriff",
+        "Fling Role"
+      ]
+    },
+    { 
+      image: "/images/sp_banner.webp", 
+      title: "Sound Space", 
+      status: "Working", 
+      statusColor: "green", 
+      url: "https://www.roblox.com/games/2677609345",
+      features: [
+        "Auto Play"
+      ]
+    },
   ];
 
   const socials = [
@@ -196,7 +252,7 @@ const HomePage = () => {
       description: "Browse & Follow our Script Blox Account.",
       icon: Globe,
       link: "https://scriptblox.com/u/starry",
-      glowColor: "rgba(139, 92, 246, 0.15)" // Purple
+      glowColor: "rgba(139, 92, 246, 0.15)"
     },
     {
       title: "GitHub",
@@ -222,7 +278,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className=" min-h-screen text-white antialiased">
+    <div className="min-h-screen text-white antialiased">
       <GridBackground />
       <Navbar />
       <LoadingScreen onComplete={() => {
@@ -233,7 +289,6 @@ const HomePage = () => {
 
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="mb-12">
-          
           <h2 className="text-4xl font-medium mb-4">Supported Experiences</h2>
           <div className="flex items-center justify-between">
             <p className="text-gray-400 max-w-2xl">
@@ -259,9 +314,13 @@ const HomePage = () => {
         <div className="relative">
           <div 
             ref={carouselRef}
-            className="overflow-hidden flex gap-6 pb-4 snap-x scrollbar-hide ">
+            className="overflow-hidden flex gap-6 pb-4 snap-x scrollbar-hide">
             {games.map((game, index) => (
-              <GameCard key={index} {...game} />
+              <GameCard 
+                key={index} 
+                {...game} 
+                onShowFeatures={() => setSelectedGame(game)}
+              />
             ))}
           </div>
         </div>
@@ -277,11 +336,79 @@ const HomePage = () => {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {socials.map((social, index) => (
-  <SocialCard key={index} {...social} />
-))}
+          {socials.map((social, index) => (
+            <SocialCard key={index} {...social} />
+          ))}
         </div>
       </section>
+
+      {selectedGame && (
+        <div 
+          className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4
+            ${isModalClosing ? 'animate-fade-out' : 'animate-fade-in'}
+          `}
+          onClick={handleCloseModal}
+        >
+          <div 
+            className={`bg-zinc-900 rounded-xl border border-white/10 w-full max-w-4xl max-h-[85vh] overflow-hidden
+              ${isModalClosing ? 'animate-slide-down' : 'animate-slide-up'}
+            `}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative h-48 sm:h-64 overflow-hidden">
+              <div 
+                className="absolute inset-0 bg-cover bg-center transform transition-transform duration-700 hover:scale-110"
+                style={{ backgroundImage: `url(${selectedGame.image})` }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/50 to-transparent" />
+              <div className="absolute bottom-0 left-0 p-6">
+                <p className={`text-sm text-${selectedGame.statusColor}-500 mb-2 flex items-center gap-2`}>
+
+                  <span className={`w-2 h-2 rounded-full bg-${selectedGame.statusColor}-500 animate-pulse`} />
+                  {selectedGame.status}
+                </p>
+                <h3 className="text-2xl font-medium">{selectedGame.title}</h3>
+                <p className="text-gray-400 text-sm">These are just placeholders, games do have real status.</p>
+              </div>
+              <button
+                onClick={handleCloseModal}
+                className="absolute top-4 right-4 p-2 hover:bg-zinc-800/80 rounded-lg transition-colors backdrop-blur-sm"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[40vh]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {selectedGame.features.map((feature, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-start gap-3 p-4 rounded-lg bg-zinc-800/50 hover:bg-zinc-800/80 transition-colors"
+                  >
+                    <span className=" w-1.5 h-1.5 rounded-full bg-accent mt-2 animate-pulse" />
+                    <span className= "-mt-0.5 text-gray-300">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="p-6 border-t border-white/10 flex justify-end gap-3">
+              <a 
+                href={selectedGame.url}
+                target="_blank"
+                className="px-6 py-2 rounded-lg bg-accent/10 hover:bg-accent/20 text-accent transition-colors flex items-center gap-2"
+              >
+                Visit Game
+              
+              </a>
+              <button
+                onClick={handleCloseModal}
+                className="px-6 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
