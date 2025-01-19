@@ -104,14 +104,11 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
           </div>
           
           <h1 className="text-6xl sm:text-7xl font-medium tracking-tight text-white mb-6 bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
-            Elevate Your Roblox
-            <br />
-            GamePlay with Starry
+            Experience More using Starry
           </h1>
           
           <p className="mt-6 text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            Meet the next generation of Roblox exploiting.
-            Powerful features, seamless execution, unmatched performance.
+            Meet the next generation of Roblox exploiting. Powerful features, seamless performance, available now for free.
           </p>
           
           <div className="mt-10 flex flex-wrap gap-4 justify-center">
@@ -158,8 +155,8 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
               <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent rounded-t-xl" />
               
               <div className="relative">
-                <h3 className="text-xl font-medium mb-2">Loadstring Code</h3>
-                <p className="text-gray-400 text-sm mb-4">Copy the code below to get started with Starry</p>
+                <h3 className="text-xl font-medium mb-2">Raw Code</h3>
+                <p className="text-gray-400 text-sm mb-4">Copy our code below to use Starry today ♥️</p>
                 
                 <div className="relative group">
                   <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 group-hover:border-white/20 transition-colors">
