@@ -119,7 +119,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
                 transform hover:scale-110 active:scale-95 
                 ${isClicked ? 'scale-95' : ''}`}
             >
-              <span className="-mt-1 relative">Get Script</span>
+              <span className="-mt-1 relative">View Script</span>
               <Code className="w-5 h-5 relative transition-transform group-hover:translate-x-1" />
             </button>
             
