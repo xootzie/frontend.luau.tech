@@ -288,10 +288,10 @@ const HomePage = () => {
 
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="mb-12">
-          <h2 className="text-4xl font-medium mb-4">Supported Experiences</h2>
+          <h2 className="text-4xl font-medium mb-4">Our Games ✨</h2>
           <div className="flex items-center justify-between">
             <p className="text-gray-400 max-w-2xl">
-              Explore our collection of supported games and their current status
+              Learn our ever-expanding library of games, and the features that follow
             </p>
             <div className="flex items-center gap-2 ml-4">
               <button 
@@ -329,9 +329,9 @@ const HomePage = () => {
 
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-medium mb-4">Join Our Community</h2>
+          <h2 className="text-4xl font-medium mb-4">Join the Community</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Connect with fellow Starry users and stay updated with the latest features and scripts
+            Meet & connect with our lovely community, get script news & updates, and more!
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -367,7 +367,7 @@ const HomePage = () => {
                   {selectedGame.status}
                 </p>
                 <h3 className="text-2xl font-medium">{selectedGame.title}</h3>
-                <p className="text-gray-400 text-sm">These are just placeholders, games do have real status.</p>
+                <p className="text-gray-400 text-sm">We're working on providing each game a proper status..</p>
               </div>
               <button
                 onClick={handleCloseModal}
@@ -395,7 +395,7 @@ const HomePage = () => {
                 target="_blank"
                 className="px-6 py-2 rounded-lg bg-accent/10 hover:bg-accent/20 text-accent transition-colors flex items-center gap-2"
               >
-                Visit Game
+                View Game
               
               </a>
               <button
