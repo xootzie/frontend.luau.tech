@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Home, CreditCard, Newspaper, MessageCircle, Key, Menu, X, LucideIcon } from "lucide-react";
+import { Home, CreditCard, Code, MessageCircle, Key, Menu, X, LucideIcon } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -49,7 +49,7 @@ const Navigation: React.FC = () => {
   const navItems: NavItem[] = [
     { href: "/", label: "Home", icon: Home },
     { href: "/pricing", label: "Pricing", icon: CreditCard },
-    { href: "/news", label: "Updates & News", icon: Newspaper },
+    { href: "/executors", label: "Executors", icon: Code },
     { href: "/d?server=luau", label: "Discord Server", icon: MessageCircle },
   ];
 
