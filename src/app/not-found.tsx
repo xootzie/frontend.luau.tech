@@ -14,7 +14,29 @@ export default function ErrorPage() {
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,38,44,0.2),transparent_40%),radial-gradient(circle_at_top_right,rgba(37,38,44,0.2),transparent_40%)] pointer-events-none"></div>
       
       <LoadingScreen onComplete={() => {
-        console.log('Page fully loaded');
+          console.log(`
+ ________   _________   ________   ________   ________ 
+
+                                                                         
+
+      ______                             
+     / _____)_                          
+    ( (_____| |_ _____  ____  ____ _   _ 
+    \____ (_   _|____ |/ ___) ___)| | | |
+     _____) )| |_/ ___ | |  | |   | |_| |
+    (______/  \__)_____|_|  |_|    \__  |
+                                  (____/ 
+
+    discord.gg/luau | @Starry | luau.tech
+
+
+
+ ________   _________   ________   ________   ________ 
+
+
+ Please note that this is a work in progress, report any bugs or issues to the discord server.
+
+`);
       }}/>
       
       <Navbar />

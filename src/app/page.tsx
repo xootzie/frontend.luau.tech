@@ -259,7 +259,29 @@ const HomePage = () => {
      
       <Navbar />
       <LoadingScreen onComplete={() => {
-        console.log('Page fully loaded');
+          console.log(`
+ ________   _________   ________   ________   ________ 
+
+                                                                         
+
+      ______                             
+     / _____)_                          
+    ( (_____| |_ _____  ____  ____ _   _ 
+    \____ (_   _|____ |/ ___) ___)| | | |
+     _____) )| |_/ ___ | |  | |   | |_| |
+    (______/  \__)_____|_|  |_|    \__  |
+                                  (____/ 
+
+    discord.gg/luau | @Starry | luau.tech
+
+
+
+ ________   _________   ________   ________   ________ 
+
+
+ Please note that this is a work in progress, report any bugs or issues to the discord server.
+
+`);
       }}/>
 
       <HeroSection />

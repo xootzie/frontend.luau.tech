@@ -240,7 +240,29 @@ export default function KeySystem() {
       <ComingSoon />
       <GridBackground />
       <LoadingScreen onComplete={() => {
-            console.log('Page fully loaded');
+          console.log(`
+ ________   _________   ________   ________   ________ 
+
+                                                                         
+
+      ______                             
+     / _____)_                          
+    ( (_____| |_ _____  ____  ____ _   _ 
+    \____ (_   _|____ |/ ___) ___)| | | |
+     _____) )| |_/ ___ | |  | |   | |_| |
+    (______/  \__)_____|_|  |_|    \__  |
+                                  (____/ 
+
+    discord.gg/luau | @Starry | luau.tech
+
+
+
+ ________   _________   ________   ________   ________ 
+
+
+ Please note that this is a work in progress, report any bugs or issues to the discord server.
+
+`);
           }}/>
 
       <div className="min-h-screen flex items-center justify-center pt-2 pb-12 px-4 sm:px-6 lg:px-8">

@@ -1,6 +1,6 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { Sparkles, Code, Copy, Check } from "lucide-react";
+
+import { useState, useEffect, useRef } from 'react';
+import { Code, Copy, Check } from "lucide-react";
 
 interface MousePosition {
   x: number;
@@ -47,6 +47,8 @@ const HeroSection = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [isClosing, setIsClosing] = useState<boolean>(false);
+  const [textHoverPosition,] = useState<MousePosition>({ x: 0, y: 0 });
+  const textRef = useRef<HTMLHeadingElement>(null);
   
   const loadstring = `getgenv().ignoreGameCheck = false
 loadstring(game:HttpGet("https://luau.tech/build"))()`;
@@ -86,6 +88,13 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
     }, 200);
   };
 
+  const handleTextHover = () => {
+    if (textRef.current) {
+      // const rect = textRef.current.getBoundingClientRect();
+      
+    }
+  };
+
   return (
     <>
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-transparent to-black/20">
@@ -98,12 +107,26 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/50 border border-white/10 mb-8 hover:border-white/20 transition-colors">
+          {/* <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/50 border border-white/10 mb-8 hover:border-white/20 transition-colors">
             <Sparkles className="w-4 h-4 text-blue-500" />
             <span className="text-sm text-gray-400">New Website Release</span>
-          </div>
+          </div> */}
           
-          <h1 className="text-6xl sm:text-7xl font-medium tracking-tight text-white mb-6 bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
+          <h1 
+            ref={textRef}
+            onMouseMove={handleTextHover}
+            className="text-6xl sm:text-7xl font-medium tracking-tight text-white mb-6 
+            hover:scale-[1.05] transition-all duration-300 ease-in-out"
+            style={{
+              background: `radial-gradient(circle at ${textHoverPosition.x}px ${textHoverPosition.y}px, 
+                rgba(255,255,255,0.3), 
+                transparent 50%)`,
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+              backgroundImage: 'linear-gradient(to bottom, white, rgba(255,255,255,0.6))'
+            }}
+          >
             Experience More using Starry
           </h1>
           
