@@ -116,7 +116,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
             ref={textRef}
             onMouseMove={handleTextHover}
             className="text-6xl sm:text-7xl font-medium tracking-tight text-white mb-6 
-            hover:scale-[1.05] transition-all duration-300 ease-in-out"
+            hover:scale-[1.05] transition-all duration-300 ease-in-out pb-1"
             style={{
               background: `radial-gradient(circle at ${textHoverPosition.x}px ${textHoverPosition.y}px, 
                 rgba(255,255,255,0.3), 
@@ -124,7 +124,8 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               color: 'transparent',
-              backgroundImage: 'linear-gradient(to bottom, white, rgba(255,255,255,0.6))'
+              backgroundImage: 'linear-gradient(to bottom, white, rgba(255,255,255,0.6))',
+              lineHeight: '1.5'
             }}
           >
             Experience More using Starry

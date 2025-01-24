@@ -5,7 +5,6 @@ import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import LoadingScreen from '@/components/loadingScreen';
 
-const api_response = fetch('https://whatexpsare.online/api/versions/current', {});
 const executors = [
   {
     name: "Swift",
@@ -114,12 +113,11 @@ interface Executor {
     const [windowsLastUpdated, setWindowsLastUpdated] = useState('');
     const [macLastUpdated, setMacLastUpdated] = useState('');
 
-    useEffect(() => {
-      const fetchVersions = async () => {
-        try {
-          const response = await api_response;
-          const data = await response.json();
-          
+useEffect(() => {
+  const fetchVersions = async () => {
+    try {
+      const response = await fetch('https://whatexpsare.online/api/versions/current', {});
+      const data = await response.json();
           setWindowsVersion(data.Windows);
           setMacVersion(data.Mac);
           
