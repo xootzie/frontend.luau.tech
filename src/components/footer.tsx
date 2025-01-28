@@ -29,19 +29,18 @@ const Footer: React.FC = () => {
               </span>
             </Link>
             <p className="text-gray-400 mb-6">
-              Experience the future of communication with Starry.
-              Connect, collaborate, and create in a seamless digital environment.
+              Experience the future of Exploiting with Starry.
             </p>
     
             <div className="flex space-x-8 text-sm text-gray-400">
               <Link
-                href="/terms"
+                href="/security#terms-of-service"
                 className="hover:text-accent transition-colors duration-300 border-b border-transparent hover:border-accent pb-1"
               >
                 Terms of Service
               </Link>
               <Link
-                href="/privacy"
+                href="/security#privacy-policy"
                 className="hover:text-accent transition-colors duration-300 border-b border-transparent hover:border-accent pb-1"
               >
                 Privacy Policy
