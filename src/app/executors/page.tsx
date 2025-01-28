@@ -8,18 +8,14 @@ import LoadingScreen from '@/components/loadingScreen';
 const executors = [
   {
     name: "Swift",
-    description: "Freemium executor that supports most Scripts.",
+    description: "Swift is known as the best Free executor, very easy to use and can run most scripts",
     platforms: {
       windows: true
     },
     price: "Freemium",
     website: "https://getswift.xyz/",
     features: [
-      "Debug Library",
-      "Script Hub",
-      "Custom Functions",
-      "Auto-Launch",
-      "Auto-Attach"
+      "Coming Soon"
     ],
     lastUpdated: 1737412980,
     type: "Free",
@@ -27,14 +23,14 @@ const executors = [
   },
   {
     name: "Seliware",
-    description: "Cheap executor that supports most Scripts",
+    description: "Seliware is one of the cheapest paid executors but is also very powerful",
     platforms: {
       windows: true
     },
     price: "$10/Month",
     website: "https://discord.gg/ydZwUMBeCe",
     features: [
-    "Soon"
+    "Coming Soon"
     ],
     lastUpdated: 1737419580,
     type: "Premium",
@@ -42,14 +38,14 @@ const executors = [
   },
   {
     name: "Nihon",
-    description: "Paid executor that supports all Scripts",
+    description: "Nihon is a paid executor that has one of the nicest UI design and is very premium with up to 90&+ UNC",
     platforms: {
       windows: true
     },
     price: "$6.49/Week",
     website: "https://nihon.lol",
     features: [
-    "Soon"
+    "Coming Soon"
     ],
     lastUpdated: 1737419580,
     type: "Premium",
@@ -57,14 +53,14 @@ const executors = [
   },
   {
     name: "AWP",
-    description: "Paid executor that supports all Scripts",
+    description: "AWP is a paid executor with a very minilistic and modern UI design, it is a premium executor that supports basically every script",
     platforms: {
       windows: true
     },
     price: "$6.99/Week",
     website: "https://discord.com/invite/awpgg",
     features: [
-    "Soon"
+    "Coming Soon"
     ],
     lastUpdated: 1737420000,
     type: "Premium",
@@ -72,18 +68,48 @@ const executors = [
   },
   {
     name: "Solara",
-    description: "One of the BEST free executors",
+    description: "Solara is the number one free executor, it has a very basic UI design and is very easy to use",
     platforms: {
       windows: true
     },
     price: "Free",
     website: "https://getsolara.dev/",
     features: [
-    "Soon"
+    "Coming Soon"
     ],
     lastUpdated: 1737420000,
     type: "Free",
     UNC: "Click to view UNC"
+  },
+  {
+    name: "Synapse Z",
+    description: "Synapse Z is a recreation of Synapse X, very powerful and premium executor",
+    platforms: {
+      windows: true
+    },
+    price: "$4.99-$6.49",
+    website: "https://synapsez.net/",
+    features: [
+    "Coming Soon"
+    ],
+    lastUpdated: 1738078080,
+    type: "Premium",
+    UNC: "None"
+  },
+  {
+    name: "Macsploit",
+    description: "Macsploit is the only currently available MacOS executor for cheap",
+    platforms: {
+      MacOS: true
+    },
+    price: "$9.99",
+    website: "https://www.abyssdigital.xyz/",
+    features: [
+    "Coming Soon"
+    ],
+    lastUpdated: 1738078230,
+    type: "Premium",
+    UNC: "None"
   },
 ];
 
@@ -272,56 +298,69 @@ useEffect(() => {
     isClosing: boolean;
   }) => {
     return (
-      <div 
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center"
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
         onClick={onClose}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
       >
-        <div 
-          className={`relative bg-zinc-900 rounded-xl border border-white/10 w-full max-w-4xl mx-4
-            ${isClosing ? 'animate-slide-down' : 'animate-slide-up'}`}
+        <div
+          className={`relative bg-zinc-900 rounded-xl border border-white/10 w-full max-w-4xl shadow-xl
+            ${isClosing ? 'animate-slide-down' : 'animate-slide-up'}
+            focus-within:outline-none focus-within:ring-2 focus-within:ring-accent/50`}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="relative h-48 sm:h-64 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/50 to-transparent" />
-            <div className="absolute bottom-0 left-0 p-6">
-              <h3 className="text-2xl font-medium">{executor.name}</h3>
-              
-              <p className="text-gray-400 text-sm">{executor.description}</p>
+          <div className="relative h-32 sm:h-48 overflow-hidden rounded-t-xl bg-gradient-to-b from-zinc-800 to-zinc-900">
+            <div className="absolute left-0 p-6">
+              <h3 id="modal-title" className="text-2xl font-medium tracking-tight">
+                {executor.name}
+              </h3>
+              <p className="text-gray-400 text-sm mt-1">
+                {executor.description}
+              </p>
             </div>
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 hover:bg-zinc-800/80 rounded-lg transition-colors backdrop-blur-sm"
+              className="absolute top-4 right-4 p-2 hover:bg-zinc-800/80 rounded-lg transition-colors backdrop-blur-sm
+                focus:outline-none focus:ring-2 focus:ring-accent/50"
+              aria-label="Close modal"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
   
-          <div className="p-6 overflow-y-auto max-h-[40vh]">
+          <div className="p-6 overflow-y-auto max-h-[40vh] scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-800">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {executor.features.map((feature, index) => (
-                <div 
+                <div
                   key={index}
-                  className="flex items-start gap-3 p-4 rounded-lg bg-zinc-800/50 hover:bg-zinc-800/80 transition-colors"
+                  className="group flex items-start gap-3 p-4 rounded-lg bg-zinc-800/50 hover:bg-zinc-800/80 transition-all duration-200"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 animate-pulse" />
-                  <span className="-mt-0.5 text-gray-300">{feature}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2 group-hover:animate-pulse" />
+                  <span className="text-gray-300 leading-relaxed">
+                    {feature}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
   
-          <div className="p-6 border-t border-white/10 flex justify-end gap-3">
-            <a 
+          <div className="p-6 border-t border-white/10 flex justify-end gap-3 bg-zinc-900/50">
+            <a
               href={executor.website}
               target="_blank"
-              className="px-6 py-2 rounded-lg bg-accent/10 hover:bg-accent/20 text-accent transition-colors flex items-center gap-2"
+              rel="noopener noreferrer"
+              className="px-6 py-2 rounded-lg bg-accent/10 hover:bg-accent/20 text-accent transition-colors flex items-center gap-2
+                focus:outline-none focus:ring-2 focus:ring-accent/50"
             >
               Visit Website
               <ExternalLink className="w-4 h-4" />
             </a>
             <button
               onClick={onClose}
-              className="px-6 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
+              className="px-6 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors
+                focus:outline-none focus:ring-2 focus:ring-accent/50"
             >
               Close
             </button>
@@ -330,6 +369,7 @@ useEffect(() => {
       </div>
     );
   };
+  
   
   const ExecutorCard = ({ executor }: { executor: Executor }) => {
     const modalContext = React.useContext(ModalContext);
@@ -541,7 +581,7 @@ useEffect(() => {
                     <option value="windows" className="bg-zinc-900 text-white hover:bg-zinc-800">
                       Windows
                     </option>
-                    <option value="macos" className="bg-zinc-900 text-white hover:bg-zinc-800">
+                    <option value="MacOS" className="bg-zinc-900 text-white hover:bg-zinc-800">
                       MacOS
                     </option>
                     <option value="android" className="bg-zinc-900 text-white hover:bg-zinc-800">
