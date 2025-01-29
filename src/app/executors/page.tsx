@@ -5,6 +5,25 @@ import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import LoadingScreen from '@/components/loadingScreen';
 
+
+type Platform = 'windows' | 'MacOS' | 'android' | 'ios';
+
+type Platforms = {
+  [key in Platform]?: boolean;
+}
+
+interface Executor {
+  name: string;
+  description: string;
+  platforms: Platforms;
+  price: string;
+  website: string;
+  features: string[];
+  lastUpdated: number;
+  type: string;
+  UNC: string;
+}
+
 const executors = [
   {
     name: "Swift",
@@ -116,9 +135,7 @@ const executors = [
 interface Executor {
     name: string;
     description: string;
-    platforms: {
-      [key: string]: boolean;
-    };
+    platforms: Platforms;
     price: string;
     website: string;
     features: string[];
@@ -618,7 +635,6 @@ useEffect(() => {
               </div>
           
               <RobloxVersionInfo />
-
               <div className="py-5 grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
                 {filteredExecutors.map((executor, index) => (
                   <ExecutorCard key={index} executor={executor} />
