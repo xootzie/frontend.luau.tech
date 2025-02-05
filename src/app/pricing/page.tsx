@@ -4,6 +4,7 @@ import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import { Check, Zap, Key, Crown } from 'lucide-react';
 import LoadingScreen from '@/components/loadingScreen';
+import Image from 'next/image';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -32,7 +33,7 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
       const newWindow = window.open(
         'https://purchase.luau.tech/b/9AQcNQbCH33sa2I7ss',
         'StripeCheckout',
-        'width=600,height=800,left=${window.innerWidth / 2 - 300},top=${window.innerHeight / 2 - 400}'
+        'width=1200,height=700,left=${window.innerWidth / 2 - 300},top=${window.innerHeight / 2 - 400}'
       );
       setPaymentWindow(newWindow);
     }
@@ -69,11 +70,70 @@ interface PricingTier {
   buttonText: string;
   isPopular?: boolean;
   disabled?: boolean;
+  paymentMethods?: React.ReactNode;
 }
 
 const PricingPage: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [, setIsLoading] = useState(true);
+
+  const PaymentMethods = () => {
+    const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
+    const cards = [
+      { src: "/images/brand/icons/amex-a49b82f46c5cd6a96a6e418a6ca1717c.svg", alt: "American Express" },
+      { src: "/images/brand/icons/discover-ac52cd46f89fa40a29a0bfb954e33173.svg", alt: "Discover" },
+      { src: "/images/brand/icons/jcb-271fd06e6e7a2c52692ffa91a95fb64f.svg", alt: "JCB" },
+      { src: "/images/brand/icons/diners-fbcbd3360f8e3f629cdaa80e93abdb8b.svg", alt: "diners" },
+      { src: "/images/brand/icons/unionpay-8a10aefc7295216c338ba4e1224627a1.svg", alt: "unionpay" },
+    ];
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setCurrentCardIndex((prevIndex) => (prevIndex + 1) % cards.length);
+      }, 2000);
+      return () => clearInterval(interval);
+    }, [cards.length]);
+
+    return (
+      <div className="mt-4 pt-4 border-t border-zinc-800">
+        <div className="flex flex-wrap gap-1 items-center justify-center">
+          <div className="bg-zinc-800 p-1.5 rounded">
+            <Image src="/images/brand/icons/mastercard-4d8844094130711885b5e41b28c9848f.svg" alt="MasterCredit Card" width={16} height={16} />
+          </div>
+          <div className="bg-zinc-800 p-1.5 rounded">
+            <Image src="/images/brand/icons/visa-729c05c240c4bdb47b03ac81d9945bfe.svg" alt="Visa Card" width={16} height={16} />
+          </div>
+          <div className="bg-zinc-800 p-1.5 rounded">
+            <Image src="/images/brand/icons/icon-pm-cashapp-981164a833e417d28a8ac2684fda2324.svg" alt="Cash App" width={16} height={16} />
+          </div>
+          <div className="bg-zinc-800 p-1.5 rounded">
+            <Image src="/images/brand/icons/google-pay-svgrepo-com.svg" alt="Google Pay" width={16} height={16} />
+          </div>
+          <div className="bg-zinc-800 p-1.5 rounded">
+            <Image src="/images/brand/icons/Apple_Pay_Mark_RGB_041619.svg" alt="Apple Pay" width={16} height={16} />
+          </div>
+          <div className="bg-zinc-800 p-1.5 rounded">
+            <Image src="/images/brand/icons/icon-pm-amazonpay_light-22cdec0f5f5609554a34fa62fa583f23.svg" alt="Amazon Pay" width={16} height={16} />
+          </div>
+          <div className="bg-zinc-800 p-2 rounded relative" style={{ width: '28px', height: '28px' }}>
+            {cards.map((card, index) => (
+              <Image
+                key={card.src}
+                src={card.src}
+                alt={card.alt}
+                width={16}
+                height={16}
+                className={`absolute left-1.5 top-1.5 transition-opacity duration-500 ${
+                  index === currentCardIndex ? 'opacity-100' : 'opacity-0'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+ 
 
   const pricingTiers: PricingTier[] = [
     {
@@ -101,7 +161,7 @@ const PricingPage: React.FC = () => {
         'Exclusive Discord Roles'
       ],
       buttonText: 'Join Server',
-      disabled: true
+      disabled: false
     },
     {
       name: 'Direct payment',
@@ -116,7 +176,8 @@ const PricingPage: React.FC = () => {
       ],
       buttonText: 'Purchase',
       isPopular: true,
-      disabled: false
+      disabled: false,
+      paymentMethods: <PaymentMethods />
     },
     {
       name: 'Content Creator',
@@ -223,48 +284,51 @@ const PricingPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {pricingTiers.map((tier) => (
-              <div
-                key={tier.name}
-                className={`bg-zinc-900 rounded-lg p-6 flex flex-col ${
-                  tier.isPopular ? 'ring-2 ring-blue-500' : ''
-                }`}
-              >
-                <div className="mb-8">
-                  <h3 className="text-white text-2xl font-semibold mb-2">{tier.name}</h3>
-                  <div className="text-2xl text-white font-semibold">{tier.price}</div>
-                  <p className="text-zinc-400 text-sm">{tier.description}</p>
-                </div>
-
-                <ul className="space-y-4 flex-grow">
-                  {tier.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center text-zinc-300">
-                      <Check className="w-5 h-5 text-blue-500 mr-2" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  className={`mt-8 w-full rounded-md py-2 ${
-                    tier.disabled
-                      ? 'opacity-50 cursor-not-allowed bg-zinc-800'
-                      : tier.isPopular
-                      ? 'bg-blue-500 hover:bg-opacity-25'
-                      : 'bg-zinc-800 hover:bg-zinc-700'
-                  } text-white transition-colors`}
-                  disabled={tier.disabled}
-                  onClick={() => {
-                    if (tier.name === 'Direct payment') {
-                      setIsPaymentModalOpen(true);
-                    }
-                  }}
-                >
-                  {tier.buttonText}
-                </button>
-              </div>
-            ))}
+      {pricingTiers.map((tier) => (
+        <div
+          key={tier.name}
+          className={`bg-zinc-900 rounded-lg p-6 flex flex-col ${
+            tier.isPopular ? 'ring-2 ring-blue-500' : ''
+          }`}
+        >
+          <div className="mb-8">
+            <h3 className="text-white text-2xl font-semibold mb-2">{tier.name}</h3>
+            <div className="text-2xl text-white font-semibold">{tier.price}</div>
+            <p className="text-zinc-400 text-sm">{tier.description}</p>
           </div>
+
+          <ul className="space-y-4 flex-grow">
+            {tier.features.map((feature, featureIndex) => (
+              <li key={featureIndex} className="flex items-center text-zinc-300">
+                <Check className="w-5 h-5 text-blue-500 mr-2" />
+                {feature}
+              </li>
+            ))}
+          </ul>
+
+          
+          {tier.paymentMethods && tier.paymentMethods}
+          <button
+            className={`mt-5 w-full rounded-md py-2 ${
+              tier.disabled
+                ? 'opacity-50 cursor-not-allowed bg-zinc-800'
+                : tier.isPopular
+                ? 'bg-blue-500 hover:bg-opacity-25'
+                : 'bg-zinc-800 hover:bg-zinc-700'
+            } text-white transition-colors`}
+            disabled={tier.disabled}
+            onClick={() => {
+              if (tier.name === 'Direct payment') {
+                setIsPaymentModalOpen(true);
+              }
+            }}
+          >
+            {tier.buttonText}
+          </button>
+          
+        </div>
+      ))}
+    </div>
 
           <div className="mt-8">
             <div className="bg-zinc-900 rounded-lg p-8">
