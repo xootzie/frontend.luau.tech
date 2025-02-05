@@ -15,12 +15,6 @@ interface KeyVerifyResponse {
   expiryDate?: string;
 }
 
-interface ExistingKeyResponse {
-  success: boolean;
-  key?: string;
-  message?: string;
-}
-
 interface TurnstileOptions {
   sitekey: string;
   theme?: 'light' | 'dark';
