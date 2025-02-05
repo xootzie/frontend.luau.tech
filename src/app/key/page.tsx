@@ -114,8 +114,8 @@ export default function KeySystem() {
       const ipResponse = await fetch('https://api.ipify.org?format=json');
       const ipData = await ipResponse.json();
       const clientIp = ipData.ip;
-
-      const response = await fetch(`https://backend.luau.tech/api/auth/license/verify?licenseKey=${licenseKey}&providedClientIp=${clientIp}`, {
+      const encodedIp = encodeURIComponent(clientIp);
+      const response = await fetch(`https://backend.luau.tech/api/auth/license/verify?licenseKey=${licenseKey}&providedClientIp=${encodedIp}`, {
         credentials: 'include',
         method: 'GET',
         headers: {
