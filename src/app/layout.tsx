@@ -86,7 +86,8 @@ export default function RootLayout({
  children: React.ReactNode;
 }>) {
  return (
-   <html lang="en" className="dark custom-cursor">
+  // <html lang="en" className="dark custom-cursor">
+   <html lang="en" className="dark">
      <head>
        <script
          src="https://challenges.cloudflare.com/turnstile/v0/api.js"

@@ -12,7 +12,7 @@
     color: black;
   }
 
-.custom-cursor, 
+/* .custom-cursor, 
 .custom-cursor * {
   cursor: url('/cursors/default.cur'), auto !important;
 }
@@ -36,7 +36,7 @@
 .custom-cursor button.opacity-50.cursor-not-allowed,
 .custom-cursor [role="button"].opacity-50.cursor-not-allowed {
   cursor: url('/cursors/not-allowed.cur'), not-allowed !important;
-}
+} */
 
 
 @keyframes fadeIn {
