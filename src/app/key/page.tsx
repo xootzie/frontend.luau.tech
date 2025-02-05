@@ -9,6 +9,7 @@ import GridBackground from '@/components/gridgb';
 import LoadingScreen from '@/components/loadingScreen';
 
 interface KeyVerifyResponse {
+  key: string;
   success: boolean;
   message?: string;
   expiryDate?: string;
@@ -65,14 +66,18 @@ export default function KeySystem() {
 
   const checkExistingKey = async () => {
     try {
-      const response = await fetch('https://backend.luau.tech/api/auth/license/exist', {
+     
+      const ipResponse = await fetch('https://api.ipify.org?format=json');
+      const ipData = await ipResponse.json();
+      const clientIp = encodeURIComponent(ipData.ip);
+
+      const response = await fetch(`https://backend.luau.tech/api/auth/license/exist?providedClientIp=${clientIp}`, {
         credentials: 'include',
         method: 'GET',
         headers: {
           'Accept': 'application/json',
         },
       });
-      console.log(response.ok);
       
       if (response.status === 404) {
         console.log('License check endpoint not found');
@@ -87,16 +92,27 @@ export default function KeySystem() {
         return;
       }
       
-      const data: ExistingKeyResponse = await response.json();
-      console.log(data);
+      const data: KeyVerifyResponse = await response.json();
+      console.log('Existing key response:', data);
+      
       if (data.success && data.key) {
         const sb = document.getElementById('status-box') as HTMLElement;
         const cloudflareTurnstile = document.getElementById("turnstileContainer") as HTMLDivElement;
+        
         if (cloudflareTurnstile instanceof HTMLDivElement) {
           cloudflareTurnstile.classList.add("hidden");
         }
-        sb.classList.add("hidden");
+        
+        if (sb) {
+          sb.classList.add("hidden");
+        }
+        
         setStatusMessage('');
+        setVerifiedKey(data.key);
+        if (data.expiryDate) {
+          setExpiryDate(data.expiryDate);
+        }
+        
         window.dispatchEvent(new MessageEvent('message', {
           data: JSON.stringify({ key: data.key }),
           origin: window.location.origin
