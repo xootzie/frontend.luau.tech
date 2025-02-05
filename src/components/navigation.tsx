@@ -77,7 +77,6 @@ const Navigation: React.FC = () => {
                 </Link>
               </div>
 
-              {/* Mobile menu button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="md:hidden p-2 rounded-md hover:bg-white/5 relative z-50 transition-all duration-200
@@ -90,7 +89,6 @@ const Navigation: React.FC = () => {
                 )}
               </button>
 
-              {/* Desktop navigation */}
               <div className="hidden md:flex flex-1 justify-center">
                 <div className="flex space-x-2">
                   {navItems.map((item) => (
@@ -117,7 +115,6 @@ const Navigation: React.FC = () => {
         </nav>
       </div>
 
-      {/* Full-screen mobile menu overlay */}
       <div
         className={`fixed inset-0 bg-black/95 backdrop-blur-xl z-40 md:hidden transition-opacity duration-300 ${
           isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'

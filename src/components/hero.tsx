@@ -1,6 +1,5 @@
-
 import { useState, useEffect, useRef } from 'react';
-import { Code, Copy, Check } from "lucide-react";
+import { Code, Copy, Check, Sparkles } from "lucide-react";
 
 interface MousePosition {
   x: number;
@@ -91,7 +90,6 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
   const handleTextHover = () => {
     if (textRef.current) {
       // const rect = textRef.current.getBoundingClientRect();
-      
     }
   };
 
@@ -102,15 +100,17 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
         
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.1),rgba(0,0,0,0))]" />
         
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
+        
         <div
           className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center transform transition-all duration-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}
         >
-          {/* <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/50 border border-white/10 mb-8 hover:border-white/20 transition-colors">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/50 border border-white/10 mb-8 hover:border-white/20 transition-colors">
             <Sparkles className="w-4 h-4 text-blue-500" />
-            <span className="text-sm text-gray-400">New Website Release</span>
-          </div> */}
+            <span className="text-sm text-gray-400">Key System & Premium Released!</span>
+          </div>
           
           <h1 
             ref={textRef}
@@ -119,12 +119,12 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
             hover:scale-[1.05] transition-all duration-300 ease-in-out pb-1"
             style={{
               background: `radial-gradient(circle at ${textHoverPosition.x}px ${textHoverPosition.y}px, 
-                rgba(255,255,255,0.3), 
-                transparent 50%)`,
+              rgba(255,255,255,0.3), 
+              transparent 50%)`,
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               color: 'transparent',
-              backgroundImage: 'linear-gradient(to bottom, white, rgba(255,255,255,0.6))',
+              backgroundImage: 'linear-gradient(to bottom, white, rgba(59, 130, 246, 0.6))',
               lineHeight: '1.5'
             }}
           >

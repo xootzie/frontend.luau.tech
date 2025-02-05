@@ -1,11 +1,12 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
-import { Check } from 'lucide-react';
+import { Check, Loader2 } from 'lucide-react';
 import LoadingScreen from '@/components/loadingScreen';
 import Image from 'next/image';
 import PricingHero from '@/components/pricinghero';
+
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -14,31 +15,69 @@ interface PaymentModalProps {
 
 const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
   const [paymentWindow, setPaymentWindow] = useState<Window | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  useEffect(() => {
-    if (paymentWindow) {
-      const timer = setInterval(() => {
-        if (paymentWindow.closed) {
-          clearInterval(timer);
-          onClose();
-          setPaymentWindow(null);
-        }
-      }, 500);
-
-      return () => clearInterval(timer);
+  const checkWindowStatus = useCallback(() => {
+    if (paymentWindow && (paymentWindow.closed || !paymentWindow.document)) {
+      setPaymentWindow(null);
+      setIsProcessing(false);
+      onClose();
+      return true;
     }
+    return false;
   }, [paymentWindow, onClose]);
 
   useEffect(() => {
-    if (isOpen && !paymentWindow) {
-      const newWindow = window.open(
-        'https://purchase.luau.tech/b/9AQcNQbCH33sa2I7ss',
-        'StripeCheckout',
-        'width=1200,height=700,left=${window.innerWidth / 2 - 300},top=${window.innerHeight / 2 - 400}'
-      );
-      setPaymentWindow(newWindow);
+    if (!paymentWindow) return;
+
+    const timer = setInterval(checkWindowStatus, 300);
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        checkWindowStatus();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', checkWindowStatus);
+
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', checkWindowStatus);
+    };
+  }, [paymentWindow, checkWindowStatus]);
+
+  useEffect(() => {
+    if (isOpen && !paymentWindow && !isProcessing) {
+      try {
+        setIsProcessing(true);
+        const width = 1200;
+        const height = 700;
+        const screenLeft = window.screenLeft || window.screenX;
+        const screenTop = window.screenTop || window.screenY;
+        const left = Math.max(0, screenLeft + (window.outerWidth - width) / 2);
+        const top = Math.max(0, screenTop + (window.outerHeight - height) / 2);
+
+        const newWindow = window.open(
+          'https://purchase.luau.tech/b/9AQcNQbCH33sa2I7ss',
+          '_blank',
+          `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no`
+        );
+
+        if (newWindow) {
+          setPaymentWindow(newWindow);
+          newWindow.focus();
+        } else {
+          setIsProcessing(false);
+          onClose();
+        }
+      } catch (error) {
+        console.error('Failed to open payment window:', error);
+        setIsProcessing(false);
+        onClose();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, paymentWindow, onClose, isProcessing]);
 
   if (!isOpen) return null;
 
@@ -48,13 +87,19 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative bg-zinc-900 p-8 rounded-lg shadow-xl text-center">
-        <h2 className="text-xl font-semibold mb-4">Payment Window Opened</h2>
-        <p className="text-gray-300 mb-4">Please complete your payment in the new window.</p>
-        <p className="text-gray-400 text-sm">You can close this overlay or wait for the payment to complete.</p>
+      <div className="relative bg-zinc-900 p-8 rounded-lg shadow-xl text-center max-w-md w-full mx-4">
+        <div className="mb-6">
+          <div className="relative w-16 h-16 mx-auto">
+            <Loader2 className="w-16 h-16 animate-spin absolute top-0 left-0 text-blue-500 opacity-75" />
+           
+          </div>
+        </div>
+        <p className="text-gray-300 mb-4 text-lg font-medium">Please complete your payment in the new window.</p>
+        <p className="text-gray-400 text-sm">You can close this overlay while completing your payment.</p>
         <button
           onClick={onClose}
-          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+          className="mt-6 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
+        >
           Close Overlay
         </button>
       </div>
@@ -260,7 +305,6 @@ const PricingPage: React.FC = () => {
 
   return (
     <div className="bg-black text-white antialiased">
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,38,44,0.2),transparent_40%),radial-gradient(circle_at_top_right,rgba(37,38,44,0.2),transparent_40%)] pointer-events-none" />
 
       <Navbar />
       <LoadingScreen onComplete={handleLoadingComplete} />

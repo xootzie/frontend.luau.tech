@@ -38,7 +38,7 @@ const Modal: React.FC<ModalProps> = ({
         className="relative w-full max-w-2xl bg-zinc-900 rounded-xl border border-white/10 shadow-xl animate-slide-up"
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
+        
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <h3 className="text-xl font-semibold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
             {title}
