@@ -97,37 +97,78 @@ const PricingPage: React.FC = () => {
     return (
       <div className="mt-4 pt-4 border-t border-zinc-800">
         <div className="flex flex-wrap gap-1 items-center justify-center">
-          <div className="bg-zinc-800 p-1.5 rounded">
-            <Image src="/images/brand/icons/mastercard-4d8844094130711885b5e41b28c9848f.svg" alt="MasterCredit Card" width={16} height={16} />
+          <div className="relative group">
+            <div className="bg-zinc-800 p-2 rounded w-[28px] h-[28px] flex items-center justify-center">
+              <Image src="/images/brand/icons/mastercard-4d8844094130711885b5e41b28c9848f.svg" alt="MasterCredit Card" width={20} height={20} />
+            </div>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Mastercard
+            </div>
           </div>
-          <div className="bg-zinc-800 p-1.5 rounded">
-            <Image src="/images/brand/icons/visa-729c05c240c4bdb47b03ac81d9945bfe.svg" alt="Visa Card" width={16} height={16} />
+          
+          <div className="relative group">
+            <div className="bg-zinc-800 p-2 rounded w-[28px] h-[28px] flex items-center justify-center">
+              <Image src="/images/brand/icons/visa-729c05c240c4bdb47b03ac81d9945bfe.svg" alt="Visa Card" width={20} height={20} />
+            </div>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Visa
+            </div>
           </div>
-          <div className="bg-zinc-800 p-1.5 rounded">
-            <Image src="/images/brand/icons/icon-pm-cashapp-981164a833e417d28a8ac2684fda2324.svg" alt="Cash App" width={16} height={16} />
+
+          <div className="relative group">
+            <div className="bg-zinc-800 p-2 rounded w-[28px] h-[28px] flex items-center justify-center">
+              <Image src="/images/brand/icons/icon-pm-cashapp-981164a833e417d28a8ac2684fda2324.svg" alt="Cash App" width={20} height={20} />
+            </div>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Cash App
+            </div>
           </div>
-          <div className="bg-zinc-800 p-1.5 rounded">
-            <Image src="/images/brand/icons/google-pay-svgrepo-com.svg" alt="Google Pay" width={16} height={16} />
+
+          <div className="relative group">
+            <div className="bg-zinc-800 p-2 rounded w-[28px] h-[28px] flex items-center justify-center">
+              <Image src="/images/brand/icons/google-pay-svgrepo-com.svg" alt="Google Pay" width={20} height={20} />
+            </div>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Google Pay
+            </div>
           </div>
-          <div className="bg-zinc-800 p-1.5 rounded">
-            <Image src="/images/brand/icons/Apple_Pay_Mark_RGB_041619.svg" alt="Apple Pay" width={16} height={16} />
+
+          <div className="relative group">
+            <div className="bg-zinc-800 p-2 rounded w-[28px] h-[28px] flex items-center justify-center">
+              <Image src="/images/brand/icons/Apple_Pay_Mark_RGB_041619.svg" alt="Apple Pay" width={20} height={20} />
+            </div>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Apple Pay
+            </div>
           </div>
-          <div className="bg-zinc-800 p-1.5 rounded">
-            <Image src="/images/brand/icons/icon-pm-amazonpay_light-22cdec0f5f5609554a34fa62fa583f23.svg" alt="Amazon Pay" width={16} height={16} />
+
+          <div className="relative group">
+            <div className="bg-zinc-800 p-2 rounded w-[28px] h-[28px] flex items-center justify-center">
+              <Image src="/images/brand/icons/icon-pm-amazonpay_light-22cdec0f5f5609554a34fa62fa583f23.svg" alt="Amazon Pay" width={20} height={20} />
+            </div>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Amazon Pay
+            </div>
           </div>
-          <div className="bg-zinc-800 p-2 rounded relative" style={{ width: '28px', height: '28px' }}>
-            {cards.map((card, index) => (
-              <Image
-                key={card.src}
-                src={card.src}
-                alt={card.alt}
-                width={16}
-                height={16}
-                className={`absolute left-1.5 top-1.5 transition-opacity duration-500 ${
-                  index === currentCardIndex ? 'opacity-100' : 'opacity-0'
-                }`}
-              />
-            ))}
+
+          <div className="relative group">
+            <div className="bg-zinc-800 p-2 rounded w-[28px] h-[28px] flex items-center justify-center relative">
+              {cards.map((card, index) => (
+                <Image
+                  key={card.src}
+                  src={card.src}
+                  alt={card.alt}
+                  width={20}
+                  height={20}
+                  className={`absolute transition-opacity duration-500 ${
+                    index === currentCardIndex ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+              ))}
+            </div>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              {cards[currentCardIndex].alt}
+            </div>
           </div>
         </div>
       </div>
