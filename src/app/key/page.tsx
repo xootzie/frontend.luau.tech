@@ -72,6 +72,7 @@ export default function KeySystem() {
           'Accept': 'application/json',
         },
       });
+      console.log(response.ok);
       
       if (response.status === 404) {
         console.log('License check endpoint not found');
@@ -87,7 +88,7 @@ export default function KeySystem() {
       }
       
       const data: ExistingKeyResponse = await response.json();
-
+      console.log(data);
       if (data.success && data.key) {
         const sb = document.getElementById('status-box') as HTMLElement;
         const cloudflareTurnstile = document.getElementById("turnstileContainer") as HTMLDivElement;
