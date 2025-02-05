@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
-import { Check, Zap, Key, Crown } from 'lucide-react';
+import { Check } from 'lucide-react';
 import LoadingScreen from '@/components/loadingScreen';
 import Image from 'next/image';
+import PricingHero from '@/components/pricinghero';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -53,8 +54,7 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
         <p className="text-gray-400 text-sm">You can close this overlay or wait for the payment to complete.</p>
         <button
           onClick={onClose}
-          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
+          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
           Close Overlay
         </button>
       </div>
@@ -174,7 +174,24 @@ const PricingPage: React.FC = () => {
       </div>
     );
   };
- 
+  const faqs = [
+    {
+      question: 'How do I claim my Premium access?',
+      answer: 'After your purchase, you\'ll receive a license key to activate Premium features in your email'
+    },
+    {
+      question: 'Is Premium a one-time purchase?',
+      answer: 'Yes, when you purchase Premium directly, it\'s a lifetime access. Server boost and content creator access depend on ongoing activity.'
+    },
+    {
+      question: 'What payment methods are accepted?',
+      answer: 'We accept all major credit cards, Google Pay, Apple Pay, Amazon Pay, and Cash App. In the future Cryptocurrency will be accepted as well.'
+    },
+    {
+      question: 'When will content creator access be available?',
+      answer: 'Content creator access will be available once we have enough content to support it. We will announce when it\'s available.'
+    }
+  ];
 
   const pricingTiers: PricingTier[] = [
     {
@@ -237,69 +254,9 @@ const PricingPage: React.FC = () => {
     }
   ];
 
-  const premiumFeatures = [
-    {
-      icon: <Zap className="w-6 h-6 text-white" />,
-      title: 'Enhanced Features',
-      description: 'Purchase Premium to use exclusive features and premium only experiences.'
-    },
-    {
-      icon: <Key className="w-6 h-6 text-white" />,
-      title: 'Bypass Key System',
-      description: 'Purchase Premium to access premium features with a special key.'
-    },
-    {
-      icon: <Crown className="w-6 h-6 text-white" />,
-      title: 'Feel Heard',
-      description: 'Get Access to VIP exclusive content including Discord channels.'
-    }
-  ];
-
-  const faqs = [
-    {
-      question: 'How do I claim my Premium access?',
-      answer: 'After your purchase, you\'ll receive a license key to activate Premium features in your email'
-    },
-    {
-      question: 'Is Premium a one-time purchase?',
-      answer: 'Yes, when you purchase Premium directly, it\'s a lifetime access. Server boost and content creator access depend on ongoing activity.'
-    },
-    {
-      question: 'What payment methods are accepted?',
-      answer: 'We accept PayPal, Credit/Debit cards, Cash App, and Venmo through our secure Stripe payment system.'
-    },
-    {
-      question: 'How do I track my content creator status?',
-      answer: 'Once approved, you\'ll get access to a creator dashboard where you can submit your content and track your Premium days.'
-    }
-  ];
-
+ 
   const handleLoadingComplete = () => {
-    setIsLoading(false);
-    console.log(`
- ________   _________   ________   ________   ________ 
-
-                                                                         
-
-      ______                             
-     / _____)_                          
-    ( (_____| |_ _____  ____  ____ _   _ 
-    \____ (_   _|____ |/ ___) ___)| | | |
-     _____) )| |_/ ___ | |  | |   | |_| |
-    (______/  \__)_____|_|  |_|    \__  |
-                                  (____/ 
-
-    discord.gg/luau | @Starry | luau.tech
-
-
-
- ________   _________   ________   ________   ________ 
-
-
- Please note that this is a work in progress, report any bugs or issues to the discord server.
-
-`);
-  };
+    setIsLoading(false);};
 
   return (
     <div className="bg-black text-white antialiased">
@@ -308,15 +265,10 @@ const PricingPage: React.FC = () => {
       <Navbar />
       <LoadingScreen onComplete={handleLoadingComplete} />
           
-      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <h1 className="text-5xl font-medium tracking-tight max-w-4xl">
-          Get Starry Premium
-        </h1>
-        <p className="mt-6 text-lg text-gray-400 max-w-2xl">
-          Choose your preferred way to unlock premium features and enhance your Roblox experience.
-        </p>
-      </section>
 
+      <PricingHero />
+          
+    
       <section className="bg-black min-h-screen py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -394,22 +346,6 @@ const PricingPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <h2 className="text-3xl font-medium mb-12">Premium Features</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {premiumFeatures.map((feature, index) => (
-            <div
-              key={index}
-              className="bg-zinc-900/50 rounded-xl p-6 border border-white/10"
-            >
-              {feature.icon}
-              <h3 className="text-lg font-medium mb-2">{feature.title}</h3>
-              <p className="text-gray-400">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <h2 className="text-3xl font-medium mb-12">Frequently Asked Questions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -423,6 +359,7 @@ const PricingPage: React.FC = () => {
           ))}
         </div>
       </section>
+
 
       <PaymentModal 
         isOpen={isPaymentModalOpen} 
