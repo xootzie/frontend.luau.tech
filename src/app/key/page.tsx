@@ -65,7 +65,7 @@ export default function KeySystem() {
 
   const checkExistingKey = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/auth/license/exist', {
+      const response = await fetch('http://backend.luau.tech/api/auth/license/exist', {
         credentials: 'include',
         method: 'GET',
         headers: {
@@ -111,7 +111,7 @@ export default function KeySystem() {
 
   const verifyKey = async (licenseKey: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/auth/license/verify?licenseKey=${licenseKey}`, {
+      const response = await fetch(`http://backend.luau.tech/api/auth/license/verify?licenseKey=${licenseKey}`, {
         credentials: 'include',
         method: 'GET',
         headers: {
