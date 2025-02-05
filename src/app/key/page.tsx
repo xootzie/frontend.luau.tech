@@ -152,7 +152,7 @@ export default function KeySystem() {
       const allowedOrigins = [
         'http://localhost:3001',
         'http://localhost:3000', 
-        'https://starry.luau.tech',
+        'https://www.luau.tech',
         'https://luau.tech'
       ];
       
