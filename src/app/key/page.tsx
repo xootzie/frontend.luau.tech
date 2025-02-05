@@ -111,7 +111,11 @@ export default function KeySystem() {
 
   const verifyKey = async (licenseKey: string) => {
     try {
-      const response = await fetch(`https://backend.luau.tech/api/auth/license/verify?licenseKey=${licenseKey}`, {
+      const ipResponse = await fetch('https://api.ipify.org?format=json');
+      const ipData = await ipResponse.json();
+      const clientIp = ipData.ip;
+
+      const response = await fetch(`https://backend.luau.tech/api/auth/license/verify?licenseKey=${licenseKey}&providedClientIp=${clientIp}`, {
         credentials: 'include',
         method: 'GET',
         headers: {
