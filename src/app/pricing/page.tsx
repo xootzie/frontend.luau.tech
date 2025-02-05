@@ -1,10 +1,65 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
-import ComingSoon from '@/components/comingsoon';
 import { Check, Zap, Key, Crown } from 'lucide-react';
 import LoadingScreen from '@/components/loadingScreen';
+
+interface PaymentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
+  const [paymentWindow, setPaymentWindow] = useState<Window | null>(null);
+
+  useEffect(() => {
+    if (paymentWindow) {
+      const timer = setInterval(() => {
+        if (paymentWindow.closed) {
+          clearInterval(timer);
+          onClose();
+          setPaymentWindow(null);
+        }
+      }, 500);
+
+      return () => clearInterval(timer);
+    }
+  }, [paymentWindow, onClose]);
+
+  useEffect(() => {
+    if (isOpen && !paymentWindow) {
+      const newWindow = window.open(
+        'https://purchase.luau.tech/b/9AQcNQbCH33sa2I7ss',
+        'StripeCheckout',
+        'width=600,height=800,left=${window.innerWidth / 2 - 300},top=${window.innerHeight / 2 - 400}'
+      );
+      setPaymentWindow(newWindow);
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div 
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="relative bg-zinc-900 p-8 rounded-lg shadow-xl text-center">
+        <h2 className="text-xl font-semibold mb-4">Payment Window Opened</h2>
+        <p className="text-gray-300 mb-4">Please complete your payment in the new window.</p>
+        <p className="text-gray-400 text-sm">You can close this overlay or wait for the payment to complete.</p>
+        <button
+          onClick={onClose}
+          className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        >
+          Close Overlay
+        </button>
+      </div>
+    </div>
+  );
+};
 
 interface PricingTier {
   name: string;
@@ -17,6 +72,9 @@ interface PricingTier {
 }
 
 const PricingPage: React.FC = () => {
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   const pricingTiers: PricingTier[] = [
     {
       name: 'Free',
@@ -47,7 +105,7 @@ const PricingPage: React.FC = () => {
     },
     {
       name: 'Direct payment',
-      price: '$6.99',
+      price: '$5.49',
       description: 'per user/lifetime',
       features: [
         'Exclusive Features',
@@ -58,7 +116,7 @@ const PricingPage: React.FC = () => {
       ],
       buttonText: 'Purchase',
       isPopular: true,
-      disabled: true
+      disabled: false
     },
     {
       name: 'Content Creator',
@@ -98,7 +156,7 @@ const PricingPage: React.FC = () => {
   const faqs = [
     {
       question: 'How do I claim my Premium access?',
-      answer: 'After your purchase, you\'ll receive a license key to activate Premium features in your email or Discord DM.'
+      answer: 'After your purchase, you\'ll receive a license key to activate Premium features in your email'
     },
     {
       question: 'Is Premium a one-time purchase?',
@@ -114,14 +172,9 @@ const PricingPage: React.FC = () => {
     }
   ];
 
-  return (
-    <div className="bg-black text-white antialiased">
-   
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,38,44,0.2),transparent_40%),radial-gradient(circle_at_top_right,rgba(37,38,44,0.2),transparent_40%)] pointer-events-none" />
-
-    <Navbar />
-    <LoadingScreen onComplete={() => {
-          console.log(`
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+    console.log(`
  ________   _________   ________   ________   ________ 
 
                                                                          
@@ -144,10 +197,15 @@ const PricingPage: React.FC = () => {
  Please note that this is a work in progress, report any bugs or issues to the discord server.
 
 `);
-          }}/>
-          
-<ComingSoon/>
+  };
 
+  return (
+    <div className="bg-black text-white antialiased">
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,38,44,0.2),transparent_40%),radial-gradient(circle_at_top_right,rgba(37,38,44,0.2),transparent_40%)] pointer-events-none" />
+
+      <Navbar />
+      <LoadingScreen onComplete={handleLoadingComplete} />
+          
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <h1 className="text-5xl font-medium tracking-tight max-w-4xl">
           Get Starry Premium
@@ -196,6 +254,11 @@ const PricingPage: React.FC = () => {
                       : 'bg-zinc-800 hover:bg-zinc-700'
                   } text-white transition-colors`}
                   disabled={tier.disabled}
+                  onClick={() => {
+                    if (tier.name === 'Direct payment') {
+                      setIsPaymentModalOpen(true);
+                    }
+                  }}
                 >
                   {tier.buttonText}
                 </button>
@@ -255,6 +318,12 @@ const PricingPage: React.FC = () => {
           ))}
         </div>
       </section>
+
+      <PaymentModal 
+        isOpen={isPaymentModalOpen} 
+        onClose={() => setIsPaymentModalOpen(false)}
+      />
+      
       <Footer />
     </div>
   );
