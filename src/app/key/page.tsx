@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import GridBackground from '@/components/gridgb';
-import ComingSoon from '@/components/comingsoon';
+
 import LoadingScreen from '@/components/loadingScreen';
 
 interface KeyVerifyResponse {
@@ -204,7 +204,7 @@ export default function KeySystem() {
     }
     
     const popup = window.open(
-      `http://localhost:3001/api/auth/license/authorize?action=redirect&turnstile=${turnstileToken}`, 
+      `https://backend.luau.tech/api/auth/license/authorize?action=redirect&turnstile=${turnstileToken}`, 
       'Discord Auth', 
       'width=500,height=800'
     );
@@ -237,7 +237,6 @@ export default function KeySystem() {
 
       <Navbar />
 
-      <ComingSoon />
       <GridBackground />
       <LoadingScreen onComplete={() => {
           console.log(`
