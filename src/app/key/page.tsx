@@ -4,7 +4,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
-import GridBackground from '@/components/gridgb';
 
 import LoadingScreen from '@/components/loadingScreen';
 
@@ -250,7 +249,6 @@ export default function KeySystem() {
 
       <Navbar />
 
-      <GridBackground />
       <LoadingScreen onComplete={() => {
           console.log(`
  ________   _________   ________   ________   ________ 
