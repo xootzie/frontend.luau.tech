@@ -196,7 +196,6 @@ export default function KeySystem() {
 
   const handleDiscordAuth = () => {
     if (!turnstileWidget) {
-      setStatusMessage('Turnstile not properly initialized');
       return;
     }
     
