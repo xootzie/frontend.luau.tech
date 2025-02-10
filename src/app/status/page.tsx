@@ -1,11 +1,11 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Navbar from '@/components/navigation';
 import Footer from '@/components/footer';
-import { Shield, Server, Bot, Mail, Code } from 'lucide-react';
+import {  Server, Bot, Mail, Code, Globe } from 'lucide-react';
 
 const StatusPage = () => {
-  const [services, setServices] = useState([
+  const [services,] = useState([
     {
       name: 'Discord APP',
       status: 'operational',
@@ -17,7 +17,7 @@ const StatusPage = () => {
     {
       name: 'www.luau.tech',
       status: 'operational',
-      icon: Shield,
+      icon: Globe,
       uptime: '100%',
       lastIncident: 'No recent incidents',
       description: 'Main website and user interface'
