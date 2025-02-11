@@ -25,6 +25,21 @@ interface Executor {
 
 const executors = [
   {
+    name: "Wave",
+    description: "Wave is an older but known Paid executor, it is one of the best but most expensive executors",
+    platforms: {
+      windows: true
+    },
+    price: "$7.49",
+    website: "https://getswift.xyz/",
+    features: [
+      "Coming Soon"
+    ],
+    lastUpdated: 1737412980,
+    type: "Premium",
+    UNC: "View UNC"
+  },
+  {
     name: "Swift",
     description: "Swift is known as the best Free executor, very easy to use and can run most scripts",
     platforms: {

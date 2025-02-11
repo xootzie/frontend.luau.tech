@@ -32,7 +32,7 @@ const TestResultsPage = () => {
   useEffect(() => {
     const fetchTestResults = async () => {
       try {
-        const response = await fetch('/unc/nihon.txt');
+        const response = await fetch('/unc/wave.txt');
         if (!response.ok) throw new Error('Failed to load test results');
         
         const text = await response.text();
@@ -125,10 +125,10 @@ const TestResultsPage = () => {
       <div className="mt-48 max-w-4xl mx-auto">
       
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Nihon sUNC Test Results</h1>
+          <h1 className="text-3xl font-bold mb-2">Wave sUNC Test Results</h1>
           <div className="flex items-center gap-2 text-gray-400">
             <Clock className="mt-1 w-4 h-4" />
-            <span>Last Updated: 2/11/2025, 2:09 PM EST</span>
+            <span>Last Updated: 2/11/2025, 2:20 PM EST</span>
           </div>
         </div>
 
@@ -181,8 +181,8 @@ const TestResultsPage = () => {
         <div className="bg-zinc-900/50 rounded-xl p-6 border border-white/10">
           <p className="text-gray-400">{testData.summary.version}</p>
           <p className="text-gray-400"> {testData.summary.contributors.join(', ')}</p>
-                    {/* <p className="text-gray-400">Test completed in {testData.summary.executionTime} seconds</p> */}
-                    <p className="text-gray-400">Test provided by sUNC </p>
+          {/* <p className="text-gray-400">Test completed in {testData.summary.executionTime} seconds</p> */}
+          <p className="text-gray-400">Test provided by sUNC </p>
         </div>
       </div>
     </div>

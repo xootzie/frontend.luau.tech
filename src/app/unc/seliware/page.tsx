@@ -180,7 +180,8 @@ const TestResultsPage = () => {
         <div className="bg-zinc-900/50 rounded-xl p-6 border border-white/10">
           <p className="text-gray-400">{testData.summary.version}</p>
           <p className="text-gray-400">{testData.summary.contributors.join(', ')}</p>
-          <p className="text-gray-400">Test completed in {testData.summary.executionTime} seconds</p>
+                   {/* <p className="text-gray-400">Test completed in {testData.summary.executionTime} seconds</p> */}
+                   <p className="text-gray-400">Test provided by sUNC </p>
         </div>
       </div>
     </div>
