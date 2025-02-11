@@ -40,17 +40,32 @@ const executors = [
     UNC: "View UNC"
   },
   {
+    name: "Velocity",
+    description: "Velocity is a new FREE executor and it even has a decompiler. Believed to be rebranded from 'Sonar'",
+    platforms: {
+      windows: true
+    },
+    price: "Free",
+    website: "https://discord.gg/getvelocity",
+    features: [
+      "Coming Soon"
+    ],
+    lastUpdated: 1739301120,
+    type: "Free",
+    UNC: "View UNC"
+  },
+  {
     name: "Seliware",
     description: "Seliware is one of the cheapest paid executors but is also very powerful",
     platforms: {
       windows: true
     },
     price: "$10/Month",
-    website: "https://discord.gg/ydZwUMBeCe",
+    website: "https://discord.gg/zr7bdRYHh4",
     features: [
       "Coming Soon"
     ],
-    lastUpdated: 1737419580,
+    lastUpdated: 1739301120,
     type: "Premium",
     UNC: "View UNC"
   },
@@ -491,9 +506,9 @@ const ExecutorCard: React.FC<{ executor: Executor }> = ({ executor }) => {
               transition-all duration-300 backdrop-blur-sm text-sm font-medium text-white
               hover:text-accent group"
           >
-            <Globe className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
+           
             Website
-            <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+            <ExternalLink className="mt-0.5 w-3.5 h-3.5  transition-transform duration-300" />
           </a>
         </div>
       </div>

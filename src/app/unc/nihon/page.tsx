@@ -125,10 +125,10 @@ const TestResultsPage = () => {
       <div className="mt-48 max-w-4xl mx-auto">
       
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">sUNC Test Results</h1>
+          <h1 className="text-3xl font-bold mb-2">Nihon sUNC Test Results</h1>
           <div className="flex items-center gap-2 text-gray-400">
             <Clock className="mt-1 w-4 h-4" />
-            <span>Last Updated: {new Date(testData.lastUpdated * 1000).toLocaleString()}</span>
+            <span>Last Updated: 2/11/2025, 2:09 PM EST</span>
           </div>
         </div>
 

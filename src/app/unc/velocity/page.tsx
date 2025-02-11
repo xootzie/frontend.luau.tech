@@ -32,7 +32,7 @@ const TestResultsPage = () => {
   useEffect(() => {
     const fetchTestResults = async () => {
       try {
-        const response = await fetch('/unc/swift.txt');
+        const response = await fetch('/unc/velocity.txt');
         if (!response.ok) throw new Error('Failed to load test results');
         
         const text = await response.text();
@@ -123,9 +123,9 @@ const TestResultsPage = () => {
         console.log('Page fully loaded');
       }}/>
       <div className="mt-48 max-w-4xl mx-auto">
-
+      
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Swift sUNC Test Results</h1>
+          <h1 className="text-3xl font-bold mb-2">Velocity sUNC Test Results</h1>
           <div className="flex items-center gap-2 text-gray-400">
             <Clock className="mt-1 w-4 h-4" />
             <span>Last Updated: 2/11/2025, 2:09 PM EST</span>

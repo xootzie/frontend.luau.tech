@@ -85,8 +85,3 @@
 ✅ setscriptable
 ✅ setthreadidentity
 ✅ writefile
-
-
-😎 Passed the test with 99% succеss rate (86 ‌out ‌of ‌87)
-😏 This test was made by senS (fuck all the inco pastes/‌unc fakers)‌
-Finished the test in 29.8 seconds
