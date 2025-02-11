@@ -14,6 +14,8 @@ import {
   Globe,
   X 
 } from "lucide-react";
+
+import GradientDivider from '@/components/divider';
 import { FaDiscord } from "react-icons/fa";
 
 interface GameCardProps {
@@ -131,7 +133,9 @@ const ScreenshotGallery = () => (
         </div>
       </div>
     </div>
+    
   </section>
+  
 );
 
 
@@ -255,37 +259,13 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen text-white antialiased">
+    <div className="bg-black min-h-screen text-white antialiased">
      
       <Navbar />
-      <LoadingScreen onComplete={() => {
-          console.log(`
- ________   _________   ________   ________   ________ 
-
-                                                                         
-
-      ______                             
-     / _____)_                          
-    ( (_____| |_ _____  ____  ____ _   _ 
-    \____ (_   _|____ |/ ___) ___)| | | |
-     _____) )| |_/ ___ | |  | |   | |_| |
-    (______/  \__)_____|_|  |_|    \__  |
-                                  (____/ 
-
-    discord.gg/luau | @Starry | luau.tech
-
-
-
- ________   _________   ________   ________   ________ 
-
-
- Please note that this is a work in progress, report any bugs or issues to the discord server.
-
-`);
-      }}/>
+      <LoadingScreen />
 
       <HeroSection />
-
+      
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="mb-12">
           <h2 className="text-4xl font-medium mb-4">Our Games ✨</h2>
@@ -324,10 +304,11 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
+      < GradientDivider />
       <ScreenshotGallery />
-
+            
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      < GradientDivider />
         <div className="text-center mb-12">
           <h2 className="text-4xl font-medium mb-4">Join the Community</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
@@ -408,7 +389,7 @@ const HomePage = () => {
           </div>
         </div>
       )}
-
+ 
       <Footer />
     </div>
   );

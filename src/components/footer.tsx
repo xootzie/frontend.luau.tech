@@ -2,18 +2,22 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Github } from 'lucide-react';
+import GradientDivider from '@/components/divider';
+
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
+
     <footer className="w-full bg-black relative">
-    
+      <GradientDivider />
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-background to-transparent pointer-events-none" />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col md:flex-row justify-between items-start mb-12">
           <div className="mb-8 md:mb-0 max-w-md">
+
             <Link href="/" className="flex items-center space-x-3 mb-4">
               <Image
                 src="/images/brand/icon.png"
@@ -22,9 +26,9 @@ const Footer: React.FC = () => {
                 height={40}
                 className="w-10 h-10"
               />
-              <span 
+              <span
                 className="text-2xl text-accent font-semibold"
-                style={{ filter: 'drop-shadow(0 0 40px #5486fc)' }}
+                style={{ filter: 'drop-shadow(0 0 50px #5486fc)' }}
               >
                 Starry
               </span>
@@ -32,7 +36,7 @@ const Footer: React.FC = () => {
             <p className="text-gray-400 mb-6">
               Experience the future of Exploiting with Starry.
             </p>
-    
+
             <div className="flex space-x-8 text-sm text-gray-400">
               <Link
                 href="/security#terms-of-service"

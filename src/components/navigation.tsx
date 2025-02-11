@@ -31,14 +31,18 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children, icon: Icon, className
     <Link
       href={href}
       onClick={handleClick}
-      className={`flex items-center gap-2 text-sm text-gray-400 transition-all duration-200 px-3 py-2 rounded-md
-        hover:text-accent hover:bg-white/5
+      className={`group flex items-center gap-2.5 text-sm text-gray-400/80 transition-all duration-300
+        hover:text-white px-4 py-2 rounded-full
         transform hover:scale-105 active:scale-95
         ${isClicked ? 'scale-95' : ''}
         ${className}`}
     >
-      {Icon && <Icon className="w-4 h-4 transition-transform group-hover:scale-110" />}
-      {children}
+      {Icon && (
+        <Icon className="w-4 h-4 transition-all duration-300 group-hover:stroke-2" />
+      )}
+      <span className="transition-all duration-300 group-hover:tracking-wide">
+        {children}
+      </span>
     </Link>
   );
 };
@@ -50,47 +54,48 @@ const Navigation: React.FC = () => {
     { href: "/", label: "Home", icon: Home },
     { href: "/pricing", label: "Pricing", icon: CreditCard },
     { href: "/executors", label: "Executors", icon: Code },
-    { href: "/d?server=luau", label: "Discord Server", icon: MessageCircle },
+    { href: "/d?server=luau", label: "Discord", icon: MessageCircle },
   ];
 
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <>
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-6xl px-4">
-        <nav className="rounded-full border border-white/10 bg-black/5 backdrop-blur-xl shadow-lg">
-          <div className="px-6 py-3">
+      <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-6xl px-4">
+        <nav className="rounded-2xl border-2 border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl
+          ring-1 ring-white/5 ring-offset-0">
+          <div className="px-8 py-4">
             <div className="flex items-center justify-between md:justify-start">
               <div className="flex-none w-48">
                 <Link
                   href="/"
-                  className="flex items-center space-x-2 hover:opacity-80 transition-all duration-200 transform hover:scale-105 active:scale-95"
+                  className="flex items-center space-x-3 hover:opacity-80 transition-all duration-300 transform hover:scale-105 active:scale-95"
                 >
                   <Image
                     src="/images/brand/icon.png"
                     alt="Starry Logo"
                     width={32}
                     height={32}
-                    className="w-8 h-8"
+                    className="w-8 h-8 transition-transform duration-300 hover:rotate-12"
                   />
-                  <span className="-mt-1 text-accent text-xl font-medium">Starry</span>
+                  <span className="text-accent text-lg font-medium tracking-wide">Starry</span>
                 </Link>
               </div>
 
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="md:hidden p-2 rounded-md hover:bg-white/5 relative z-50 transition-all duration-200
+                className="md:hidden p-2 rounded-full hover:bg-white/5 relative z-50 transition-all duration-300
                   transform hover:scale-110 active:scale-95"
               >
                 {isMenuOpen ? (
-                  <X className="w-6 h-6 text-gray-400" />
+                  <X className="w-6 h-6 text-white" />
                 ) : (
-                  <Menu className="w-6 h-6 text-gray-400" />
+                  <Menu className="w-6 h-6 text-white" />
                 )}
               </button>
 
               <div className="hidden md:flex flex-1 justify-center">
-                <div className="flex space-x-2">
+                <div className="flex space-x-1">
                   {navItems.map((item) => (
                     <NavLink key={item.href} href={item.href} icon={item.icon}>
                       {item.label}
@@ -99,15 +104,18 @@ const Navigation: React.FC = () => {
                 </div>
               </div>
 
-              <div className="hidden md:flex flex-none w-48 items-center justify-end space-x-4">
+              <div className="hidden md:flex flex-none w-48 items-center justify-end">
                 <Link
                   href="/key"
-                  className="px-4 py-1.5 rounded-full bg-midnight text-white text-sm 
-                    hover:bg-opacity-75 transition-all duration-200 flex items-center gap-2
-                    transform hover:scale-110 active:scale-95 hover:shadow-lg "
+                  className="px-5 py-2 rounded-full bg-white/5 text-white text-sm
+                    hover:bg-white/10 transition-all duration-300 flex items-center gap-2.5
+                    transform hover:scale-105 active:scale-95
+                    hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]
+                    border border-white/10 hover:border-white/20
+                    backdrop-blur-sm"
                 >
-                  <Key className="w-4 h-4" />
-                  License Key
+                  <Key className="w-4 h-4" strokeWidth={2} />
+                  <span className="transition-all duration-300 hover:tracking-wide">Get License Key</span>
                 </Link>
               </div>
             </div>
@@ -116,18 +124,18 @@ const Navigation: React.FC = () => {
       </div>
 
       <div
-        className={`fixed inset-0 bg-black/95 backdrop-blur-xl z-40 md:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/90 backdrop-blur-2xl z-40 md:hidden transition-all duration-500 ${
           isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
         <div className="flex flex-col items-center justify-center h-full">
-          <div className="space-y-6 text-center">
+          <div className="space-y-8 text-center">
             {navItems.map((item) => (
               <NavLink
                 key={item.href}
                 href={item.href}
                 icon={item.icon}
-                className="text-lg"
+                className="text-lg !px-8"
                 onClick={closeMenu}
               >
                 {item.label}
@@ -136,12 +144,14 @@ const Navigation: React.FC = () => {
             <Link
               href="/key"
               onClick={closeMenu}
-              className="mt-8 px-6 py-2 rounded-full bg-midnight text-white text-lg
-                hover:bg-opacity-75 transition-all duration-200 flex items-center gap-2 justify-center
-                transform hover:scale-110 active:scale-95 hover:shadow-lg hover:shadow-blue-500/25"
+              className="mt-12 px-8 py-3 rounded-full bg-white/5 text-white text-lg
+                hover:bg-white/10 transition-all duration-300 flex items-center gap-3 justify-center
+                transform hover:scale-105 active:scale-95 
+                hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]
+                border border-white/10 hover:border-white/20"
             >
               <Key className="w-5 h-5" />
-              License Key
+              <span className="transition-all duration-300 hover:tracking-wide">Get License Key</span>
             </Link>
           </div>
         </div>
