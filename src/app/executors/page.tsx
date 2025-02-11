@@ -367,7 +367,7 @@ const FeaturesModal: React.FC<{
 
 const ExecutorCard: React.FC<{ executor: Executor }> = ({ executor }) => {
   const modalContext = React.useContext(ModalContext);
-  const [isHovered, setIsHovered] = useState(false);
+  const [, setIsHovered] = useState(false);
 
   return (
     <div
@@ -377,12 +377,10 @@ const ExecutorCard: React.FC<{ executor: Executor }> = ({ executor }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Gradient overlay effect */}
-      {/* Gradient overlay effect */}
+      
       <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-accent/5 to-transparent opacity-0 
         group-hover:opacity-100 transition-all duration-700 rounded-xl blur-2xl -z-10" />
       
-      {/* Card header with name and badges */}
       <div className="p-6 pb-4">
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-2xl font-bold bg-gradient-to-br from-white via-gray-100 to-gray-300 
@@ -419,7 +417,6 @@ const ExecutorCard: React.FC<{ executor: Executor }> = ({ executor }) => {
           </div>
         </div>
 
-        {/* Last updated timestamp */}
         <div className="mt-4 flex items-center gap-2 text-sm text-gray-400">
           <Clock className="w-4 h-4" />
           <TimeAgo timestamp={executor.lastUpdated} />
