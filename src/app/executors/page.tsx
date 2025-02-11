@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Globe, ExternalLink, CheckCircle, Clock, X, Search, Apple, Grid2X2 } from 'lucide-react';
+import { Globe, ExternalLink, CheckCircle, Clock, X, Search, Apple, Grid2X2, Check, Copy } from 'lucide-react';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import LoadingScreen from '@/components/loadingScreen';
@@ -188,8 +188,14 @@ const RobloxVersionInfo: React.FC = () => {
     fetchVersions();
   }, []);
 
-  const copyToClipboard = (text: string) => {
+  const [copying, setCopying] = useState<{[key: string]: boolean}>({});
+
+  const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
+    setCopying({...copying, [id]: true});
+    setTimeout(() => {
+      setCopying({...copying, [id]: false});
+    }, 2000);
   };
 
   const formatUnixTime = (unixTimestamp: string) => {
@@ -215,11 +221,12 @@ const RobloxVersionInfo: React.FC = () => {
               {windowsVersion}
             </code>
             <button
-              onClick={() => copyToClipboard(windowsVersion)}
-              className="px-3 py-1.5 text-xs font-medium text-accent hover:bg-accent/10 rounded-md transition-colors"
-            >
-              Copy
-            </button>
+  onClick={() => copyToClipboard(windowsVersion, 'win')}
+  className="px-3 py-1.5 text-xs font-medium text-accent hover:bg-accent/10 rounded-md transition-colors flex items-center gap-1"
+>
+  {copying['win'] ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+  {copying['win'] ? 'Copied!' : 'Copy'}
+</button>
           </div>
           <div className="mt-2 text-xs text-gray-500">
             Last Updated: {windowsLastUpdated ? formatUnixTime(windowsLastUpdated) : 'Loading...'}
@@ -236,11 +243,12 @@ const RobloxVersionInfo: React.FC = () => {
               {macVersion}
             </code>
             <button
-              onClick={() => copyToClipboard(macVersion)}
-              className="px-3 py-1.5 text-xs font-medium text-accent hover:bg-accent/10 rounded-md transition-colors"
-            >
-              Copy
-            </button>
+  onClick={() => copyToClipboard(macVersion, 'mac')}
+  className="px-3 py-1.5 text-xs font-medium text-accent hover:bg-accent/10 rounded-md transition-colors flex items-center gap-1"
+>
+  {copying['mac'] ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+  {copying['mac'] ? 'Copied!' : 'Copy'}
+</button>
           </div>
           <div className="mt-2 text-xs text-gray-500">
             Last Updated: {macLastUpdated ? formatUnixTime(macLastUpdated) : 'Loading...'}
