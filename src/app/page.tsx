@@ -4,6 +4,7 @@ import Navbar from '@/components/navigation';
 import LoadingScreen from '@/components/loadingScreen';
 import SocialCard from '@/components/SocialCard';
 import HeroSection from '@/components/hero';
+import UpdateNotification from '@/components/updateBanner';
 import { useRef, useState } from 'react';
 import { 
   ChevronLeft, 
@@ -262,6 +263,7 @@ const HomePage = () => {
     <div className="bg-black min-h-screen text-white antialiased">
      
       <Navbar />
+      <UpdateNotification  />
       <LoadingScreen />
 
       <HeroSection />
