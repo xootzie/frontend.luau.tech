@@ -1,9 +1,11 @@
 'use client';
 import React, { useState } from 'react';
-import { Home, CreditCard, Code, MessageCircle, Key, Menu, X, LucideIcon } from "lucide-react";
+import { Home, CreditCard, Code, Key, Menu, X, LucideIcon, Newspaper } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
+import UpdateNotification from '@/components/updateBanner';
 
+const showBanner = true;
 interface NavLinkProps {
   href: string;
   children: React.ReactNode;
@@ -54,7 +56,7 @@ const Navigation: React.FC = () => {
     { href: "/", label: "Home", icon: Home },
     { href: "/pricing", label: "Pricing", icon: CreditCard },
     { href: "/executors", label: "Executors", icon: Code },
-    { href: "/d?server=luau", label: "Discord", icon: MessageCircle },
+    { href: "/changelog", label: "Changelog", icon: Newspaper },
   ];
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -154,8 +156,12 @@ const Navigation: React.FC = () => {
               <span className="transition-all duration-300 hover:tracking-wide">Get License Key</span>
             </Link>
           </div>
+          
         </div>
       </div>
+            
+      {showBanner && <UpdateNotification />}
+      
     </>
   );
 };

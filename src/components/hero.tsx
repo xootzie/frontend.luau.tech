@@ -95,7 +95,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
 
   return (
     <>
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-transparent to-black/20">
+      <section className="relative h-[calc(100vh-8rem)] flex items-center justify-center overflow-hidden bg-gradient-to-b from-transparent to-black/20">
         <FloatingElements />
         
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(59,130,246,0.1),rgba(0,0,0,0))]" />
@@ -103,7 +103,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
         
         <div
-          className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center transform transition-all duration-1000 ${
+          className={`relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center transform transition-all duration-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
           }`}
         >
@@ -115,7 +115,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
           <h1 
             ref={textRef}
             onMouseMove={handleTextHover}
-            className="text-6xl sm:text-7xl font-medium tracking-tight text-white mb-6 
+            className="text-5xl sm:text-7xl font-medium tracking-tight text-white mb-6 
             hover:scale-[1.05] transition-all duration-300 ease-in-out pb-1"
             style={{
               background: `radial-gradient(circle at ${textHoverPosition.x}px ${textHoverPosition.y}px, 
@@ -125,20 +125,20 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
               WebkitBackgroundClip: 'text',
               color: 'transparent',
               backgroundImage: 'linear-gradient(to bottom, white, rgba(59, 130, 246, 0.6))',
-              lineHeight: '1.5'
+              lineHeight: '1.2'
             }}
           >
             Experience More using Starry
           </h1>
           
-          <p className="mt-6 text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-4 text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
             Meet the next generation of Roblox exploiting. Powerful features, seamless performance, available now for free.
           </p>
           
-          <div className="mt-10 flex flex-wrap gap-4 justify-center">
+          <div className="mt-8 flex flex-wrap gap-4 justify-center">
             <button 
               onClick={handleButtonClick}
-              className={`relative px-8 py-3 rounded-full bg-blue-600 text-white text-lg font-medium 
+              className={`relative px-6 sm:px-8 py-2.5 sm:py-3 rounded-full bg-blue-600 text-white text-base sm:text-lg font-medium 
                 hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 
                 transform hover:scale-110 active:scale-95 
                 ${isClicked ? 'scale-95' : ''}`}
@@ -149,7 +149,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
             
             <button 
               onClick={handleScrollToFeatures}
-              className="px-8 py-3 rounded-full text-lg text-gray-400 hover:text-white transition-colors group flex items-center gap-2 hover:bg-white/5"
+              className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-base sm:text-lg text-gray-400 hover:text-white transition-colors group flex items-center gap-2 hover:bg-white/5"
             >
               Learn More
               <span className="inline-block transition-transform group-hover:translate-x-1">→</span>

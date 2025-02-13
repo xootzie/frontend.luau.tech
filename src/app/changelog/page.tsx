@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import Navbar from '@/components/navigation';
 import Footer from '@/components/footer';
 import { useState } from 'react';
+import LoadingScreen from "@/components/loadingScreen";
 
 interface Update {
   version: string;
@@ -109,7 +110,9 @@ const ChangelogPage = () => {
 
   return (
     <div className="bg-black min-h-screen text-white antialiased">
+
       <Navbar />
+      < LoadingScreen />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center mb-12">

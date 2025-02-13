@@ -4,7 +4,6 @@ import Navbar from '@/components/navigation';
 import LoadingScreen from '@/components/loadingScreen';
 import SocialCard from '@/components/SocialCard';
 import HeroSection from '@/components/hero';
-import UpdateNotification from '@/components/updateBanner';
 import { useRef, useState } from 'react';
 import { 
   ChevronLeft, 
@@ -26,16 +25,55 @@ interface GameCardProps {
   statusColor: string;
   url: string;
   features: string[];
+  isPremium: boolean;
+  hasPremiumFeatures: boolean;
+  onShowFeatures?: () => void;
 }
 
+const PremiumBadge = ({ message }: { message: string }) => (
+  <div className="group relative">
+    <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-yellow-500/90 backdrop-blur-sm text-xs font-medium cursor-help">
+      Premium
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-12 right-0 px-3 py-2 rounded-lg bg-zinc-800/95 backdrop-blur-sm text-white text-xs whitespace-nowrap border border-white/10">
+        {message}
+      </div>
+    </div>
+  </div>
+);
 
+const PremiumFeaturesBadge = ({ message }: { message: string }) => (
+  <div className="group relative">
+    <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-zinc-800/90 backdrop-blur-sm text-xs font-medium border border-yellow-500/50 text-yellow-500 cursor-help">
+      Premium Features
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-12 right-0 px-3 py-2 rounded-lg bg-zinc-800/95 backdrop-blur-sm text-white text-xs whitespace-nowrap border border-white/10">
+        {message}
+      </div>
+    </div>
+  </div>
+);
 
-const GameCard = ({ image, title, status, statusColor, url, onShowFeatures }: GameCardProps & { onShowFeatures: () => void }) => (
+const GameCard = ({ 
+  image, 
+  title, 
+  status, 
+  statusColor, 
+  url, 
+  isPremium,
+  hasPremiumFeatures,
+  onShowFeatures 
+}: GameCardProps) => (
   <div className="min-w-[385px] bg-zinc-900/50 rounded-xl p-6 border border-white/10 snap-start hover:border-white/20 transition-all duration-300 group">
     <div 
-      className="h-48 rounded-lg mb-6 bg-cover bg-center transform group-hover:scale-[1.02] transition-all duration-300" 
+      className="relative h-48 rounded-lg mb-6 bg-cover bg-center transform group-hover:scale-[1.02] transition-all duration-300" 
       style={{ backgroundImage: `url(${image})` }} 
-    />
+    >
+      {isPremium && (
+        <PremiumBadge message="This game requires a premium license to use" />
+      )}
+      {!isPremium && hasPremiumFeatures && (
+        <PremiumFeaturesBadge message="This game has some features that require premium" />
+      )}
+    </div>
     <p className={`text-sm text-${statusColor}-500 mb-3 flex items-center gap-2`}>
       <span className={`w-2 h-2 rounded-full bg-${statusColor}-500 animate-pulse`} />
       {status}
@@ -179,7 +217,9 @@ const HomePage = () => {
         "Disable Modifiers",
         "Godmode",
         "& Much more!"
-      ]
+      ],
+      isPremium: false,
+    hasPremiumFeatures: false,
     },
     { 
       image: "/images/doors_banner.webp", 
@@ -195,7 +235,9 @@ const HomePage = () => {
         "Entity Spawner",
         "Entity Notifier",
         "& Much more!"
-      ]
+      ],
+      isPremium: true,
+      hasPremiumFeatures: true,
     },
     { 
       image: "/images/mm2_banner.webp", 
@@ -210,7 +252,9 @@ const HomePage = () => {
         "Become Sheriff",
         "Coin Farm (Includes Events)",
         "& Much more!"
-      ]
+      ],
+      isPremium: false,
+      hasPremiumFeatures: true,
     },
     { 
       image: "/images/sp_banner.webp", 
@@ -224,7 +268,9 @@ const HomePage = () => {
         "Block Score",
         "Change Background",
         "& More!"
-      ]
+      ],
+      isPremium: false,
+      hasPremiumFeatures: false,
     },
   ];
 
@@ -263,7 +309,7 @@ const HomePage = () => {
     <div className="bg-black min-h-screen text-white antialiased">
      
       <Navbar />
-      <UpdateNotification  />
+     
       <LoadingScreen />
 
       <HeroSection />
@@ -293,17 +339,20 @@ const HomePage = () => {
         </div>
 
         <div className="relative">
-          <div 
-            ref={carouselRef}
-            className="overflow-hidden flex gap-6 pb-4 snap-x scrollbar-hide">
-            {games.map((game, index) => (
-              <GameCard 
-                key={index} 
-                {...game} 
-                onShowFeatures={() => setSelectedGame(game)}
-              />
-            ))}
-          </div>
+        <div 
+      ref={carouselRef}
+      className="overflow-hidden flex gap-6 pb-4 snap-x scrollbar-hide"
+    >
+      {games.map((game, index) => (
+        <GameCard 
+          key={index} 
+          {...game}
+          isPremium={game.isPremium}
+          hasPremiumFeatures={game.hasPremiumFeatures}
+          onShowFeatures={() => setSelectedGame(game)}
+        />
+      ))}
+    </div>
         </div>
       </section>
       < GradientDivider />

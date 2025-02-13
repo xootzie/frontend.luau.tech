@@ -551,14 +551,13 @@ const ExecutorDatabase: React.FC = () => {
     <ModalProvider>
       <div className="min-h-screen flex flex-col">
         <div className="fixed top-0 left-0 right-0 z-50 bg-zinc-900/95 border-b border-white/10">
-          <Navbar />
         </div>
-        
+        <Navbar />
         <LoadingScreen onComplete={() => {
           console.log('Loading complete');
         }}/>
         
-        <main className="flex-1 pt-16">
+        <main className="flex-1 pt-44">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-medium mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
