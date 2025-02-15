@@ -268,6 +268,13 @@ export default function KeySystem() {
       });
       setTurnstileWidget(widgetId);
 
+      setTimeout(() => {
+        const turnstileIframe = document.querySelector('iframe[src*="challenges.cloudflare.com"]');
+        if (turnstileIframe) {
+          turnstileIframe.classList.add('rounded-lg');
+        }
+      }, 100);
+
       return () => {
         if (widgetId && window.turnstile) {
           window.turnstile.reset(widgetId);
@@ -279,27 +286,7 @@ export default function KeySystem() {
   return (
     <>
       <Navbar />
-
-      <LoadingScreen onComplete={() => {
-        console.log(`
- ________   _________   ________   ________   ________ 
-
-                                                                         
-      ______                             
-     / _____)_                          
-    ( (_____| |_ _____  ____  ____ _   _ 
-    \____ (_   _|____ |/ ___) ___)| | | |
-     _____) )| |_/ ___ | |  | |   | |_| |
-    (______/  \__)_____|_|  |_|    \__  |
-                                  (____/ 
-
-    discord.gg/luau | @Starry | luau.tech
-
- ________   _________   ________   ________   ________ 
-
- Please note that this is a work in progress, report any bugs or issues to the discord server.
-`);
-      }}/>
+      <LoadingScreen onComplete={() => {/* ... */}}/>
 
       <div className="min-h-screen flex items-center justify-center pt-2 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
@@ -318,8 +305,8 @@ export default function KeySystem() {
               </div>
             </div>
 
-            <div className="">
-              <div id="turnstileContainer" />
+            <div className="flex justify-center items-center">
+              <div id="turnstileContainer" className="overflow-hidden rounded-lg" />
             </div>
 
             {verifiedKey ? (

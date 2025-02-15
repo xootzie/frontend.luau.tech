@@ -186,7 +186,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
                   <div className="p-4 bg-zinc-900/50 rounded-lg border border-white/10 group-hover:border-white/20 transition-colors">
                     <pre className="text-sm text-blue-400 font-mono whitespace-pre overflow-x-auto">
                     <code>
-                    <span className="text-blue-300">skipGameCheck</span> <span className="text-gray-400">=</span> <span className="text-red-400">false</span>
+                    <span className="text-blue-300">skipGameCheck</span> <span className="text-gray-400">=</span> <span className="text-red-400">false;</span>
                     <span className="text-purple-400">{"\n"}loadstring</span>(<span className="text-blue-300">game</span><span className="text-gray-400">:</span><span className="text-yellow-400">HttpGet</span>(<span className="text-green-400">&quot;https://luau.tech/build&quot;</span>))()
 </code>
                     </pre>
