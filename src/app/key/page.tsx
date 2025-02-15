@@ -46,7 +46,7 @@ export default function KeySystem() {
       setStatusMessage('Please visit the link unlocker first to continue.');
       const turnstileContainer = document.getElementById("turnstileContainer");
       if (turnstileContainer) {
-        turnstileContainer.classList.add("hidden");
+        // turnstileContainer.classList.add("hidden");
       }
     } else {
       setStatusMessage('Complete verification to continue.');
