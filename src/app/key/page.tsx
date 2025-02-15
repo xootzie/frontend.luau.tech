@@ -50,7 +50,7 @@ export default function KeySystem() {
       }
     } else {
       setStatusMessage('Complete verification to continue.');
-      const turnstileContainer = document.getElementById("turnstileContainer");
+      // const turnstileContainer = document.getElementById("turnstileContainer");
       // if (turnstileContainer) {
       //   turnstileContainer.classList.remove("hidden");
       // }
