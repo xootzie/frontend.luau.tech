@@ -98,11 +98,12 @@ const ChangelogPage = () => {
   const updateLog: Record<string, Update[]> = {
     'February 2025': [
       {
-        version: '0',
-        date: 'Feb 13, 2025',
+        version: 'v 2.9',
+        date: 'Feb 14, 2025',
         type: 'feature',
         changes: [
-          'Officially released Starry Premium ✨'
+          'Officially released Starry Premium ✨',
+          'Early DOORS release 🚪'
         ]
       }
     ]

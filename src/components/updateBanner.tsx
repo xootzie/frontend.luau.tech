@@ -8,7 +8,7 @@ interface UpdateNotificationProps {
   version?: string;
 }
 
-const UpdateNotification = ({ version = '0' }: UpdateNotificationProps) => {
+const UpdateNotification = ({ version = 'v29' }: UpdateNotificationProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const cookieName = `luau-tech-update-notification-${version}`;
 
@@ -34,7 +34,7 @@ const UpdateNotification = ({ version = '0' }: UpdateNotificationProps) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-x-3">
                 <div className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
-                <p className="text-sm text-gray-300">Place holder update banner, please ignore this!</p>
+                <p className="text-sm text-gray-300">Update 2.9 Available, premium & more! 🎉</p>
               </div>
               <div className="flex items-center gap-x-4">
                 <Link
