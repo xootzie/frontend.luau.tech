@@ -69,7 +69,7 @@ export default function KeySystem() {
 
     const cloudflareTurnstile = document.getElementById("turnstileContainer") as HTMLDivElement;
     if (cloudflareTurnstile instanceof HTMLDivElement) {
-      cloudflareTurnstile.classList.add("hidden");
+      // cloudflareTurnstile.classList.add("hidden");
     }
     
     if (token) {
@@ -116,7 +116,7 @@ export default function KeySystem() {
         const cloudflareTurnstile = document.getElementById("turnstileContainer") as HTMLDivElement;
         
         if (cloudflareTurnstile instanceof HTMLDivElement) {
-          cloudflareTurnstile.classList.add("hidden");
+          // cloudflareTurnstile.classList.add("hidden");
         }
         
         if (sb) {
