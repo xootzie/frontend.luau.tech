@@ -125,7 +125,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
 };
 
 const HeroSection: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible] = useState(true);
   const [isClicked, setIsClicked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
