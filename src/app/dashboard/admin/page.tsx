@@ -404,30 +404,46 @@ const LicenseManager = () => {
     try {
       const headers: { 
         authorization: string;
-        'x-license-key-id': string;
+        'x-license-key'?: string;
+        'x-license-key-id'?: string;
         'x-bypass-key'?: string;
       } = {
-        'authorization': `Bearer ${bearerToken}`,
-        'x-license-key-id': deleteConfirmation.license._id || ''
+        'authorization': `Bearer ${bearerToken}`
       };
-
+  
+      if (deleteConfirmation.license._id) {
+        headers['x-license-key-id'] = deleteConfirmation.license._id;
+      } else {
+        headers['x-license-key'] = deleteConfirmation.license.key;
+      }
+  
       if (bypassKey) {
         headers['x-bypass-key'] = bypassKey;
       }
-
+  
       const response = await fetch('https://backend.luau.tech/api/auth/license/delete', {
         method: 'DELETE',
         headers
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok && data.success) {
         showToast('License deleted successfully');
-        // Remove from lists
-        setAllLicenses(prev => prev.filter(license => license._id !== deleteConfirmation.license?._id));
-        setActiveKeys(prev => prev.filter(license => license._id !== deleteConfirmation.license?._id));
+
+        setAllLicenses(prev => prev.filter(license => 
+          license._id !== deleteConfirmation.license?._id && 
+          license.key !== deleteConfirmation.license?.key
+        ));
+        setActiveKeys(prev => prev.filter(license => 
+          license._id !== deleteConfirmation.license?._id && 
+          license.key !== deleteConfirmation.license?.key
+        ));
         setDeleteConfirmation({ isOpen: false, license: null });
+        
+        if (licenseKey === deleteConfirmation.license.key) {
+          setLicenseKey('');
+        }
       } else {
         showToast(data.message || 'Failed to delete license', 'error');
       }
