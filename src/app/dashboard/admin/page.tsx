@@ -3,9 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { AlertCircle, Check, ChevronDown, Search, X } from 'lucide-react';
 import Cookies from 'js-cookie';
-
 import Navigation from '@/components/navigation';
-
 
 interface ToastProps {
   message: string;
@@ -13,6 +11,15 @@ interface ToastProps {
   id: string;
   onClose: (id: string) => void;
 }
+
+interface License {
+  key: string;
+  type: string;
+  expiresAt: string;
+  generatedAt: string;
+  isExpired: boolean;
+}
+
 const Toast: React.FC<ToastProps> = ({ message, type, id, onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -58,7 +65,6 @@ const Toast: React.FC<ToastProps> = ({ message, type, id, onClose }) => {
   );
 };
 
-
 interface CardProps {
   children: React.ReactNode;
   className?: string;
@@ -103,18 +109,16 @@ const LicenseManager = () => {
   const [fieldValue, setFieldValue] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [discordId, setDiscordId] = useState('');
-  interface License {
-    key: string;
-    type: string;
-    expiresAt: string;
-    generatedAt: string;
-    isExpired: boolean;
-  }
   const [activeKeys, setActiveKeys] = useState<License[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [allLicenses, setAllLicenses] = useState<License[]>([]);
+  const [loadingAllLicenses, setLoadingAllLicenses] = useState(false);
+  const [licenseSearchTerm, setLicenseSearchTerm] = useState('');
+
   interface ToastState {
     message: string;
     type: 'success' | 'error';
+    id: string;
   }
   
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -130,6 +134,7 @@ const LicenseManager = () => {
   useEffect(() => {
     if (bearerToken) {
       Cookies.set('bearerToken', bearerToken, { expires: 30 });
+      fetchAllLicenses();
     }
   }, [bearerToken]);
 
@@ -148,7 +153,52 @@ const LicenseManager = () => {
   };
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    setToast({ message, type });
+    const id = Date.now().toString();
+    setToast({ message, type, id });
+  };
+
+  const handleToastClose = () => {
+    setToast(null);
+  };
+
+  const fetchAllLicenses = async () => {
+    if (!bearerToken) {
+      showToast('Bearer token is required', 'error');
+      return;
+    }
+
+    setLoadingAllLicenses(true);
+    try {
+      const headers: { 
+        authorization: string;
+        'x-bypass-key'?: string;
+      } = {
+        'authorization': `Bearer ${bearerToken}`
+      };
+
+      if (bypassKey) {
+        headers['x-bypass-key'] = bypassKey;
+      }
+
+      const response = await fetch('https://backend.luau.tech/api/auth/license/list', {
+        method: 'GET',
+        headers
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setAllLicenses(data.keys);
+        showToast(`Loaded ${data.keys.length} licenses`);
+      } else {
+        showToast(data.message || 'Failed to fetch licenses', 'error');
+      }
+    } catch (error) {
+      console.log(error);
+      showToast('Failed to connect to server', 'error');
+    } finally {
+      setLoadingAllLicenses(false);
+    }
   };
 
   const handleReset = async () => {
@@ -266,12 +316,7 @@ const LicenseManager = () => {
 
       if (response.ok && data.success) {
         setActiveKeys(data.licenseKeys);
-        if(data.count > 1) {
-          showToast(`Found ${data.count} connected license`);
-        } else {
-          showToast(`Found ${data.count} connected license(s)`);
-        }
-        
+        showToast(`Found ${data.count} connected license(s)`);
       } else {
         showToast(data.message || 'Failed to fetch licenses', 'error');
         setActiveKeys([]);
@@ -287,12 +332,14 @@ const LicenseManager = () => {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white antialiased p-6">
-      < Navigation/>
+      <Navigation/>
       {toast && (
         <Toast
           message={toast.message}
           type={toast.type}
-          onClose={() => setToast(null)} id={''}        />
+          id={toast.id}
+          onClose={handleToastClose}
+        />
       )}
       <div className="mt-48 max-w-6xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
@@ -489,7 +536,91 @@ const LicenseManager = () => {
           </CardContent>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <CardTitle>All Licenses</CardTitle>
+            <CardDescription>View and search all licenses in the database</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400" />
+                <input
+                  type="text"
+                  className="w-full pl-10 pr-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
+                  placeholder="Search licenses..."
+                  value={licenseSearchTerm}
+                  onChange={(e) => setLicenseSearchTerm(e.target.value)}
+                />
+              </div>
+              <button
+                onClick={fetchAllLicenses}
+                disabled={loadingAllLicenses || !bearerToken}
+                className={`px-6 py-2 rounded-lg ${
+                  loadingAllLicenses || !bearerToken
+                    ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                    : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20'
+                } transition-all duration-300 font-medium`}
+              >
+                {loadingAllLicenses ? 'Loading...' : 'Refresh'}
+              </button>
+            </div>
 
+            {allLicenses.length === 0 ? (
+              <div className="text-center py-8">
+                <AlertCircle className="mx-auto h-12 w-12 text-zinc-400" />
+                <p className="mt-4 text-zinc-400">No licenses found</p>
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {allLicenses
+                  .filter(license => 
+                    license.key.toLowerCase().includes(licenseSearchTerm.toLowerCase()) ||
+                    license.type.toLowerCase().includes(licenseSearchTerm.toLowerCase())
+                  )
+                  .map((license) => (
+                    <div
+                      key={license.key}
+                      className="p-4 bg-black/40 border border-zinc-800 rounded-lg"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium">{license.key}</p>
+                          <p className="text-sm text-zinc-400 mt-1">Type: {license.type}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-zinc-400">
+                            Expires: {new Date(license.expiresAt).toLocaleDateString()}
+                          </p>
+                          <p className="text-sm text-zinc-400">
+                            Generated: {new Date(license.generatedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-2 flex items-center gap-2">
+                        <div className={`px-2 py-1 rounded text-xs ${
+                          new Date(license.expiresAt) < new Date()
+                            ? 'bg-red-500/10 text-red-400'
+                            : 'bg-emerald-500/10 text-emerald-400'
+                        }`}>
+                          {new Date(license.expiresAt) < new Date() ? 'Expired' : 'Active'}
+                        </div>
+                        <button
+                          onClick={() => {
+                            setLicenseKey(license.key);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                          Use this key
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
