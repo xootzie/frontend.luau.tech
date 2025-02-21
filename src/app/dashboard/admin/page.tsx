@@ -157,6 +157,50 @@ const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({
   );
 };
 
+interface PurgeConfirmationProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  isPurging: boolean;
+}
+
+const PurgeConfirmation: React.FC<PurgeConfirmationProps> = ({ 
+  isOpen, 
+  onClose, 
+  onConfirm,
+  isPurging
+}) => {
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 max-w-md w-full mx-4">
+        <h3 className="text-xl font-semibold mb-4">Purge Expired Licensess</h3>
+        <p className="text-zinc-300 mb-6">
+          Are you sure you want to delete all expired free-tier licenses? This action cannot be undone.
+        </p>
+        <div className="flex justify-end gap-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg hover:bg-zinc-700 transition-colors"
+            disabled={isPurging}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 bg-amber-500/20 text-amber-400 rounded-lg hover:bg-amber-500/30 transition-colors flex items-center gap-2"
+            disabled={isPurging}
+          >
+            {isPurging ? 'Purging...' : 'Purge Licenses'}
+            {!isPurging && <Trash2 className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const LicenseDetails: React.FC<{ license: License }> = ({ license }) => (
   <div className="space-y-3">
     <div className="grid grid-cols-2 gap-4">
@@ -297,6 +341,8 @@ const LicenseManager = () => {
     license: null as License | null,
   });
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isPurging, setIsPurging] = useState(false);
+  const [purgeConfirmation, setPurgeConfirmation] = useState(false);
 
   interface ToastState {
     message: string;
@@ -452,6 +498,38 @@ const LicenseManager = () => {
       showToast('Failed to connect to server', 'error');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handlePurgeExpiredLicenses = async () => {
+    if (!bearerToken) {
+      showToast('Bearer token is required', 'error');
+      return;
+    }
+
+    setIsPurging(true);
+    try {
+      const response = await fetch('https://backend.luau.tech/api/auth/license/delete/purge', {
+        method: 'DELETE',
+        headers: {
+          'authorization': `Bearer ${bearerToken}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        showToast(`Successfully purged ${data.deletedCount} expired free licenses`);
+        fetchAllLicenses(); // Refresh license list
+      } else {
+        showToast(data.message || 'Failed to purge licenses', 'error');
+      }
+    } catch (error) {
+      console.log(error);
+      showToast('Failed to connect to server', 'error');
+    } finally {
+      setIsPurging(false);
+      setPurgeConfirmation(false);
     }
   };
 
@@ -624,12 +702,30 @@ const LicenseManager = () => {
         onConfirm={handleDeleteLicense}
         isDeleting={isDeleting}
       />
+      <PurgeConfirmation
+        isOpen={purgeConfirmation}
+        onClose={() => setPurgeConfirmation(false)}
+        onConfirm={handlePurgeExpiredLicenses}
+        isPurging={isPurging}
+      />
       <div className="mt-48 max-w-6xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold mb-2">Admin License Manager</h1>
             <p className="text-zinc-400">Manage and monitor license keys</p>
           </div>
+          <button
+            onClick={() => setPurgeConfirmation(true)}
+            disabled={!bearerToken || isPurging}
+            className={`px-6 py-3 rounded-lg flex items-center gap-2 ${
+              !bearerToken || isPurging
+                ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                : 'bg-amber-500/10 text-amber-300 hover:text-red-200 hover:bg-red-600 '
+            } transition-all duration-300 font-medium`}
+          >
+            <Trash2 className="w-5 h-5" />
+            {isPurging ? 'Purging...' : 'Purge Expired Licensess'}
+          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
