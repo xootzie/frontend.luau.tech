@@ -18,6 +18,16 @@ interface License {
   expiresAt: string;
   generatedAt: string;
   isExpired: boolean;
+  discordId?: string;
+  hwid?: string;
+  clientIp?: string;
+  notes?: string;
+  blacklisted?: boolean;
+  status?: string;
+  lastUsed?: string;
+  usageCount?: number;
+  createdBy?: string;
+  updatedAt?: string;
 }
 
 const Toast: React.FC<ToastProps> = ({ message, type, id, onClose }) => {
@@ -100,6 +110,116 @@ const CardContent: React.FC<{ children: React.ReactNode; className?: string }> =
   </div>
 );
 
+const LicenseDetails: React.FC<{ license: License }> = ({ license }) => (
+  <div className="space-y-3">
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <p className="text-sm text-zinc-400">Discord ID</p>
+        <p className="font-medium">{license.discordId || 'Not set'}</p>
+      </div>
+      <div>
+        <p className="text-sm text-zinc-400">Hardware ID</p>
+        <p className="font-medium">{license.hwid || 'Not set'}</p>
+      </div>
+      <div>
+        <p className="text-sm text-zinc-400">Client IP</p>
+        <p className="font-medium">{license.clientIp || 'Not set'}</p>
+      </div>
+      <div>
+        <p className="text-sm text-zinc-400">Status</p>
+        <p className="font-medium">{license.status || 'Active'}</p>
+      </div>
+    </div>
+    
+    <div className="space-y-2">
+      <div>
+        <p className="text-sm text-zinc-400">Last Used</p>
+        <p className="font-medium">
+          {license.lastUsed ? new Date(license.lastUsed).toLocaleString() : 'Never'}
+        </p>
+      </div>
+      <div>
+        <p className="text-sm text-zinc-400">Usage Count</p>
+        <p className="font-medium">{license.usageCount || 0}</p>
+      </div>
+      {license.notes && (
+        <div>
+          <p className="text-sm text-zinc-400">Notes</p>
+          <p className="font-medium">{license.notes}</p>
+        </div>
+      )}
+    </div>
+
+    <div className="flex gap-2 flex-wrap">
+      {license.blacklisted && (
+        <span className="px-2 py-1 bg-red-500/10 text-red-400 rounded text-xs">
+          Blacklisted
+        </span>
+      )}
+      {license.createdBy && (
+        <span className="px-2 py-1 bg-blue-500/10 text-blue-400 rounded text-xs">
+          Created by: {license.createdBy}
+        </span>
+      )}
+      <span className="px-2 py-1 bg-zinc-500/10 text-zinc-400 rounded text-xs">
+        Updated: {new Date(license.updatedAt || license.generatedAt).toLocaleString()}
+      </span>
+    </div>
+  </div>
+);
+
+const LicenseCard: React.FC<{ 
+  license: License; 
+  onSelect: (key: string) => void;
+  expanded: boolean;
+  onToggle: () => void;
+}> = ({ license, onSelect, expanded, onToggle }) => (
+  <div className="p-4 bg-black/40 border border-zinc-800 rounded-lg">
+    <div className="flex justify-between items-start">
+      <div>
+        <p className="font-medium">{license.key}</p>
+        <p className="text-sm text-zinc-400 mt-1">Type: {license.type}</p>
+      </div>
+      <div className="text-right">
+        <p className="text-sm text-zinc-400">
+          Expires: {new Date(license.expiresAt).toLocaleDateString()}
+        </p>
+        <p className="text-sm text-zinc-400">
+          Generated: {new Date(license.generatedAt).toLocaleDateString()}
+        </p>
+      </div>
+    </div>
+    
+    {expanded && (
+      <div className="mt-4 pt-4 border-t border-zinc-800">
+        <LicenseDetails license={license} />
+      </div>
+    )}
+
+    <div className="mt-2 flex items-center gap-2">
+      <div className={`px-2 py-1 rounded text-xs ${
+        new Date(license.expiresAt) < new Date()
+          ? 'bg-red-500/10 text-red-400'
+          : 'bg-emerald-500/10 text-emerald-400'
+      }`}>
+        {new Date(license.expiresAt) < new Date() ? 'Expired' : 'Active'}
+      </div>
+      <button
+        onClick={() => onSelect(license.key)}
+        className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+      >
+        Use this key
+      </button>
+      <button
+        onClick={onToggle}
+        className="text-xs text-zinc-400 hover:text-zinc-300 transition-colors ml-auto"
+      >
+        {expanded ? 'Show less' : 'Show more'}
+      </button>
+    </div>
+  </div>
+);
+
 const LicenseManager = () => {
   const [licenseKey, setLicenseKey] = useState('');
   const [bearerToken, setBearerToken] = useState('');
@@ -114,6 +234,7 @@ const LicenseManager = () => {
   const [allLicenses, setAllLicenses] = useState<License[]>([]);
   const [loadingAllLicenses, setLoadingAllLicenses] = useState(false);
   const [licenseSearchTerm, setLicenseSearchTerm] = useState('');
+  const [expandedLicenses, setExpandedLicenses] = useState<Set<string>>(new Set());
 
   interface ToastState {
     message: string;
@@ -159,6 +280,18 @@ const LicenseManager = () => {
 
   const handleToastClose = () => {
     setToast(null);
+  };
+
+  const toggleLicenseExpanded = (key: string) => {
+    setExpandedLicenses(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(key)) {
+        newSet.delete(key);
+      } else {
+        newSet.add(key);
+      }
+      return newSet;
+    });
   };
 
   const fetchAllLicenses = async () => {
@@ -229,6 +362,7 @@ const LicenseManager = () => {
 
       if (response.ok) {
         showToast('IP reset successfully');
+        fetchAllLicenses();
       } else {
         showToast(data.message, 'error');
       }
@@ -274,6 +408,7 @@ const LicenseManager = () => {
 
       if (response.ok) {
         showToast('License updated successfully');
+        fetchAllLicenses();
       } else {
         showToast(data.message, 'error');
       }
@@ -496,39 +631,16 @@ const LicenseManager = () => {
                 <h4 className="text-sm font-medium text-zinc-400">Active Licenses</h4>
                 <div className="space-y-2">
                   {activeKeys.map((license) => (
-                    <div
+                    <LicenseCard
                       key={license.key}
-                      className="p-4 bg-black/40 border border-zinc-800 rounded-lg"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">{license.key}</p>
-                          <p className="text-sm text-zinc-400 mt-1">Type: {license.type}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-zinc-400">Expires: {new Date(license.expiresAt).toLocaleDateString()}</p>
-                          <p className="text-sm text-zinc-400">Generated: {new Date(license.generatedAt).toLocaleDateString()}</p>
-                        </div>
-                      </div>
-                      <div className="mt-2 flex items-center gap-2">
-                        <div className={`px-2 py-1 rounded text-xs ${
-                          license.isExpired
-                            ? 'bg-red-500/10 text-red-400'
-                            : 'bg-emerald-500/10 text-emerald-400'
-                        }`}>
-                          {license.isExpired ? 'Expired' : 'Active'}
-                        </div>
-                        <button
-                          onClick={() => {
-                            setLicenseKey(license.key);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
-                        >
-                          Use this key
-                        </button>
-                      </div>
-                    </div>
+                      license={license}
+                      onSelect={(key) => {
+                        setLicenseKey(key);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      expanded={expandedLicenses.has(license.key)}
+                      onToggle={() => toggleLicenseExpanded(license.key)}
+                    />
                   ))}
                 </div>
               </div>
@@ -576,46 +688,22 @@ const LicenseManager = () => {
                 {allLicenses
                   .filter(license => 
                     license.key.toLowerCase().includes(licenseSearchTerm.toLowerCase()) ||
-                    license.type.toLowerCase().includes(licenseSearchTerm.toLowerCase())
+                    license.type.toLowerCase().includes(licenseSearchTerm.toLowerCase()) ||
+                    (license.discordId?.toLowerCase() || '').includes(licenseSearchTerm.toLowerCase()) ||
+                    (license.clientIp?.toLowerCase() || '').includes(licenseSearchTerm.toLowerCase()) ||
+                    (license.hwid?.toLowerCase() || '').includes(licenseSearchTerm.toLowerCase())
                   )
                   .map((license) => (
-                    <div
+                    <LicenseCard
                       key={license.key}
-                      className="p-4 bg-black/40 border border-zinc-800 rounded-lg"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">{license.key}</p>
-                          <p className="text-sm text-zinc-400 mt-1">Type: {license.type}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-zinc-400">
-                            Expires: {new Date(license.expiresAt).toLocaleDateString()}
-                          </p>
-                          <p className="text-sm text-zinc-400">
-                            Generated: {new Date(license.generatedAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="mt-2 flex items-center gap-2">
-                        <div className={`px-2 py-1 rounded text-xs ${
-                          new Date(license.expiresAt) < new Date()
-                            ? 'bg-red-500/10 text-red-400'
-                            : 'bg-emerald-500/10 text-emerald-400'
-                        }`}>
-                          {new Date(license.expiresAt) < new Date() ? 'Expired' : 'Active'}
-                        </div>
-                        <button
-                          onClick={() => {
-                            setLicenseKey(license.key);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
-                        >
-                          Use this key
-                        </button>
-                      </div>
-                    </div>
+                      license={license}
+                      onSelect={(key) => {
+                        setLicenseKey(key);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      expanded={expandedLicenses.has(license.key)}
+                      onToggle={() => toggleLicenseExpanded(license.key)}
+                    />
                   ))}
               </div>
             )}
