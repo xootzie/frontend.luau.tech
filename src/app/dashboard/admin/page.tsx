@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, Check, ChevronDown, Search, X } from 'lucide-react';
+import { AlertCircle, Check, ChevronDown, Search, X, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import Cookies from 'js-cookie';
 import Navigation from '@/components/navigation';
 
@@ -14,6 +14,7 @@ interface ToastProps {
 
 interface License {
   key: string;
+  _id?: string;
   type: string;
   expiresAt: string;
   generatedAt: string;
@@ -110,6 +111,52 @@ const CardContent: React.FC<{ children: React.ReactNode; className?: string }> =
   </div>
 );
 
+interface DeleteConfirmationProps {
+  isOpen: boolean;
+  licenseKey: string;
+  onClose: () => void;
+  onConfirm: () => void;
+  isDeleting: boolean;
+}
+
+const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({ 
+  isOpen, 
+  licenseKey, 
+  onClose, 
+  onConfirm,
+  isDeleting
+}) => {
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6 max-w-md w-full mx-4">
+        <h3 className="text-xl font-semibold mb-4">Delete License Key</h3>
+        <p className="text-zinc-300 mb-6">
+          Are you sure you want to delete the license key: <span className="font-mono text-red-400">{licenseKey}</span>? This action cannot be undone.
+        </p>
+        <div className="flex justify-end gap-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg hover:bg-zinc-700 transition-colors"
+            disabled={isDeleting}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors flex items-center gap-2"
+            disabled={isDeleting}
+          >
+            {isDeleting ? 'Deleting...' : 'Delete License'}
+            {!isDeleting && <Trash2 className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const LicenseDetails: React.FC<{ license: License }> = ({ license }) => (
   <div className="space-y-3">
     <div className="grid grid-cols-2 gap-4">
@@ -173,7 +220,8 @@ const LicenseCard: React.FC<{
   onSelect: (key: string) => void;
   expanded: boolean;
   onToggle: () => void;
-}> = ({ license, onSelect, expanded, onToggle }) => (
+  onDelete: (license: License) => void;
+}> = ({ license, onSelect, expanded, onToggle, onDelete }) => (
   <div className="p-4 bg-black/40 border border-zinc-800 rounded-lg">
     <div className="flex justify-between items-start">
       <div>
@@ -212,9 +260,16 @@ const LicenseCard: React.FC<{
       </button>
       <button
         onClick={onToggle}
-        className="text-xs text-zinc-400 hover:text-zinc-300 transition-colors ml-auto"
+        className="text-xs text-zinc-400 hover:text-zinc-300 transition-colors"
       >
         {expanded ? 'Show less' : 'Show more'}
+      </button>
+      <button
+        onClick={() => onDelete(license)}
+        className="text-xs text-red-400 hover:text-red-300 transition-colors ml-auto"
+        aria-label="Delete license"
+      >
+        <Trash2 className="w-4 h-4" />
       </button>
     </div>
   </div>
@@ -235,6 +290,13 @@ const LicenseManager = () => {
   const [loadingAllLicenses, setLoadingAllLicenses] = useState(false);
   const [licenseSearchTerm, setLicenseSearchTerm] = useState('');
   const [expandedLicenses, setExpandedLicenses] = useState<Set<string>>(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const [licensesPerPage] = useState(5);
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    isOpen: false,
+    license: null as License | null,
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   interface ToastState {
     message: string;
@@ -323,6 +385,7 @@ const LicenseManager = () => {
       if (response.ok && data.success) {
         setAllLicenses(data.keys);
         showToast(`Loaded ${data.keys.length} licenses`);
+        setCurrentPage(1);
       } else {
         showToast(data.message || 'Failed to fetch licenses', 'error');
       }
@@ -331,6 +394,48 @@ const LicenseManager = () => {
       showToast('Failed to connect to server', 'error');
     } finally {
       setLoadingAllLicenses(false);
+    }
+  };
+
+  const handleDeleteLicense = async () => {
+    if (!deleteConfirmation.license || !bearerToken) return;
+    
+    setIsDeleting(true);
+    try {
+      const headers: { 
+        authorization: string;
+        'x-license-key-id': string;
+        'x-bypass-key'?: string;
+      } = {
+        'authorization': `Bearer ${bearerToken}`,
+        'x-license-key-id': deleteConfirmation.license._id || ''
+      };
+
+      if (bypassKey) {
+        headers['x-bypass-key'] = bypassKey;
+      }
+
+      const response = await fetch('https://backend.luau.tech/api/auth/license/delete', {
+        method: 'DELETE',
+        headers
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        showToast('License deleted successfully');
+        // Remove from lists
+        setAllLicenses(prev => prev.filter(license => license._id !== deleteConfirmation.license?._id));
+        setActiveKeys(prev => prev.filter(license => license._id !== deleteConfirmation.license?._id));
+        setDeleteConfirmation({ isOpen: false, license: null });
+      } else {
+        showToast(data.message || 'Failed to delete license', 'error');
+      }
+    } catch (error) {
+      console.log(error);
+      showToast('Failed to connect to server', 'error');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -465,6 +570,26 @@ const LicenseManager = () => {
     setSearchLoading(false);
   };
 
+  // Filter licenses based on search term
+  const filteredLicenses = allLicenses.filter(license => 
+    license.key.toLowerCase().includes(licenseSearchTerm.toLowerCase()) ||
+    license.type.toLowerCase().includes(licenseSearchTerm.toLowerCase()) ||
+    (license.discordId?.toLowerCase() || '').includes(licenseSearchTerm.toLowerCase()) ||
+    (license.clientIp?.toLowerCase() || '').includes(licenseSearchTerm.toLowerCase()) ||
+    (license.hwid?.toLowerCase() || '').includes(licenseSearchTerm.toLowerCase())
+  );
+
+  // Pagination logic
+  const indexOfLastLicense = currentPage * licensesPerPage;
+  const indexOfFirstLicense = indexOfLastLicense - licensesPerPage;
+  const currentLicenses = filteredLicenses.slice(indexOfFirstLicense, indexOfLastLicense);
+  const totalPages = Math.ceil(filteredLicenses.length / licensesPerPage);
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white antialiased p-6">
       <Navigation/>
@@ -476,6 +601,13 @@ const LicenseManager = () => {
           onClose={handleToastClose}
         />
       )}
+      <DeleteConfirmation
+        isOpen={deleteConfirmation.isOpen}
+        licenseKey={deleteConfirmation.license?.key || ''}
+        onClose={() => setDeleteConfirmation({ isOpen: false, license: null })}
+        onConfirm={handleDeleteLicense}
+        isDeleting={isDeleting}
+      />
       <div className="mt-48 max-w-6xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -630,16 +762,14 @@ const LicenseManager = () => {
               <div className="space-y-3">
                 <h4 className="text-sm font-medium text-zinc-400">Active Licenses</h4>
                 <div className="space-y-2">
-                  {activeKeys.map((license) => (
+                {activeKeys.map((license) => (
                     <LicenseCard
                       key={license.key}
                       license={license}
-                      onSelect={(key) => {
-                        setLicenseKey(key);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
+                      onSelect={setLicenseKey}
                       expanded={expandedLicenses.has(license.key)}
                       onToggle={() => toggleLicenseExpanded(license.key)}
+                      onDelete={(license) => setDeleteConfirmation({ isOpen: true, license })}
                     />
                   ))}
                 </div>
@@ -649,62 +779,116 @@ const LicenseManager = () => {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>All Licenses</CardTitle>
-            <CardDescription>View and search all licenses in the database</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400" />
+          <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center">
+            <div>
+              <CardTitle>All Licenses</CardTitle>
+              <CardDescription>View and manage all licenses in the system</CardDescription>
+            </div>
+            <div className="flex gap-4 mt-4 sm:mt-0">
+              <div className="relative">
+                <Search className="w-4 h-4 absolute top-1/2 transform -translate-y-1/2 left-3 text-zinc-500" />
                 <input
                   type="text"
-                  className="w-full pl-10 pr-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
+                  className="pl-10 pr-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300 w-full sm:w-60"
                   placeholder="Search licenses..."
                   value={licenseSearchTerm}
-                  onChange={(e) => setLicenseSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setLicenseSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
                 />
               </div>
               <button
                 onClick={fetchAllLicenses}
                 disabled={loadingAllLicenses || !bearerToken}
-                className={`px-6 py-2 rounded-lg ${
+                className={`px-4 py-2 rounded-lg ${
                   loadingAllLicenses || !bearerToken
                     ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
                     : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20'
-                } transition-all duration-300 font-medium`}
+                } transition-all duration-300 font-medium flex items-center gap-2`}
               >
                 {loadingAllLicenses ? 'Loading...' : 'Refresh'}
               </button>
             </div>
-
-            {allLicenses.length === 0 ? (
-              <div className="text-center py-8">
-                <AlertCircle className="mx-auto h-12 w-12 text-zinc-400" />
-                <p className="mt-4 text-zinc-400">Invalid Bearer Token Provided</p>
+          </CardHeader>
+          <CardContent>
+            {loadingAllLicenses ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+              </div>
+            ) : allLicenses.length === 0 ? (
+              <div className="text-center py-12 text-zinc-400">
+                <p>No licenses found. Please authenticate to view licenses.</p>
+              </div>
+            ) : currentLicenses.length === 0 ? (
+              <div className="text-center py-12 text-zinc-400">
+                <p>No licenses match your search criteria.</p>
               </div>
             ) : (
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {allLicenses
-                  .filter(license => 
-                    license.key.toLowerCase().includes(licenseSearchTerm.toLowerCase()) ||
-                    license.type.toLowerCase().includes(licenseSearchTerm.toLowerCase()) ||
-                    (license.discordId?.toLowerCase() || '').includes(licenseSearchTerm.toLowerCase()) ||
-                    (license.clientIp?.toLowerCase() || '').includes(licenseSearchTerm.toLowerCase()) ||
-                    (license.hwid?.toLowerCase() || '').includes(licenseSearchTerm.toLowerCase())
-                  )
-                  .map((license) => (
+              <div className="space-y-4">
+                <div className="space-y-4">
+                  {currentLicenses.map((license) => (
                     <LicenseCard
-                      key={license.key}
+                      key={license.key} 
                       license={license}
-                      onSelect={(key) => {
-                        setLicenseKey(key);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
+                      onSelect={setLicenseKey}
                       expanded={expandedLicenses.has(license.key)}
                       onToggle={() => toggleLicenseExpanded(license.key)}
+                      onDelete={(license) => setDeleteConfirmation({ isOpen: true, license })}
                     />
                   ))}
+                </div>
+                
+                {totalPages > 1 && (
+                  <div className="flex justify-between items-center pt-4 border-t border-zinc-800">
+                    <div className="text-sm text-zinc-400">
+                      Showing {indexOfFirstLicense + 1} to {Math.min(indexOfLastLicense, filteredLicenses.length)} of {filteredLicenses.length} licenses
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={prevPage}
+                        disabled={currentPage === 1}
+                        className={`p-2 rounded-lg ${
+                          currentPage === 1
+                            ? 'text-zinc-600 cursor-not-allowed'
+                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                        }`}
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1)
+                        .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                        .map((page, idx, arr) => (
+                          <React.Fragment key={page}>
+                            {idx > 0 && arr[idx - 1] !== page - 1 && (
+                              <span className="p-2 text-zinc-600">...</span>
+                            )}
+                            <button
+                              onClick={() => paginate(page)}
+                              className={`px-3 py-1 rounded-lg ${
+                                currentPage === page
+                                  ? 'bg-blue-500/20 text-blue-400'
+                                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          </React.Fragment>
+                        ))}
+                      <button
+                        onClick={nextPage}
+                        disabled={currentPage === totalPages}
+                        className={`p-2 rounded-lg ${
+                          currentPage === totalPages
+                            ? 'text-zinc-600 cursor-not-allowed'
+                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                        }`}
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>
