@@ -702,18 +702,32 @@ const LicenseManager = () => {
               />
 
               <div className="flex gap-4">
-                <button
-                  onClick={handleUpdate}
-                  disabled={loading || !licenseKey || !bearerToken}
-                  className={`flex-1 px-6 py-2 rounded-lg ${
-                    loading || !licenseKey || !bearerToken
-                      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                      : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20'
-                  } transition-all duration-300 font-medium`}
-                >
-                  {loading ? 'Updating...' : 'Update Field'}
-                </button>
-                
+              <button
+  onClick={handleUpdate}
+  disabled={loading || !licenseKey || !bearerToken}
+  className={`flex-1 px-6 py-2 rounded-lg ${
+    loading || !licenseKey || !bearerToken
+      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+      : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20'
+  } transition-all duration-300 font-medium`}
+>
+  {loading ? 'Updating...' : 'Update Field'}
+</button>
+
+<button
+  onClick={() => setDeleteConfirmation({ 
+    isOpen: true, 
+    license: { key: licenseKey, _id: '' } as License 
+  })}
+  disabled={loading || !licenseKey || !bearerToken}
+  className={`flex-1 px-6 py-2 rounded-lg ${
+    loading || !licenseKey || !bearerToken
+      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+      : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
+  } transition-all duration-300 font-medium`}
+>
+  Delete License
+</button>
                 <button
                   onClick={handleReset}
                   disabled={loading || !licenseKey || !bearerToken}
