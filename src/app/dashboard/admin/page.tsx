@@ -206,19 +206,19 @@ const LicenseDetails: React.FC<{ license: License }> = ({ license }) => (
     <div className="grid grid-cols-2 gap-4">
       <div>
         <p className="text-sm text-zinc-400">Discord ID</p>
-        <p className="font-medium">{license.discordId || 'Not set'}</p>
+        <p className="font-medium">{license.discordId || 'Unathorized'}</p>
       </div>
       <div>
         <p className="text-sm text-zinc-400">Hardware ID</p>
-        <p className="font-medium">{license.hwid || 'Not set'}</p>
+        <p className="font-medium">{license.hwid || 'Unathorized'}</p>
       </div>
       <div>
         <p className="text-sm text-zinc-400">Client IP</p>
-        <p className="font-medium">{license.clientIp || 'Not set'}</p>
+        <p className="font-medium">{license.clientIp || 'Unathorized'}</p>
       </div>
       <div>
         <p className="text-sm text-zinc-400">Status</p>
-        <p className="font-medium">{license.status || 'Active'}</p>
+        <p className="font-medium">{license.status || 'Unathorized'}</p>
       </div>
     </div>
     
