@@ -681,7 +681,7 @@ const LicenseManager = () => {
             {allLicenses.length === 0 ? (
               <div className="text-center py-8">
                 <AlertCircle className="mx-auto h-12 w-12 text-zinc-400" />
-                <p className="mt-4 text-zinc-400">No licenses found</p>
+                <p className="mt-4 text-zinc-400">Invalid Bearer Token Provided</p>
               </div>
             ) : (
               <div className="space-y-2 max-h-96 overflow-y-auto">
