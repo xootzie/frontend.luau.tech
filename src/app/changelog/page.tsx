@@ -98,7 +98,7 @@ const ChangelogPage = () => {
   const updateLog: Record<string, Update[]> = {
     'February 2025': [
       {
-        version: 'v 2.9',
+        version: '2.9',
         date: 'Feb 14, 2025',
         type: 'feature',
         changes: [
