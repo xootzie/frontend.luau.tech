@@ -100,7 +100,7 @@ const ScreenshotGallery = () => (
     <div className="text-center mb-12">
       <h2 className="text-4xl font-medium mb-4">Powerful Features in Action</h2>
       <p className="text-gray-400 max-w-2xl mx-auto">
-        Take a look at what Starry can do in your favorite games
+        View what Starry can do in your favorite games
       </p>
     </div>
     <div className="space-y-16">
@@ -115,22 +115,26 @@ const ScreenshotGallery = () => (
           </div>
         </div>
         <div className="w-full lg:w-1/3 space-y-4">
-          <h3 className="text-2xl font-medium">Why Starry?</h3>
+          <h3 className="text-2xl font-medium">Why Use Starry?</h3>
           <p className="text-gray-400">
-            Elevate your gameplay with Starry✨ - the best script you will ever need, featuring premium features and constant updates supporting popular games like Doors, Murder Mystery 2, and many more. Join thousands of players experiencing features today!
+            Starry includes many insanely overpowered features for a high variety of games we think you'd love. Enjoy game breaking modules, available for the low price of <b>$5.49</b>, or use our powerful project <b>entirely for free</b> today!
           </p>
           <ul className="space-y-2 text-gray-400">
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              Multi-Game support
+              Includes a high variety of games
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              Frequent Updates
+              Quick and heavy releases
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              Quick Support
+              Efficient and helpful support
+            </li>
+            <li className="flex items-center gap-2">
+              <spam className="w-1.5 h-1.5 rounded-full bg-accent" />
+              & so much more, available <b>for free</b>!
             </li>
           </ul>
         </div>
@@ -147,22 +151,22 @@ const ScreenshotGallery = () => (
           </div>
         </div>
         <div className="w-full lg:w-1/3 space-y-4">
-          <h3 className="text-2xl font-medium">Optiminal Performance</h3>
+          <h3 className="text-2xl font-medium">Good Performance & Reliability</h3>
           <p className="text-gray-400">
-            Starry is built with performance in mind, ensuring that your gameplay experience is smooth and responsive. With optimized code and efficient algorithms, you can enjoy a seamless and uninterrupted exploiting experience.
+            Another broken script? Not anymore. With Starry, we ensure you're able to ruin another iPad kid's day using our high-performant project!
           </p>
           <ul className="space-y-2 text-gray-400">
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              Quick Execution
+              Instant execution
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              Anti-Lag
+              Seamless Key System usage
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              Best Performance
+              Quick n' reliable
             </li>
           </ul>
         </div>
