@@ -1,12 +1,11 @@
-// /components/SocialCard.tsx
 'use client';
 
-import { Github, Globe, ArrowUpRight } from 'lucide-react';
+import { Globe, ArrowUpRight } from 'lucide-react';
 import { FaDiscord } from 'react-icons/fa';
 import { SocialData } from '@/types/SocialData';
 
 const SocialCard = ({ title, description, icon, link, glowColor }: SocialData) => {
-  // Render appropriate icon based on the icon name
+  
   const renderIcon = () => {
     switch (icon) {
       case 'Github':

@@ -360,48 +360,6 @@ const LicenseManager = () => {
     if (savedBypassKey) setBypassKey(savedBypassKey);
   }, []);
 
-  useEffect(() => {
-    if (bearerToken) {
-      Cookies.set('bearerToken', bearerToken, { expires: 30 });
-      fetchAllLicenses();
-    }
-  }, [bearerToken]);
-
-  useEffect(() => {
-    if (bypassKey) {
-      Cookies.set('bypassKey', bypassKey, { expires: 30 });
-    }
-  }, [bypassKey]);
-
-  const fields = {
-    'x-client-ip': 'Client IP',
-    'x-discord-id': 'Discord ID',
-    'x-hwid': 'Hardware ID',
-    'x-type': 'License Type',
-    'x-expires-at': 'Expiration Date'
-  };
-
-  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    const id = Date.now().toString();
-    setToast({ message, type, id });
-  };
-
-  const handleToastClose = () => {
-    setToast(null);
-  };
-
-  const toggleLicenseExpanded = (key: string) => {
-    setExpandedLicenses(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(key)) {
-        newSet.delete(key);
-      } else {
-        newSet.add(key);
-      }
-      return newSet;
-    });
-  };
-
   const fetchAllLicenses = async () => {
     if (!bearerToken) {
       showToast('Bearer token is required', 'error');
@@ -441,6 +399,48 @@ const LicenseManager = () => {
     } finally {
       setLoadingAllLicenses(false);
     }
+  };
+
+  useEffect(() => {
+    if (bearerToken) {
+      Cookies.set('bearerToken', bearerToken, { expires: 30 });
+      fetchAllLicenses();
+    }
+  }, [bearerToken, fetchAllLicenses]);
+
+  useEffect(() => {
+    if (bypassKey) {
+      Cookies.set('bypassKey', bypassKey, { expires: 30 });
+    }
+  }, [bypassKey]);
+
+  const fields = {
+    'x-client-ip': 'Client IP',
+    'x-discord-id': 'Discord ID',
+    'x-hwid': 'Hardware ID',
+    'x-type': 'License Type',
+    'x-expires-at': 'Expiration Date'
+  };
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    const id = Date.now().toString();
+    setToast({ message, type, id });
+  };
+
+  const handleToastClose = () => {
+    setToast(null);
+  };
+
+  const toggleLicenseExpanded = (key: string) => {
+    setExpandedLicenses(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(key)) {
+        newSet.delete(key);
+      } else {
+        newSet.add(key);
+      }
+      return newSet;
+    });
   };
 
   const handleDeleteLicense = async () => {
@@ -520,7 +520,7 @@ const LicenseManager = () => {
 
       if (response.ok && data.success) {
         showToast(`Successfully purged ${data.deletedCount} expired free licenses`);
-        fetchAllLicenses(); // Refresh license list
+        fetchAllLicenses();
       } else {
         showToast(data.message || 'Failed to purge licenses', 'error');
       }
