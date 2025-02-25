@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Github } from 'lucide-react';
-import GradientDivider from '@/components/divider';
+import GradientDivider from '@/components/ui/divider';
 
 
 const Footer: React.FC = () => {
