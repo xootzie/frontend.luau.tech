@@ -117,7 +117,7 @@ const ScreenshotGallery = () => (
         <div className="w-full lg:w-1/3 space-y-4">
           <h3 className="text-2xl font-medium">Why Use Starry?</h3>
           <p className="text-gray-400">
-            Starry includes many insanely overpowered features for a high variety of games we think you'd love. Enjoy game breaking modules, available for the low price of <b>$5.49</b>, or use our powerful project <b>entirely for free</b> today!
+            Starry includes many insanely overpowered features for a high variety of games we think you&apos;d love. Enjoy game breaking modules, available for the low price of <b>$5.49</b>, or use our powerful project <b>entirely for free</b> today!
           </p>
           <ul className="space-y-2 text-gray-400">
             <li className="flex items-center gap-2">
@@ -133,7 +133,7 @@ const ScreenshotGallery = () => (
               Efficient and helpful support
             </li>
             <li className="flex items-center gap-2">
-              <spam className="w-1.5 h-1.5 rounded-full bg-accent" />
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
               & so much more, available <b>for free</b>!
             </li>
           </ul>
@@ -153,7 +153,7 @@ const ScreenshotGallery = () => (
         <div className="w-full lg:w-1/3 space-y-4">
           <h3 className="text-2xl font-medium">Good Performance & Reliability</h3>
           <p className="text-gray-400">
-            Another broken script? Not anymore. With Starry, we ensure you're able to ruin another iPad kid's day using our high-performant project!
+            Another broken script? Not anymore. With Starry, we ensure you&apos;re able to ruin another iPad kid&apos;s day using our high-performant project!
           </p>
           <ul className="space-y-2 text-gray-400">
             <li className="flex items-center gap-2">
@@ -166,7 +166,7 @@ const ScreenshotGallery = () => (
             </li>
             <li className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              Quick n' reliable
+              Quick and reliable
             </li>
           </ul>
         </div>
