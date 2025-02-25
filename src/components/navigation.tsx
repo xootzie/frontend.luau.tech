@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 import { Home, CreditCard, Code, Key, Menu, X, LucideIcon, Newspaper } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
-import UpdateNotification from '@/components/updateBanner';
 
-const showBanner = true;
+
 interface NavLinkProps {
   href: string;
   children: React.ReactNode;
@@ -160,7 +159,6 @@ const Navigation: React.FC = () => {
         </div>
       </div>
             
-      {showBanner && <UpdateNotification />}
       
     </>
   );
