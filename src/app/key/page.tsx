@@ -40,6 +40,7 @@ export default function KeySystem() {
   const checkReferrer = useCallback(() => {
     const referrer = document.referrer;
     const isValid = referrer.includes('https://linkunlocker.com/');
+   
     setIsValidReferrer(isValid);
     
     if (!isValid) {
@@ -288,7 +289,7 @@ export default function KeySystem() {
       <Navbar />
       <LoadingScreen onComplete={() => {/* ... */}}/>
 
-      <div className="min-h-screen flex items-center justify-center pt-2 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="bg-black min-h-screen flex items-center justify-center pt-2 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div className="bg-black bg-opacity-50 rounded-xl p-8 border border-white/10 backdrop-blur-xl shadow-lg">
             <div className="text-center mb-8">

@@ -89,22 +89,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
-        <style dangerouslySetInnerHTML={{ __html: `
-          * {
-            user-select: none;
-          }
-         
-          input,
-          textarea,
-          [contenteditable="true"],
-          code {
-            user-select: text;
-          }
-          
-          * {
-            context-menu: none;
-          }
-        `}} />
+     
       </head>
       <body className="antialiased min-h-screen">
         <main>{children}</main>
