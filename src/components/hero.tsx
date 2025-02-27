@@ -8,7 +8,7 @@ interface CodeModalProps {
 }
 
 const CodeModal: React.FC<CodeModalProps> = ({ isOpen, onClose, isClosing }) => {
-  // Existing CodeModal code unchanged
+
   const [isCopied, setIsCopied] = useState(false);
   const [selectedTab, setSelectedTab] = useState<'script' | 'guide'>('script');
   const modalRef = useRef<HTMLDivElement>(null);
@@ -238,10 +238,7 @@ const HeroSection: React.FC = () => {
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900/30 border border-white/5 mb-8 hover:border-white/10 transition-colors animate-pulse">
-          <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-          <span className="text-xs text-gray-400 font-medium">Key System & Premium Released</span>
-        </div>
+     
         
         <h1 
           ref={titleRef}
