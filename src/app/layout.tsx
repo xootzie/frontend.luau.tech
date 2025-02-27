@@ -91,10 +91,12 @@ export default function RootLayout({
       <head>
      
       </head>
-      <body className="antialiased min-h-screen">
+      <body className="bg-zinc-950 antialiased min-h-screen">
+        
         <main>{children}</main>
         <CustomContextMenu />
       </body>
     </html>
   );
 }
+

@@ -378,12 +378,12 @@ const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
   };
 
   return (
-    <div className="bg-black text-white antialiased">
+    <div className=" text-white antialiased">
       <Navbar />
       <LoadingScreen onComplete={handleLoadingComplete} />
       <PricingHero />
       
-      <section className="bg-black min-h-screen py-16">
+      <section className=" min-h-screen py-16">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-medium text-white">Pricing Plans</h2>

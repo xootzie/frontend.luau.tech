@@ -12,7 +12,7 @@ import { games, socials } from '@/lib/data';
 
 const HomePage = () => {
   return (
-    <div className="bg-black min-h-screen text-white antialiased">
+    <div className="min-h-screen text-white antialiased">
       <Navbar />
       <LoadingScreen />
       <HeroSection />

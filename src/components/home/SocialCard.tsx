@@ -1,6 +1,6 @@
 'use client';
 
-import { Globe, ArrowUpRight } from 'lucide-react';
+import { Globe, ArrowUpRight, Github } from 'lucide-react';
 import { FaDiscord } from 'react-icons/fa';
 import { SocialData } from '@/types/SocialData';
 
@@ -9,7 +9,7 @@ const SocialCard = ({ title, description, icon, link, glowColor }: SocialData) =
   const renderIcon = () => {
     switch (icon) {
       case 'Github':
-        return <FaDiscord className="w-5 h-5" />;
+        return <Github className="w-5 h-5" />;
       case 'Globe':
         return <Globe className="w-5 h-5" />;
       case 'FaDiscord':
