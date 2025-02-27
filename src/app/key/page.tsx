@@ -33,9 +33,10 @@ export default function KeySystem() {
   const [isLoading, setIsLoading] = useState(true);
   const [verifiedKey, setVerifiedKey] = useState<string | null>(null);
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
-  const [isTurnstileMounted, setIsTurnstileMounted] = useState(false);
-  const [turnstileWidget, setTurnstileWidget] = useState<string>('');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [isValidReferrer, setIsValidReferrer] = useState(false);
+  const [turnstileLoaded, setTurnstileLoaded] = useState(false);
+  const turnstileWidgetId = useRef<string | null>(null);
   const popupRef = useRef<Window | null>(null);
   const popupCheckInterval = useRef<NodeJS.Timeout | null>(null);
 
@@ -43,41 +44,126 @@ export default function KeySystem() {
     const referrer = document.referrer;
     const isValid = referrer.includes('https://linkunlocker.com/');
     // const isValid = true;
-   
+    
     setIsValidReferrer(isValid);
     
     if (!isValid) {
       setStatusMessage('Please visit the link unlocker first to continue.');
-      const turnstileContainer = document.getElementById("turnstileContainer");
-      if (turnstileContainer) {
-        // turnstileContainer.classList.add("hidden");
-      }
     } else {
-      setStatusMessage('Complete verification to continue.');
+      setStatusMessage('Loading verification...');
     }
     
     return isValid;
   }, []);
 
-  const handleTurnstileCallback = useCallback((token: string) => {
-    if (!isValidReferrer) {
-      setStatusMessage('Please visit the link unlocker first to continue.');
-      return;
-    }
-
-    setStatusMessage('Waiting for authentication...');
-
-    const cloudflareTurnstile = document.getElementById("turnstileContainer") as HTMLDivElement;
-    if (cloudflareTurnstile instanceof HTMLDivElement) {
-      // cloudflareTurnstile.classList.add("hidden");
-    }
+  // Load Turnstile script
+  const loadTurnstileScript = useCallback(() => {
+    return new Promise<void>((resolve, reject) => {
     
-    if (token) {
-      sessionStorage.setItem('turnstileToken', token);
+      if (window.turnstile) {
+        setTurnstileLoaded(true);
+        resolve();
+        return;
+      }
+
+      const existingScript = document.querySelector('script[src*="challenges.cloudflare.com"]');
+      if (existingScript) {
+      
+        const checkInterval = setInterval(() => {
+          if (window.turnstile) {
+            clearInterval(checkInterval);
+            setTurnstileLoaded(true);
+            resolve();
+          }
+        }, 100);
+
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          reject(new Error('Turnstile script loaded but not initialized'));
+        }, 5000);
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      script.async = true;
+      script.defer = true;
+      
+      script.onload = () => {
+        const checkTurnstile = setInterval(() => {
+          if (window.turnstile) {
+            clearInterval(checkTurnstile);
+            setTurnstileLoaded(true);
+            resolve();
+          }
+        }, 100);
+        
+        setTimeout(() => {
+          clearInterval(checkTurnstile);
+          if (!window.turnstile) {
+            reject(new Error('Turnstile script loaded but object not initialized'));
+          }
+        }, 5000);
+      };
+      
+      script.onerror = (error) => {
+        console.error('Failed to load Turnstile script:', error);
+        reject(new Error('Failed to load Turnstile script'));
+      };
+      
+      document.head.appendChild(script);
+    });
+  }, []);
+
+  const renderTurnstileWidget = useCallback(() => {
+    if (!window.turnstile || !isValidReferrer) return;
+    
+    try {
+      const container = document.getElementById('turnstileContainer');
+      if (!container) return;
+      
+      container.innerHTML = '';
+      container.style.display = 'block';
+      
+      if (turnstileWidgetId.current && window.turnstile) {
+        try {
+          window.turnstile.reset(turnstileWidgetId.current);
+        } catch (e) {
+          console.error('Failed to reset existing widget:', e);
+        }
+      }
+      
+      turnstileWidgetId.current = window.turnstile.render('#turnstileContainer', {
+        sitekey: "1x00000000000000000000AA",
+        theme: 'dark',
+        callback: (token) => {
+          setTurnstileToken(token);
+          setStatusMessage('Verification complete. Click to continue.');
+          sessionStorage.setItem('turnstileToken', token);
+        }
+      });
+      
+      setTimeout(() => {
+        const turnstileIframe = document.querySelector('iframe[src*="challenges.cloudflare.com"]');
+        if (turnstileIframe) {
+          turnstileIframe.classList.add('rounded-lg');
+        }
+      }, 200);
+      
+      setStatusMessage('Please complete the security check to continue.');
+    } catch (error) {
+      console.error('Failed to render Turnstile widget:', error);
+      setStatusMessage('Failed to load security check. Please refresh the page.');
     }
   }, [isValidReferrer]);
 
-  const checkExistingKey = async () => {
+  // const handleTurnstileVerification = useCallback((token: string) => {
+  //   setTurnstileToken(token);
+  //   setStatusMessage('Verification complete. Click to continue.');
+  //   sessionStorage.setItem('turnstileToken', token);
+  // }, []);
+
+  const checkExistingKey = useCallback(async () => {
     if (!isValidReferrer) {
       setIsLoading(false);
       return;
@@ -112,16 +198,11 @@ export default function KeySystem() {
       const data: KeyVerifyResponse = await response.json();
       
       if (data.success && data.key) {
-        const sb = document.getElementById('status-box') as HTMLElement;
-        const cloudflareTurnstile = document.getElementById("turnstileContainer") as HTMLDivElement;
+        const statusBox = document.getElementById('status-box');
+        const turnstileContainer = document.getElementById('turnstileContainer');
         
-        if (cloudflareTurnstile instanceof HTMLDivElement) {
-          // cloudflareTurnstile.classList.add("hidden");
-        }
-        
-        if (sb) {
-          sb.classList.add("hidden");
-        }
+        if (statusBox) statusBox.classList.add("hidden");
+        if (turnstileContainer) turnstileContainer.style.display = 'none';
         
         setStatusMessage('');
         setVerifiedKey(data.key);
@@ -140,7 +221,7 @@ export default function KeySystem() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isValidReferrer]);
 
   const verifyKey = async (licenseKey: string) => {
     try {
@@ -171,7 +252,12 @@ export default function KeySystem() {
         setVerifiedKey(licenseKey);
         setExpiryDate(data.expiryDate || null);
         setStatusMessage('Key verified successfully!');
-        setIsLoading(false);
+        
+        const statusBox = document.getElementById('status-box');
+        const turnstileContainer = document.getElementById('turnstileContainer');
+        
+        if (statusBox) statusBox.classList.add("hidden");
+        if (turnstileContainer) turnstileContainer.style.display = 'none';
       } else {
         setStatusMessage(data.message || 'Key verification failed');
       }
@@ -188,216 +274,99 @@ export default function KeySystem() {
     }
   };
 
-  const handleDiscordAuth = () => {
-   
+  const handleDiscordAuth = async () => {
     if (!isValidReferrer) {
-    
-        setStatusMessage('Please visit the link unlocker first to continue.');
-      
-        window.open('https://linkunlocker.com/starry-license-key-dWrla', '_self');
-        return;
+      window.open('https://linkunlocker.com/starry-license-key-dWrla', '_self');
+      return;
     }
     
-    // Check if window.turnstile exists
-    if (!window.turnstile) {
-        console.log('ERROR: Turnstile script not loaded or not available');
-        
-        const turnstileScript = document.querySelector('script[src*="challenges.cloudflare.com"]');
-        if (!turnstileScript) {
-         
-            const script = document.createElement('script');
-            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-            script.async = true;
-            script.onload = () => {
-               
-                setTimeout(handleDiscordAuth, 1000);
-            };
-            script.onerror = (error) => {
-                console.error('Failed to load Turnstile script:', error);
-                setStatusMessage('Failed to load security check. Please refresh the page.');
-            };
-            document.head.appendChild(script);
-            return;
-        } else {
-        
-            console.log('Turnstile script exists but not initialized');
-            setStatusMessage('Security check is loading. Please try again in a moment.');
-            return;
-        }
+    let token = turnstileToken;
+    
+    if (!token) {
+      token = sessionStorage.getItem('turnstileToken');
     }
     
-    if (!turnstileWidget && window.turnstile) {
-        try {
-     
-            const container = document.getElementById('turnstileContainer');
-            if (!container) {
-                console.error('ERROR: Turnstile container not found');
-                setStatusMessage('Security check container not found. Please refresh the page.');
-                return;
-            }
-            
-            container.style.display = 'block';
-            
-            const newTurnstileWidget = window.turnstile.render('#turnstileContainer', {
-                sitekey: "0x4AAAAAAA4tVIa8BO3ZNLCH",
-                theme: 'dark',
-                callback: (token) => {
-                    console.log('Turnstile callback received token:', !!token);
-                    handleTurnstileCallback(token);
-                    setTimeout(() => {
-                        console.log('Auto-proceeding with Discord auth after Turnstile completion');
-                        handleDiscordAuth();
-                    }, 500);
-                }
-            });
-            
-            if (newTurnstileWidget) {
-         
-                setTurnstileWidget(newTurnstileWidget);
-                setStatusMessage('Please complete the security check to continue.');
-                
-                setTimeout(() => {
-                    const turnstileIframe = document.querySelector('iframe[src*="challenges.cloudflare.com"]');
-                    if (turnstileIframe) {
-                        turnstileIframe.classList.add('rounded-lg');
-                    }
-                }, 100);
-                
-                return;
-            } else {
-                console.log('ERROR: Failed to create turnstileWidget');
-            }
-        } catch (error) {
-            console.error('ERROR: Failed to initialize turnstileWidget:', error);
-        
-            try {
-                const directContainer = document.getElementById('turnstileContainer');
-                if (directContainer) {
-          
-                    directContainer.innerHTML = '';
-                    
-                    const button = document.createElement('button');
-                    button.className = 'w-full flex items-center justify-center px-4 py-3 rounded-md bg-blue-500 hover:bg-blue-600 transition-colors text-white text-sm font-medium';
-                    button.textContent = 'Refresh Security Check';
-                    button.onclick = () => {
-                        location.reload();
-                    };
-                    directContainer.appendChild(button);
-                }
-            } catch (innerError) {
-                console.error('Failed even with direct DOM manipulation:', innerError);
-            }
-        }
+    if (token) {
+      openAuthPopup(token);
+      return;
     }
-   
-    if (!turnstileWidget) {
-       
-        const sessionToken = sessionStorage.getItem('turnstileToken');
-        
-        if (sessionToken) {
-      
-            proceedWithAuth(sessionToken);
-            return;
-        }
-        
-        console.error('ERROR: No token available in any source');
-        setStatusMessage('Security check not initialized. Please refresh the page and try again.');
-        return;
+    
+    if (!turnstileLoaded) {
+      setStatusMessage('Loading verification...');
+      try {
+        await loadTurnstileScript();
+        renderTurnstileWidget(); // This will now clear and render a single widget
+      } catch (error) {
+        console.error('Failed to load Turnstile:', error);
+        setStatusMessage('Failed to load security verification. Please refresh the page.');
+      }
+      return;
     }
-   
-    const turnstileToken = window.turnstile?.getResponse(turnstileWidget);
+    
+    setStatusMessage('Please complete the security check first');
+    
+    // Instead of potentially creating a new widget, just reset the current one
+    if (turnstileWidgetId.current && window.turnstile) {
+      renderTurnstileWidget(); // This will now properly reset and render
+    } else {
+      renderTurnstileWidget();
+    }
+  };
+  
+  const openAuthPopup = (token: string) => {
 
-    
-    if (!turnstileToken) {
-       
-        const sessionToken = sessionStorage.getItem('turnstileToken');
-        if (sessionToken) {
-          
-            proceedWithAuth(sessionToken);
-            return;
-        }
-        
-        setStatusMessage('Please complete the security check first');
-        
-        try {
-         
-            window.turnstile?.reset(turnstileWidget);
-        } catch (resetError) {
-            console.error('Failed to reset turnstile widget:', resetError);
-        }
-        return;
+    if (popupRef.current && !popupRef.current.closed) {
+      popupRef.current.close();
     }
     
-    proceedWithAuth(turnstileToken);
+    clearPopupInterval();
     
-    function proceedWithAuth(token: string) {
-        if (popupRef.current && !popupRef.current.closed) {
-           
-            popupRef.current.close();
-        }
-       
-        console.log('Clearing popup interval');
-        clearPopupInterval();
-       
-        try {
+    try {
+      const popupUrl = `https://backend.luau.tech/api/auth/license/authorize?action=redirect&turnstile=${token}`;
       
-            const popupUrl = `https://backend.luau.tech/api/auth/license/authorize?action=redirect&turnstile=${token}`;
-         
-            popupRef.current = window.open(
-                popupUrl,
-                'DiscordAuth',
-                'width=500,height=800,resizable=yes,scrollbars=yes'
-            );
+      popupRef.current = window.open(
+        popupUrl,
+        'DiscordAuth',
+        'width=500,height=800,resizable=yes,scrollbars=yes'
+      );
+      
+      if (!popupRef.current || popupRef.current.closed || typeof popupRef.current.closed === 'undefined') {
+        console.log('Primary popup method failed, trying fallback');
         
-            if (!popupRef.current || popupRef.current.closed || typeof popupRef.current.closed === 'undefined') {
-                console.log('Primary popup method failed, trying fallback (blank window)');
-               
-                popupRef.current = window.open(popupUrl, '_blank');
-               
-                
-                if (!popupRef.current || popupRef.current.closed || typeof popupRef.current.closed === 'undefined') {
-           
-                    setStatusMessage('Popup was blocked. Opening in new tab...');
-            
-                    window.open(popupUrl, '_blank');
-                    return;
-                }
-            }
-         
-            popupCheckInterval.current = setInterval(() => {
+        popupRef.current = window.open(popupUrl, '_blank');
         
-                if (popupRef.current && popupRef.current.closed) {
-                 
-                    clearPopupInterval();
-                    setStatusMessage('Authentication window was closed. Please try again.');
-                }
-            }, 1000);
-            
-        } catch (error) {
-            console.error('CRITICAL ERROR opening popup:', error);
-            if (error instanceof Error) {
-                console.error('Error name:', error.name);
-                console.error('Error message:', error.message);
-                console.error('Error stack:', error.stack);
-            } else {
-                console.error('Unknown error:', error);
-            }
-            setStatusMessage('Failed to open authentication window. Please try again.');
+        if (!popupRef.current || popupRef.current.closed || typeof popupRef.current.closed === 'undefined') {
+          setStatusMessage('Popup was blocked. Opening in new tab...');
+          window.open(popupUrl, '_blank');
+          return;
         }
+      }
+      
+      popupCheckInterval.current = setInterval(() => {
+        if (popupRef.current && popupRef.current.closed) {
+          clearPopupInterval();
+          setStatusMessage('Authentication failed. Please try again.');
+          window.location.reload();
+        }
+      }, 1000);
+    } catch (error) {
+      console.error('Error opening popup:', error);
+      setStatusMessage('Failed to open authentication window. Please try again.');
     }
-};
+  };
 
   const copyKey = async () => {
     if (!verifiedKey) return;
+    
     try {
       await navigator.clipboard.writeText(verifiedKey);
- 
+      
       const copyButton = document.getElementById('copy-button');
       if (copyButton) {
         const originalText = copyButton.textContent;
         copyButton.textContent = 'Copied!';
         setTimeout(() => {
-          copyButton.textContent = originalText;
+          if (copyButton) copyButton.textContent = originalText;
         }, 2000);
       }
     } catch (err) {
@@ -422,7 +391,6 @@ export default function KeySystem() {
       if (!isAllowedOrigin) return;
 
       try {
-       
         let parsedData;
         if (typeof event.data === 'string') {
           try {
@@ -432,13 +400,12 @@ export default function KeySystem() {
             parsedData = { message: event.data };
           }
         } else {
-      
           parsedData = event.data;
         }
         
         if (parsedData && parsedData.key) {
           await verifyKey(parsedData.key);
-        
+          
           if (popupRef.current && !popupRef.current.closed) {
             popupRef.current.close();
           }
@@ -455,6 +422,7 @@ export default function KeySystem() {
     };
 
     window.addEventListener('message', handleMessage);
+    
     return () => {
       window.removeEventListener('message', handleMessage);
       clearPopupInterval();
@@ -463,42 +431,46 @@ export default function KeySystem() {
 
   useEffect(() => {
     const isValid = checkReferrer();
+    
     if (isValid) {
-      setIsTurnstileMounted(true);
+   
       checkExistingKey();
+      
+      loadTurnstileScript()
+        .then(() => {
+          renderTurnstileWidget();
+        })
+        .catch((error) => {
+          console.error('Failed to initialize Turnstile:', error);
+          setStatusMessage('Failed to load security verification. Please refresh and try again.');
+        });
+    }
+    
+    const sessionToken = sessionStorage.getItem('turnstileToken');
+    if (sessionToken) {
+      setTurnstileToken(sessionToken);
+      setStatusMessage('Verification complete. Click to continue.');
     }
 
-    if (window.turnstile && isTurnstileMounted && isValid) {
-      const widgetId = window.turnstile.render('#turnstileContainer', {
-        sitekey: "0x4AAAAAAA4tVIa8BO3ZNLCH",
-        theme: 'dark',
-        callback: handleTurnstileCallback
-      });
-      setTurnstileWidget(widgetId);
-
-      setTimeout(() => {
-        const turnstileIframe = document.querySelector('iframe[src*="challenges.cloudflare.com"]');
-        if (turnstileIframe) {
-          turnstileIframe.classList.add('rounded-lg');
+    return () => {
+      if (turnstileWidgetId.current && window.turnstile) {
+        try {
+          window.turnstile.reset(turnstileWidgetId.current);
+        } catch (error) {
+          console.error('Error cleaning up turnstile:', error);
         }
-      }, 100);
-
-      return () => {
-        if (widgetId && window.turnstile) {
-          window.turnstile.reset(widgetId);
-        }
-      };
-    }
-  }, [isTurnstileMounted, handleTurnstileCallback, checkReferrer]);
+      }
+    };
+  }, [checkReferrer, checkExistingKey, loadTurnstileScript, renderTurnstileWidget]);
 
   return (
     <>
       <Navbar />
-      <LoadingScreen onComplete={() => {/* ... */}}/>
+      <LoadingScreen/>
 
-      <div className=" min-h-screen flex items-center justify-center pt-2 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center pt-2 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
-          <div className=" bg-opacity-50 rounded-xl p-8 border border-white/10 backdrop-blur-xl shadow-lg">
+          <div className="bg-opacity-50 rounded-xl p-8 border border-white/10 backdrop-blur-xl shadow-lg">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-medium text-white mb-2">Key System</h2>
               <p className="text-gray-400">Authorize with your Discord account to get a key</p>
@@ -513,8 +485,12 @@ export default function KeySystem() {
               </div>
             </div>
 
-            <div className={`flex justify-center items-center ${verifiedKey ? 'hidden' : ''}`}>
-              <div id="turnstileContainer" className="overflow-hidden rounded-lg" />
+            <div className={`flex justify-center items-center mb-6 ${verifiedKey ? 'hidden' : ''}`}>
+              <div 
+                id="turnstileContainer" 
+                className="overflow-hidden rounded-lg w-full flex justify-center"
+                style={{ display: isValidReferrer ? 'flex' : 'none' }}
+              />
             </div>
 
             {verifiedKey ? (
@@ -550,6 +526,7 @@ export default function KeySystem() {
                 id="discord-auth-button"
                 onClick={handleDiscordAuth}
                 className={`w-full flex items-center justify-center px-4 py-3 rounded-md transition-colors text-white text-sm font-medium ${
+                  isValidReferrer && turnstileToken ? 'bg-[#5865F2] hover:bg-[#4752C4]' : 
                   isValidReferrer ? 'bg-[#5865F2] hover:bg-[#4752C4]' : 'bg-green-500 hover:bg-green-600'
                 }`}
               >

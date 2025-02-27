@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Code, Copy, Check, Sparkles, Download, ExternalLink, ChevronDown } from "lucide-react";
+import { Code, Copy, Check, Sparkles, ExternalLink, ChevronDown } from "lucide-react";
 
 interface CodeModalProps {
   isOpen: boolean;
@@ -8,7 +8,6 @@ interface CodeModalProps {
 }
 
 const CodeModal: React.FC<CodeModalProps> = ({ isOpen, onClose, isClosing }) => {
-
   const [isCopied, setIsCopied] = useState(false);
   const [selectedTab, setSelectedTab] = useState<'script' | 'guide'>('script');
   const modalRef = useRef<HTMLDivElement>(null);
@@ -26,7 +25,6 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
     }
   }, [loadstring]);
 
-  // Close on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -38,7 +36,6 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Trap focus inside modal for accessibility
   useEffect(() => {
     if (isOpen && modalRef.current) {
       modalRef.current.focus();
@@ -169,9 +166,32 @@ const HeroSection: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const [textGradientPosition, setTextGradientPosition] = useState({ x: 50, y: 50 });
   const [isHovering, setIsHovering] = useState(false);
   const [scrollButtonVisible, setScrollButtonVisible] = useState(true);
+  const sectionRef = useRef<HTMLElement>(null);
+  
+  const [stars, setStars] = useState<Array<{
+    id: number, 
+    x: number, 
+    y: number, 
+    size: number, 
+    opacity: number, 
+    duration: number,
+    delay: number
+  }>>([]);
+
+  useEffect(() => {
+    const newStars = Array.from({ length: 120 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 2 + 0.5,
+      opacity: Math.random() * 0.7 + 0.3,
+      duration: Math.random() * 15 + 15,
+      delay: Math.random() * -30
+    }));
+    setStars(newStars);
+  }, []);
 
   const handleButtonClick = useCallback(() => {
     setIsClicked(true);
@@ -187,16 +207,7 @@ const HeroSection: React.FC = () => {
     }, 200);
   }, []);
 
-  const handleTitleHover = useCallback((e: React.MouseEvent<HTMLHeadingElement>) => {
-    if (titleRef.current) {
-      const rect = titleRef.current.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      setTextGradientPosition({ x, y });
-    }
-  }, []);
   
-  // Function to scroll down when button is clicked
   const scrollDown = () => {
     window.scrollTo({
       top: window.innerHeight,
@@ -204,7 +215,6 @@ const HeroSection: React.FC = () => {
     });
   };
   
-  // Hide scroll button when scrolled down
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {
@@ -218,46 +228,83 @@ const HeroSection: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!isHovering && titleRef.current) {
-        setTextGradientPosition(prev => ({
-          x: prev.x + (Math.random() * 2 - 1),
-          y: prev.y + (Math.random() * 2 - 1)
-        }));
-      }
-    }, 2000);
-    
-    return () => clearInterval(interval);
-  }, [isHovering]);
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-blue-950 backdrop-blur-sm">
+    <section 
+      ref={sectionRef}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      style={{ 
+        background: 'linear-gradient(to bottom, #000000, #050322)'
+      }}
+    >
+      <div className="absolute inset-0 overflow-hidden">
+        {stars.map(star => (
+          <div
+            key={star.id}
+            className="absolute rounded-full bg-white"
+            style={{
+              left: `${star.x}%`,
+              top: `${star.y}%`,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              opacity: star.opacity,
+              boxShadow: `0 0 ${star.size * 2}px rgba(255, 255, 255, 0.8)`,
+              animation: `float-star ${star.duration}s linear infinite`,
+              animationDelay: `${star.delay}s`,
+              willChange: 'transform'
+            }}
+          />
+        ))}
+      </div>
+      
+      <div 
+        className="absolute opacity-10 w-96 h-96 rounded-full filter blur-3xl"
+        style={{
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, rgba(0, 0, 0, 0) 70%)',
+          top: '10%',
+          right: '15%',
+          animation: 'nebula-pulse 8s ease-in-out infinite alternate'
+        }}
+      />
+      
+      <div 
+        className="absolute opacity-10 w-64 h-64 rounded-full filter blur-3xl"
+        style={{
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(0, 0, 0, 0) 70%)',
+          bottom: '20%',
+          left: '10%',
+          animation: 'nebula-pulse 10s ease-in-out infinite alternate-reverse'
+        }}
+      />
+      
       <div
         className={`relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center transform transition-all duration-1000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}
       >
-     
-        
-        <h1 
-          ref={titleRef}
-          onMouseMove={handleTitleHover}
+      
+        <div 
+          className="mx-auto inline-block"
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
-          className="text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight mb-6 
-            hover:scale-[1.02] transition-all duration-500 ease-in-out cursor-default"
-          style={{
-            backgroundImage: `radial-gradient(circle at ${textGradientPosition.x}% ${textGradientPosition.y}%, 
-              white 0%, rgba(59, 130, 246, 0.6) 100%)`,
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            color: 'transparent',
-            lineHeight: '1.4'
-          }}
         >
-          Experience More using Starry
-        </h1>
+          <h1 
+            ref={titleRef}
+            className="text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight mb-6 transition-transform duration-300 ease-in-out cursor-default"
+            style={{
+              background: 'linear-gradient(135deg, white 0%, rgba(59, 130, 246, 0.6) 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+             
+              lineHeight: '1.4',
+              transform: isHovering ? 'scale(1.05)' : 'scale(1)',
+              pointerEvents: 'auto',
+              position: 'relative',
+              zIndex: 100
+            }}
+          >
+            Experience More using Starry
+          </h1>
+        </div>
         
         <p className="mt-6 text-base sm:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed font-light">
           Meet the next generation of Roblox exploiting. Powerful features, seamless performance, available now for free.
@@ -266,45 +313,35 @@ const HeroSection: React.FC = () => {
         <div className="mt-10 flex flex-wrap gap-4 justify-center">
           <button 
             onClick={handleButtonClick}
-            className={`px-6 sm:px-8 py-2.5 sm:py-3 rounded-md bg-blue-600 text-white text-sm sm:text-base font-medium 
-              hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 
-              transform hover:translate-y-[-2px] active:translate-y-[1px] shadow-lg shadow-blue-600/20
-              ${isClicked ? 'translate-y-[1px]' : ''}`}
+            className={`px-6 sm:px-8 py-2.5 sm:py-3 rounded-md bg-blue-600 text-white text-sm sm:text-base font-medium hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 transform hover:translate-y-[-2px] active:translate-y-[1px] shadow-lg shadow-blue-600/20 ${isClicked ? 'translate-y-[1px]' : ''}`}
             aria-haspopup="dialog"
           >
             <span className="relative">View Script</span>
             <Code className="w-4 h-4 sm:w-5 sm:h-5 relative transition-transform group-hover:translate-x-1" />
           </button>
         </div>
-        
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center max-w-4xl mx-auto">
-          <div className="p-5 rounded-lg bg-zinc-900/30 border border-white/5 hover:border-white/10 transition-all duration-300 hover:transform hover:scale-105">
-            <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-blue-600/20 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-blue-400" />
-            </div>
-            <h3 className="text-lg font-medium mb-2">Powerful Features</h3>
-            <p className="text-sm text-gray-400">Advanced capabilities for seamless gameplay enhancement</p>
-          </div>
-          
-          <div className="p-5 rounded-lg bg-zinc-900/30 border border-white/5 hover:border-white/10 transition-all duration-300 hover:transform hover:scale-105">
-            <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-blue-600/20 flex items-center justify-center">
-              <Download className="w-5 h-5 text-blue-400" />
-            </div>
-            <h3 className="text-lg font-medium mb-2">Easy to Use</h3>
-            <p className="text-sm text-gray-400">Easily copy and paste the script into your executor</p>
-          </div>
-          
-          <div className="p-5 rounded-lg bg-zinc-900/30 border border-white/5 hover:border-white/10 transition-all duration-300 hover:transform hover:scale-105">
-            <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-blue-600/20 flex items-center justify-center">
-              <ExternalLink className="w-5 h-5 text-blue-400" />
-            </div>
-            <h3 className="text-lg font-medium mb-2">Regular Updates</h3>
-            <p className="text-sm text-gray-400">Constantly improving with new features</p>
-          </div>
-        </div>
       </div>
 
-      {/* Bouncing Scroll Down Button */}
+      <div className=" lg:block">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="absolute rounded-full opacity-20 mix-blend-screen filter blur-xl"
+            style={{
+              background: i === 1 ? 'radial-gradient(circle, #3b82f6, transparent 70%)' :
+                        i === 2 ? 'radial-gradient(circle, #8b5cf6, transparent 70%)' :
+                        'radial-gradient(circle, #06b6d4, transparent 70%)',
+              width: `${i * 100 + 150}px`,
+              height: `${i * 100 + 150}px`,
+              left: `${i === 1 ? 20 : i === 2 ? 65 : 40}%`,
+              top: `${i === 1 ? 70 : i === 2 ? 30 : 50}%`,
+              animation: `orb-float ${8 + i * 2}s ease-in-out infinite alternate`,
+              animationDelay: `${i * -2}s`
+            }}
+          />
+        ))}
+      </div>
+
       <div 
         className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 transition-opacity duration-300 z-30 ${
           scrollButtonVisible ? 'opacity-100' : 'opacity-0'
@@ -318,6 +355,80 @@ const HeroSection: React.FC = () => {
           <ChevronDown className="ml-2 w-5 h-5" />
         </button>
       </div>
+
+      <div className="absolute inset-0 pointer-events-none">
+        {Array.from({ length: 25 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: `${Math.random() * 2 + 1}px`,
+              height: `${Math.random() * 2 + 1}px`,
+              background: Math.random() > 0.7 
+                ? 'rgba(59, 130, 246, 0.7)' 
+                : Math.random() > 0.5 
+                  ? 'rgba(139, 92, 246, 0.7)' 
+                  : 'rgba(255, 255, 255, 0.7)',
+              left: `${Math.random() * 100}%`,
+              bottom: `${-Math.random() * 10}%`,
+              animation: `float-particle ${Math.random() * 30 + 30}s linear infinite`,
+              animationDelay: `${Math.random() * -30}s`
+            }}
+          />
+        ))}
+      </div>
+
+      <style jsx>{`
+        @keyframes float-star {
+          0% {
+            transform: translateY(0);
+            opacity: ${(props: { opacity: number; }) => props.opacity};
+          }
+          100% {
+            transform: translateY(-100vh);
+            opacity: ${(props: { opacity: number; }) => props.opacity};
+          }
+        }
+        
+        @keyframes float-particle {
+          0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+          }
+          5% {
+            opacity: 0.7;
+          }
+          95% {
+            opacity: 0.7;
+          }
+          100% {
+            transform: translateY(-100vh) rotate(360deg);
+            opacity: 0;
+          }
+        }
+        
+        @keyframes nebula-pulse {
+          0% {
+            opacity: 0.05;
+            transform: scale(1);
+          }
+          100% {
+            opacity: 0.15;
+            transform: scale(1.1);
+          }
+        }
+        
+        @keyframes orb-float {
+          0% {
+            transform: translate(-50%, -50%) translateY(0);
+            opacity: 0.15;
+          }
+          100% {
+            transform: translate(-50%, -50%) translateY(-30px);
+            opacity: 0.25;
+          }
+        }
+      `}</style>
 
       <CodeModal 
         isOpen={showModal} 
