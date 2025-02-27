@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navigation';
 import LoadingScreen from '@/components/loadingScreen';
@@ -36,6 +36,8 @@ export default function KeySystem() {
   const [isTurnstileMounted, setIsTurnstileMounted] = useState(false);
   const [turnstileWidget, setTurnstileWidget] = useState<string>('');
   const [isValidReferrer, setIsValidReferrer] = useState(false);
+  const popupRef = useRef<Window | null>(null);
+  const popupCheckInterval = useRef<NodeJS.Timeout | null>(null);
 
   const checkReferrer = useCallback(() => {
     const referrer = document.referrer;
@@ -51,10 +53,6 @@ export default function KeySystem() {
       }
     } else {
       setStatusMessage('Complete verification to continue.');
-      // const turnstileContainer = document.getElementById("turnstileContainer");
-      // if (turnstileContainer) {
-      //   turnstileContainer.classList.remove("hidden");
-      // }
     }
     
     return isValid;
@@ -182,6 +180,13 @@ export default function KeySystem() {
     }
   };
 
+  const clearPopupInterval = () => {
+    if (popupCheckInterval.current) {
+      clearInterval(popupCheckInterval.current);
+      popupCheckInterval.current = null;
+    }
+  };
+
   const handleDiscordAuth = () => {
     if (!isValidReferrer) {
       setStatusMessage('Please visit the link unlocker first to continue.');
@@ -199,31 +204,68 @@ export default function KeySystem() {
       return;
     }
     
-    const popup = window.open(
-      `https://backend.luau.tech/api/auth/license/authorize?action=redirect&turnstile=${turnstileToken}`, 
-      'Discord Auth', 
-      'width=500,height=800'
-    );
-
-    window.addEventListener('message', async function(event) {
-      if (event.data && event.data.key) {
-        await verifyKey(event.data.key);
-        if (popup) popup.close();
+    // Close any existing popup
+    if (popupRef.current && !popupRef.current.closed) {
+      popupRef.current.close();
+    }
+    
+    // Clear any existing interval
+    clearPopupInterval();
+    
+    try {
+      // Create popup with fallback options for cross-browser compatibility
+      const popupUrl = `https://backend.luau.tech/api/auth/license/authorize?action=redirect&turnstile=${turnstileToken}`;
+      
+      // Try to open popup with the typical approach
+      popupRef.current = window.open(
+        popupUrl, 
+        'DiscordAuth', 
+        'width=500,height=800,resizable=yes,scrollbars=yes'
+      );
+      
+      // If popup is blocked or not opened properly
+      if (!popupRef.current || popupRef.current.closed || typeof popupRef.current.closed === 'undefined') {
+        // Fallback: Try opening without popup features
+        popupRef.current = window.open(popupUrl, '_blank');
+        
+        if (!popupRef.current || popupRef.current.closed || typeof popupRef.current.closed === 'undefined') {
+          // Ultimate fallback: redirect in the same window
+          setStatusMessage('Popup was blocked. Opening in new tab...');
+          window.open(popupUrl, '_blank');
+          return;
+        }
       }
-  
-      if (event.data && event.data.error) {
-        setStatusMessage(event.data.error);
-        if (popup) popup.close();
-      }
-    }, false);
+      
+      // Start checking if popup is closed
+      popupCheckInterval.current = setInterval(() => {
+        if (popupRef.current && popupRef.current.closed) {
+          clearPopupInterval();
+          setStatusMessage('Authentication window was closed. Please try again.');
+        }
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Error opening popup:', error);
+      setStatusMessage('Failed to open authentication window. Please try again.');
+    }
   };
 
   const copyKey = async () => {
     if (!verifiedKey) return;
     try {
       await navigator.clipboard.writeText(verifiedKey);
+      // Provide visual feedback
+      const copyButton = document.getElementById('copy-button');
+      if (copyButton) {
+        const originalText = copyButton.textContent;
+        copyButton.textContent = 'Copied!';
+        setTimeout(() => {
+          copyButton.textContent = originalText;
+        }, 2000);
+      }
     } catch (err) {
       console.error('Failed to copy key: ', err);
+      setStatusMessage('Failed to copy key to clipboard');
     }
   };
 
@@ -233,15 +275,44 @@ export default function KeySystem() {
         'http://localhost:3001',
         'http://localhost:3000', 
         'https://www.luau.tech',
-        'https://luau.tech'
+        'https://luau.tech',
+        'https://backend.luau.tech'  // Add the backend domain
       ];
       
-      if (!allowedOrigins.includes(event.origin)) return;
+      // Check if origin is allowed or if it's from our popup (which might have a different origin)
+      const isAllowedOrigin = allowedOrigins.includes(event.origin) || 
+                             (popupRef.current && event.source === popupRef.current);
+      
+      if (!isAllowedOrigin) return;
 
       try {
-        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-        if (data && data.key) {
-          await verifyKey(data.key);
+        // Handle string data
+        let parsedData;
+        if (typeof event.data === 'string') {
+          try {
+            parsedData = JSON.parse(event.data);
+          } catch (e) {
+            // Not JSON, might be a simple string message
+            parsedData = { message: event.data };
+          }
+        } else {
+          // Already an object
+          parsedData = event.data;
+        }
+        
+        // Process the data
+        if (parsedData && parsedData.key) {
+          await verifyKey(parsedData.key);
+          // Close popup if it exists
+          if (popupRef.current && !popupRef.current.closed) {
+            popupRef.current.close();
+          }
+          clearPopupInterval();
+        }
+        
+        if (parsedData && parsedData.error) {
+          setStatusMessage(parsedData.error);
+          clearPopupInterval();
         }
       } catch (error) {
         console.error('Error processing message:', error);
@@ -251,6 +322,7 @@ export default function KeySystem() {
     window.addEventListener('message', handleMessage);
     return () => {
       window.removeEventListener('message', handleMessage);
+      clearPopupInterval();
     };
   }, []);
 
@@ -297,7 +369,7 @@ export default function KeySystem() {
               <p className="text-gray-400">Authorize with your Discord account to get a key</p>
             </div>
 
-            <div id="status-box" className="bg-zinc-800/50 rounded-lg p-4 mb-6">
+            <div id="status-box" className={`bg-zinc-800/50 rounded-lg p-4 mb-6 ${verifiedKey ? 'hidden' : ''}`}>
               <div className="flex items-center justify-center space-x-3">
                 {isLoading && (
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
@@ -306,7 +378,7 @@ export default function KeySystem() {
               </div>
             </div>
 
-            <div className="flex justify-center items-center">
+            <div className={`flex justify-center items-center ${verifiedKey ? 'hidden' : ''}`}>
               <div id="turnstileContainer" className="overflow-hidden rounded-lg" />
             </div>
 
@@ -321,6 +393,7 @@ export default function KeySystem() {
                     className="flex-1 bg-zinc-900 border border-white/10 rounded-md px-3 py-2 text-white select-all"
                   />
                   <button
+                    id="copy-button"
                     onClick={copyKey}
                     className="px-4 py-2 rounded-md bg-midnight text-white text-sm hover:bg-opacity-25 transition-colors"
                   >
