@@ -127,11 +127,11 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
               </>
             ) : (
               <div className="space-y-4 text-sm text-gray-300">
-                <p><strong className="text-white">Step 1:</strong> Copy the script from the Script tab.</p>
-                <p><strong className="text-white">Step 2:</strong> Open your Roblox executor of choice.</p>
+                <p><strong className="text-white">Step 1:</strong> Copy the script from the Script tab</p>
+                <p><strong className="text-white">Step 2:</strong> Open your Roblox executor of choice</p>
                 <p><strong className="text-white">Step 3:</strong> Paste the script into your executor.</p>
-                <p><strong className="text-white">Step 4:</strong> Execute the script while in-game.</p>
-                <p><strong className="text-white">Tip:</strong> If you encounter any issues, try waiting until the game fully loads before executing.</p>
+                <p><strong className="text-white">Step 4:</strong> Execute the script while in-game</p>
+               
                 <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-md">
                   <p className="text-blue-300 flex items-start gap-2">
                     <span className="mt-1"><Sparkles className="w-4 h-4" /></span>
