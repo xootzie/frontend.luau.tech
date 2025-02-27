@@ -189,14 +189,11 @@ export default function KeySystem() {
   };
 
   const handleDiscordAuth = () => {
-    console.log('=== Starting handleDiscordAuth ===');
-    console.log('isValidReferrer:', isValidReferrer);
-    console.log('turnstileWidget state:', !!turnstileWidget);
-    
+   
     if (!isValidReferrer) {
-        console.log('ERROR: Invalid referrer detected, redirecting to link unlocker');
+    
         setStatusMessage('Please visit the link unlocker first to continue.');
-        console.log('Redirecting to:', 'https://linkunlocker.com/starry-license-key-dWrla');
+      
         window.open('https://linkunlocker.com/starry-license-key-dWrla', '_self');
         return;
     }
@@ -205,18 +202,14 @@ export default function KeySystem() {
     if (!window.turnstile) {
         console.log('ERROR: Turnstile script not loaded or not available');
         
-        // Check if the turnstile script is present
         const turnstileScript = document.querySelector('script[src*="challenges.cloudflare.com"]');
         if (!turnstileScript) {
-            console.log('Adding Turnstile script dynamically');
-            
-            // Add Turnstile script dynamically
+         
             const script = document.createElement('script');
             script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
             script.async = true;
             script.onload = () => {
-                console.log('Turnstile script loaded successfully');
-                // Retry the function after script loads
+               
                 setTimeout(handleDiscordAuth, 1000);
             };
             script.onerror = (error) => {
@@ -226,18 +219,16 @@ export default function KeySystem() {
             document.head.appendChild(script);
             return;
         } else {
-            // Script exists but not initialized yet
+        
             console.log('Turnstile script exists but not initialized');
             setStatusMessage('Security check is loading. Please try again in a moment.');
             return;
         }
     }
     
-    // Force initialize turnstileWidget if it's not initialized
     if (!turnstileWidget && window.turnstile) {
-        console.log('Attempting to initialize missing turnstileWidget');
         try {
-            // Check if the container exists
+     
             const container = document.getElementById('turnstileContainer');
             if (!container) {
                 console.error('ERROR: Turnstile container not found');
@@ -245,19 +236,14 @@ export default function KeySystem() {
                 return;
             }
             
-            console.log('turnstileContainer found:', !!container);
-            
-            // Make sure the container is visible
             container.style.display = 'block';
             
-            // Initialize turnstile widget
             const newTurnstileWidget = window.turnstile.render('#turnstileContainer', {
                 sitekey: "0x4AAAAAAA4tVIa8BO3ZNLCH",
                 theme: 'dark',
                 callback: (token) => {
                     console.log('Turnstile callback received token:', !!token);
                     handleTurnstileCallback(token);
-                    // Automatically proceed with auth after getting token
                     setTimeout(() => {
                         console.log('Auto-proceeding with Discord auth after Turnstile completion');
                         handleDiscordAuth();
@@ -266,12 +252,10 @@ export default function KeySystem() {
             });
             
             if (newTurnstileWidget) {
-                console.log('Successfully created new turnstileWidget:', newTurnstileWidget);
-                // Update the turnstileWidget state
+         
                 setTurnstileWidget(newTurnstileWidget);
                 setStatusMessage('Please complete the security check to continue.');
                 
-                // Add the rounded corners to the iframe after a short delay
                 setTimeout(() => {
                     const turnstileIframe = document.querySelector('iframe[src*="challenges.cloudflare.com"]');
                     if (turnstileIframe) {
@@ -279,18 +263,17 @@ export default function KeySystem() {
                     }
                 }, 100);
                 
-                return; // Exit to let the user complete the challenge
+                return;
             } else {
                 console.log('ERROR: Failed to create turnstileWidget');
             }
         } catch (error) {
             console.error('ERROR: Failed to initialize turnstileWidget:', error);
-            // Try a more direct approach as a last resort
+        
             try {
                 const directContainer = document.getElementById('turnstileContainer');
                 if (directContainer) {
-                    console.log('Trying direct innerHTML approach');
-                    // Clear the container and add a button as fallback
+          
                     directContainer.innerHTML = '';
                     
                     const button = document.createElement('button');
@@ -307,14 +290,12 @@ export default function KeySystem() {
         }
     }
    
-    // If we're here with no turnstileWidget, try proceeding anyway if there's a token in session storage
     if (!turnstileWidget) {
-        console.log('ERROR: turnstileWidget is still not initialized, checking session storage');
+       
         const sessionToken = sessionStorage.getItem('turnstileToken');
         
         if (sessionToken) {
-            console.log('Found token in session storage, proceeding with auth');
-            // Continue with the token from session storage
+      
             proceedWithAuth(sessionToken);
             return;
         }
@@ -324,26 +305,22 @@ export default function KeySystem() {
         return;
     }
    
-    console.log('Attempting to get Turnstile response...');
     const turnstileToken = window.turnstile?.getResponse(turnstileWidget);
-    console.log('Turnstile token received:', !!turnstileToken);
+
     
     if (!turnstileToken) {
-        // Check session storage as a backup
+       
         const sessionToken = sessionStorage.getItem('turnstileToken');
         if (sessionToken) {
-            console.log('No widget token, but found token in session storage');
-            // Continue with the token from session storage
+          
             proceedWithAuth(sessionToken);
             return;
         }
         
-        console.log('ERROR: No Turnstile token received');
         setStatusMessage('Please complete the security check first');
         
-        // Try to reset the widget to make it more noticeable
         try {
-            console.log('Resetting turnstile widget to prompt user');
+         
             window.turnstile?.reset(turnstileWidget);
         } catch (resetError) {
             console.error('Failed to reset turnstile widget:', resetError);
@@ -351,13 +328,11 @@ export default function KeySystem() {
         return;
     }
     
-    // Proceed with the authentication using the token
     proceedWithAuth(turnstileToken);
     
-    // Helper function to proceed with authentication
     function proceedWithAuth(token: string) {
         if (popupRef.current && !popupRef.current.closed) {
-            console.log('Closing existing popup');
+           
             popupRef.current.close();
         }
        
@@ -365,54 +340,39 @@ export default function KeySystem() {
         clearPopupInterval();
        
         try {
-            console.log('Starting authentication process');
+      
             const popupUrl = `https://backend.luau.tech/api/auth/license/authorize?action=redirect&turnstile=${token}`;
-            console.log('Auth URL:', popupUrl);
          
-            // Try to open popup with the typical approach
-            console.log('Attempting to open popup with features');
             popupRef.current = window.open(
                 popupUrl,
                 'DiscordAuth',
                 'width=500,height=800,resizable=yes,scrollbars=yes'
             );
-         
-            // Check if popup was successfully opened
-            console.log('Popup open status:', !!popupRef.current);
-            console.log('Popup closed status:', popupRef.current?.closed);
-            console.log('Popup closed is defined:', typeof popupRef.current?.closed !== 'undefined');
-            
-            // If popup is blocked or not opened properly
+        
             if (!popupRef.current || popupRef.current.closed || typeof popupRef.current.closed === 'undefined') {
                 console.log('Primary popup method failed, trying fallback (blank window)');
-                // Fallback: Try opening without popup features
+               
                 popupRef.current = window.open(popupUrl, '_blank');
                
-                console.log('Fallback popup status:', !!popupRef.current);
-                console.log('Fallback popup closed status:', popupRef.current?.closed);
                 
                 if (!popupRef.current || popupRef.current.closed || typeof popupRef.current.closed === 'undefined') {
-                    // Ultimate fallback: redirect in the same window
-                    console.log('All popup methods failed, using ultimate fallback');
+           
                     setStatusMessage('Popup was blocked. Opening in new tab...');
-                    console.log('Opening URL in new tab');
+            
                     window.open(popupUrl, '_blank');
                     return;
                 }
             }
          
-            // Start checking if popup is closed
-            console.log('Setting up popup check interval');
             popupCheckInterval.current = setInterval(() => {
-                console.log('Checking if popup is still open:', !popupRef.current?.closed);
+        
                 if (popupRef.current && popupRef.current.closed) {
-                    console.log('Popup was closed by user');
+                 
                     clearPopupInterval();
                     setStatusMessage('Authentication window was closed. Please try again.');
                 }
             }, 1000);
             
-            console.log('Auth popup successfully launched');
         } catch (error) {
             console.error('CRITICAL ERROR opening popup:', error);
             if (error instanceof Error) {
@@ -425,15 +385,13 @@ export default function KeySystem() {
             setStatusMessage('Failed to open authentication window. Please try again.');
         }
     }
-    
-    console.log('=== handleDiscordAuth completed ===');
 };
 
   const copyKey = async () => {
     if (!verifiedKey) return;
     try {
       await navigator.clipboard.writeText(verifiedKey);
-      // Provide visual feedback
+ 
       const copyButton = document.getElementById('copy-button');
       if (copyButton) {
         const originalText = copyButton.textContent;
@@ -455,17 +413,16 @@ export default function KeySystem() {
         'http://localhost:3000', 
         'https://www.luau.tech',
         'https://luau.tech',
-        'https://backend.luau.tech'  // Add the backend domain
+        'https://backend.luau.tech'
       ];
       
-      // Check if origin is allowed or if it's from our popup (which might have a different origin)
       const isAllowedOrigin = allowedOrigins.includes(event.origin) || 
                              (popupRef.current && event.source === popupRef.current);
       
       if (!isAllowedOrigin) return;
 
       try {
-        // Handle string data
+       
         let parsedData;
         if (typeof event.data === 'string') {
           try {
@@ -475,14 +432,13 @@ export default function KeySystem() {
             parsedData = { message: event.data };
           }
         } else {
-          // Already an object
+      
           parsedData = event.data;
         }
         
-        // Process the data
         if (parsedData && parsedData.key) {
           await verifyKey(parsedData.key);
-          // Close popup if it exists
+        
           if (popupRef.current && !popupRef.current.closed) {
             popupRef.current.close();
           }
