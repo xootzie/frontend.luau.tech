@@ -143,7 +143,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
             
             <div className="mt-6 flex justify-between">
               <a
-                href="#discord"
+                href="/d?invite=luau"
                 className="px-4 py-2 rounded-md bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 transition-colors text-sm font-medium flex items-center gap-2"
               >
                 <ExternalLink className="w-4 h-4" />
