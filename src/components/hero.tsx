@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Code, Copy, Check, Sparkles, Download, ExternalLink } from "lucide-react";
+import { Code, Copy, Check, Sparkles, Download, ExternalLink, ChevronDown } from "lucide-react";
 
 interface CodeModalProps {
   isOpen: boolean;
@@ -8,6 +8,7 @@ interface CodeModalProps {
 }
 
 const CodeModal: React.FC<CodeModalProps> = ({ isOpen, onClose, isClosing }) => {
+  // Existing CodeModal code unchanged
   const [isCopied, setIsCopied] = useState(false);
   const [selectedTab, setSelectedTab] = useState<'script' | 'guide'>('script');
   const modalRef = useRef<HTMLDivElement>(null);
@@ -170,7 +171,7 @@ const HeroSection: React.FC = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [textGradientPosition, setTextGradientPosition] = useState({ x: 50, y: 50 });
   const [isHovering, setIsHovering] = useState(false);
-
+  const [scrollButtonVisible, setScrollButtonVisible] = useState(true);
 
   const handleButtonClick = useCallback(() => {
     setIsClicked(true);
@@ -195,7 +196,27 @@ const HeroSection: React.FC = () => {
     }
   }, []);
   
-
+  // Function to scroll down when button is clicked
+  const scrollDown = () => {
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: 'smooth'
+    });
+  };
+  
+  // Hide scroll button when scrolled down
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setScrollButtonVisible(false);
+      } else {
+        setScrollButtonVisible(true);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -212,8 +233,6 @@ const HeroSection: React.FC = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-blue-950 backdrop-blur-sm">
-    
-      
       <div
         className={`relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center transform transition-all duration-1000 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
@@ -259,8 +278,6 @@ const HeroSection: React.FC = () => {
             <span className="relative">View Script</span>
             <Code className="w-4 h-4 sm:w-5 sm:h-5 relative transition-transform group-hover:translate-x-1" />
           </button>
-          
-         
         </div>
         
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center max-w-4xl mx-auto">
@@ -290,7 +307,20 @@ const HeroSection: React.FC = () => {
         </div>
       </div>
 
-     
+      {/* Bouncing Scroll Down Button */}
+      <div 
+        className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 transition-opacity duration-300 z-30 ${
+          scrollButtonVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <button 
+          onClick={scrollDown}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center animate-bounce transition-all duration-300"
+        >
+          Scroll Down
+          <ChevronDown className="ml-2 w-5 h-5" />
+        </button>
+      </div>
 
       <CodeModal 
         isOpen={showModal} 
