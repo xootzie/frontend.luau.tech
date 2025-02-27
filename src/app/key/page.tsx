@@ -41,8 +41,8 @@ export default function KeySystem() {
 
   const checkReferrer = useCallback(() => {
     const referrer = document.referrer;
-    // const isValid = referrer.includes('https://linkunlocker.com/');
-    const isValid = true;
+    const isValid = referrer.includes('https://linkunlocker.com/');
+    // const isValid = true;
    
     setIsValidReferrer(isValid);
     
@@ -471,7 +471,7 @@ export default function KeySystem() {
           try {
             parsedData = JSON.parse(event.data);
           } catch (e) {
-            // Not JSON, might be a simple string message
+            console.log(e);
             parsedData = { message: event.data };
           }
         } else {
