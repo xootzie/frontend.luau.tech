@@ -117,7 +117,13 @@ export default function KeySystem() {
 
   const renderTurnstileWidget = useCallback(() => {
     if (!window.turnstile || !isValidReferrer) return;
-    
+
+    if (sessionStorage.getItem('turnstileToken')) {
+
+      sessionStorage.removeItem('turnstileToken');
+    };
+   
+
     try {
       const container = document.getElementById('turnstileContainer');
       if (!container) return;
@@ -292,7 +298,7 @@ export default function KeySystem() {
       setStatusMessage('Loading verification...');
       try {
         await loadTurnstileScript();
-        renderTurnstileWidget(); // This will now clear and render a single widget
+        renderTurnstileWidget();
       } catch (error) {
         console.error('Failed to load Turnstile:', error);
         setStatusMessage('Failed to load security verification. Please refresh the page.');
@@ -302,9 +308,8 @@ export default function KeySystem() {
     
     setStatusMessage('Please complete the security check first');
     
-    // Instead of potentially creating a new widget, just reset the current one
     if (turnstileWidgetId.current && window.turnstile) {
-      renderTurnstileWidget(); // This will now properly reset and render
+      renderTurnstileWidget();
     } else {
       renderTurnstileWidget();
     }
@@ -440,7 +445,6 @@ export default function KeySystem() {
           console.error('Failed to initialize Turnstile:', error);
           setStatusMessage('Failed to load security verification. Please refresh and try again.');
         });
-    
     
     const sessionToken = sessionStorage.getItem('turnstileToken');
     if (sessionToken) {
