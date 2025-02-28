@@ -187,6 +187,7 @@ export default function KeySystem() {
    
 
     try {
+      sessionStorage.removeItem('turnstileToken');
       const ipResponse = await fetch('https://backend.luau.tech/api/user/information');
       const ipData = await ipResponse.json();
       const clientIp = encodeURIComponent(ipData.ip);
