@@ -118,10 +118,8 @@ export default function KeySystem() {
   const renderTurnstileWidget = useCallback(() => {
     if (!window.turnstile || !isValidReferrer) return;
 
-    if (sessionStorage.getItem('turnstileToken')) {
-
       sessionStorage.removeItem('turnstileToken');
-    };
+  
    
 
     try {
