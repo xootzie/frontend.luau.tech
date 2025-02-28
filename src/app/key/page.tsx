@@ -164,13 +164,10 @@ export default function KeySystem() {
   // }, []);
 
   const checkExistingKey = useCallback(async () => {
-    if (!isValidReferrer) {
-      setIsLoading(false);
-      return;
-    }
+   
 
     try {
-      const ipResponse = await fetch('https://api.ipify.org?format=json');
+      const ipResponse = await fetch('https://backend.luau.tech/api/user/information');
       const ipData = await ipResponse.json();
       const clientIp = encodeURIComponent(ipData.ip);
 
