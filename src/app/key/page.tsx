@@ -142,7 +142,7 @@ export default function KeySystem() {
         theme: 'dark',
         callback: (token) => {
           setTurnstileToken(token);
-          setStatusMessage('Verification complete. Click to continue.');
+          setStatusMessage('You may now Authorize with your Discord account.');
           sessionStorage.setItem('turnstileToken', token);
         }
       });
@@ -154,6 +154,14 @@ export default function KeySystem() {
         }
       }, 200);
       
+      const btn_temp1 = document.getElementById('discord-auth-button');
+      if (btn_temp1) {
+        btn_temp1.classList.remove('bg-[#5865F2]');
+        btn_temp1.classList.remove('hover:bg-[#4752C4]');
+        btn_temp1.classList.add('bg-yellow-500');
+        btn_temp1.classList.add('hover:bg-yellow-600');
+        btn_temp1.innerHTML = 'Refresh Captcha';
+      }
       setStatusMessage('Please complete the security check to continue.');
     } catch (error) {
       console.error('Failed to render Turnstile widget:', error);
@@ -446,8 +454,17 @@ export default function KeySystem() {
     
     const sessionToken = sessionStorage.getItem('turnstileToken');
     if (sessionToken) {
+      const btn_temp1 = document.getElementById('discord-auth-button');
+      if (btn_temp1) {
+        btn_temp1.classList.remove('bg-yellow-500');
+        btn_temp1.classList.remove('hover:bg-yellow-600');
+        btn_temp1.classList.add('bg-[#5865F2]');
+        btn_temp1.classList.add('hover:bg-[#4752C4]');
+        btn_temp1.innerHTML = 'Authorize With Discord';
+      }
       setTurnstileToken(sessionToken);
       setStatusMessage('Verification complete. Click to continue.');
+
     }
 
     return () => {
