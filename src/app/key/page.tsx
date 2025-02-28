@@ -427,9 +427,8 @@ export default function KeySystem() {
   }, []);
 
   useEffect(() => {
-    const isValid = checkReferrer();
+    // const isValid = checkReferrer();
     
-    if (isValid) {
    
       checkExistingKey();
       
@@ -441,7 +440,7 @@ export default function KeySystem() {
           console.error('Failed to initialize Turnstile:', error);
           setStatusMessage('Failed to load security verification. Please refresh and try again.');
         });
-    }
+    
     
     const sessionToken = sessionStorage.getItem('turnstileToken');
     if (sessionToken) {
