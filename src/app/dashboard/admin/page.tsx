@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { AlertCircle, Check, ChevronDown, Search, X, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { AlertCircle, Check, ChevronDown, Search, X, ChevronLeft, ChevronRight, Trash2, Save, Key } from 'lucide-react';
 import Cookies from 'js-cookie';
 import Navigation from '@/components/navigation';
 
@@ -320,10 +320,17 @@ const LicenseCard: React.FC<{
 );
 
 const LicenseManager = () => {
+  // Input states
+  const [tokenInput, setTokenInput] = useState('');
+  const [bypassKeyInput, setBypassKeyInput] = useState('');
+  
+  // Actual values used for API calls
   const [licenseKey, setLicenseKey] = useState('');
   const [bearerToken, setBearerToken] = useState('');
   const [bypassKey, setBypassKey] = useState('');
+  
   const [loading, setLoading] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
   const [selectedField, setSelectedField] = useState<keyof typeof fields>('x-client-ip');
   const [fieldValue, setFieldValue] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -343,6 +350,7 @@ const LicenseManager = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPurging, setIsPurging] = useState(false);
   const [purgeConfirmation, setPurgeConfirmation] = useState(false);
+  const hasInitializedRef = useRef(false);
 
   interface ToastState {
     message: string;
@@ -352,19 +360,34 @@ const LicenseManager = () => {
   
   const [toast, setToast] = useState<ToastState | null>(null);
 
+  // Only load cookies once during initialization
   useEffect(() => {
+    if (hasInitializedRef.current) return;
+    
     const savedBearerToken = Cookies.get('bearerToken');
     const savedBypassKey = Cookies.get('bypassKey');
     
-    if (savedBearerToken) setBearerToken(savedBearerToken);
-    if (savedBypassKey) setBypassKey(savedBypassKey);
+    if (savedBearerToken) {
+      setBearerToken(savedBearerToken);
+      setTokenInput(savedBearerToken);
+    }
+    
+    if (savedBypassKey) {
+      setBypassKey(savedBypassKey);
+      setBypassKeyInput(savedBypassKey);
+    }
+    
+    hasInitializedRef.current = true;
   }, []);
 
-  const fetchAllLicenses = async () => {
+  const fetchAllLicenses = useCallback(async () => {
     if (!bearerToken) {
       showToast('Bearer token is required', 'error');
       return;
     }
+
+    // Prevent multiple simultaneous requests
+    if (loadingAllLicenses) return;
 
     setLoadingAllLicenses(true);
     try {
@@ -399,20 +422,33 @@ const LicenseManager = () => {
     } finally {
       setLoadingAllLicenses(false);
     }
+  }, [bearerToken, bypassKey, loadingAllLicenses]);
+
+  const handleAuthenticate = () => {
+    setAuthLoading(true);
+    
+    // Update the actual bearer token and bypass key
+    setBearerToken(tokenInput);
+    setBypassKey(bypassKeyInput);
+    
+    // Save to cookies
+    if (tokenInput) {
+      Cookies.set('bearerToken', tokenInput, { expires: 30 });
+    }
+    
+    if (bypassKeyInput) {
+      Cookies.set('bypassKey', bypassKeyInput, { expires: 30 });
+    }
+    
+    // Fetch licenses if bearer token is provided
+    if (tokenInput) {
+      fetchAllLicenses().finally(() => {
+        setAuthLoading(false);
+      });
+    } else {
+      setAuthLoading(false);
+    }
   };
-
-  useEffect(() => {
-    if (bearerToken) {
-      Cookies.set('bearerToken', bearerToken, { expires: 30 });
-      fetchAllLicenses();
-    }
-  }, [bearerToken, fetchAllLicenses]);
-
-  useEffect(() => {
-    if (bypassKey) {
-      Cookies.set('bypassKey', bypassKey, { expires: 30 });
-    }
-  }, [bypassKey]);
 
   const fields = {
     'x-client-ip': 'Client IP',
@@ -534,6 +570,7 @@ const LicenseManager = () => {
   };
 
   const handleReset = async () => {
+    if (loading) return;
     setLoading(true);
 
     try {
@@ -574,6 +611,8 @@ const LicenseManager = () => {
   };
 
   const handleUpdate = async () => {
+    if (loading) return;
+    
     if (!selectedField || !fieldValue) {
       showToast('Please select a field and enter a value', 'error');
       return;
@@ -620,6 +659,8 @@ const LicenseManager = () => {
   };
 
   const handleDiscordSearch = async () => {
+    if (searchLoading) return;
+    
     if (!discordId || !bearerToken) {
       showToast('Please enter Discord ID and Bearer Token', 'error');
       return;
@@ -741,8 +782,8 @@ const LicenseManager = () => {
                   type="password"
                   className="w-full px-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
                   placeholder="Enter Bearer Token"
-                  value={bearerToken}
-                  onChange={(e) => setBearerToken(e.target.value)}
+                  value={tokenInput}
+                  onChange={(e) => setTokenInput(e.target.value)}
                 />
               </div>
               
@@ -763,175 +804,192 @@ const LicenseManager = () => {
                   type="password"
                   className="w-full px-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
                   placeholder="Enter Bypass Key"
-                  value={bypassKey}
-                  onChange={(e) => setBypassKey(e.target.value)}
+                  value={bypassKeyInput}
+                  onChange={(e) => setBypassKeyInput(e.target.value)}
                 />
               </div>
+              
+              <button
+                onClick={handleAuthenticate}
+                disabled={!tokenInput || authLoading}
+                className={`w-full px-4 py-3 rounded-lg ${
+                  !tokenInput || authLoading
+                    ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                } transition-colors flex items-center justify-center gap-2`}
+              >
+                {authLoading ? 'Authenticating...' : 'Authenticate'}
+                {!authLoading && <Key className="w-4 h-4" />}
+              </button>
+           
             </CardContent>
           </Card>
-
+          
           <Card>
             <CardHeader>
               <CardTitle>License Management</CardTitle>
-              <CardDescription>Update license fields and settings</CardDescription>
+              <CardDescription>Modify and reset license information</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="relative">
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center justify-between gap-2 w-40 px-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
+                  >
+                    <span>{fields[selectedField]}</span>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {isDropdownOpen && (
+                    <div className="absolute z-10 w-full mt-1 bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden shadow-lg">
+                      {Object.entries(fields).map(([key, value]) => (
+                        <button
+                          key={key}
+                          onClick={() => {
+                            setSelectedField(key as keyof typeof fields);
+                            setIsDropdownOpen(false);
+                          }}
+                          className="w-full px-4 py-2 text-left hover:bg-black/40 transition-colors"
+                        >
+                          {value}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                <input
+                  type="text"
+                  className="flex-1 px-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
+                  placeholder={`Enter ${fields[selectedField]}`}
+                  value={fieldValue}
+                  onChange={(e) => setFieldValue(e.target.value)}
+                />
+              </div>
+              
+              <div className="flex gap-2">
                 <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="w-full px-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-left hover:bg-black/60 transition-all duration-300 flex justify-between items-center"
+                  onClick={handleUpdate}
+                  disabled={!bearerToken || !licenseKey || loading}
+                  className={`flex-1 px-4 py-2 rounded-lg ${
+                    !bearerToken || !licenseKey || loading
+                      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                      : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                  } transition-colors flex items-center justify-center gap-2`}
                 >
-                  <span className="text-zinc-400">
-                    {selectedField ? fields[selectedField] : 'Select field to update'}
-                  </span>
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                  {loading ? 'Updating...' : 'Update License'}
+                  {!loading && <Save className="w-4 h-4" />}
                 </button>
                 
-                {isDropdownOpen && (
-                  <div className="absolute w-full mt-2 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl z-10">
-                    {Object.entries(fields).map(([key, label]) => (
-                      <div
-                        key={key}
-                        className="px-4 py-2 hover:bg-zinc-800 cursor-pointer text-zinc-300 hover:text-white transition-colors"
-                        onClick={() => {
-                          setSelectedField(key as keyof typeof fields);
-                          setIsDropdownOpen(false);
-                        }}
+                <button
+                  onClick={handleReset}
+                  disabled={!bearerToken || !licenseKey || loading}
+                  className={`flex-1 px-4 py-2 rounded-lg ${
+                    !bearerToken || !licenseKey || loading
+                      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                      : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                  } transition-colors`}
+                >
+                  {loading ? 'Resetting...' : 'Reset IP'}
+                </button>
+                <button
+                onClick={() => setDeleteConfirmation({ isOpen: true, license: activeKeys.find(key => key.key === licenseKey) || null })}
+                disabled={!bearerToken || !licenseKey || loading}
+                className={`px-4 py-2 rounded-lg ${
+                  !bearerToken || !licenseKey || loading
+                    ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                    : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+                } transition-colors flex items-center justify-center gap-2`}
+              >
+                {loading ? 'Deleting...' : ''}
+                {!loading && <Trash2 className="w-4 h-4" />}
+              </button>
+              </div>
+              
+              <hr className="border-zinc-800" />
+              
+              <div className="space-y-2">
+                <label className="text-sm text-zinc-400">Discord ID Search</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    className="flex-1 px-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
+                    placeholder="Enter Discord ID"
+                    value={discordId}
+                    onChange={(e) => setDiscordId(e.target.value)}
+                  />
+                  <button
+                    onClick={handleDiscordSearch}
+                    disabled={!bearerToken || !discordId || searchLoading}
+                    className={`px-4 py-2 rounded-lg ${
+                      !bearerToken || !discordId || searchLoading
+                        ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                        : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                    } transition-colors flex items-center justify-center gap-2`}
+                  >
+                    {searchLoading ? 'Searching...' : 'Search'}
+                    {!searchLoading && <Search className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+              
+              {activeKeys.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm text-zinc-400">Found {activeKeys.length} license(s) for Discord ID: {discordId}</p>
+                  <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
+                    {activeKeys.map((key, i) => (
+                      <div 
+                        key={i} 
+                        className="p-3 bg-black/40 border border-zinc-800 rounded-lg flex items-center justify-between"
                       >
-                        {label}
+                        <div>
+                          <p className="font-mono">{key.key}</p>
+                          <p className="text-xs text-zinc-400">
+                            Type: {key.type} | Expires: {new Date(key.expiresAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => setLicenseKey(key.key)}
+                          className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                        >
+                          Use this key
+                        </button>
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
-
-              <input
-                type={selectedField === 'x-expires-at' ? 'datetime-local' : 'text'}
-                className="w-full px-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
-                placeholder="Enter new value"
-                value={fieldValue}
-                onChange={(e) => setFieldValue(e.target.value)}
-              />
-
-              <div className="flex gap-4">
-              <button
-  onClick={handleUpdate}
-  disabled={loading || !licenseKey || !bearerToken}
-  className={`flex-1 px-6 py-2 rounded-lg ${
-    loading || !licenseKey || !bearerToken
-      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-      : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20'
-  } transition-all duration-300 font-medium`}
->
-  {loading ? 'Updating...' : 'Update Field'}
-</button>
-
-<button
-  onClick={() => setDeleteConfirmation({ 
-    isOpen: true, 
-    license: { key: licenseKey, _id: '' } as License 
-  })}
-  disabled={loading || !licenseKey || !bearerToken}
-  className={`flex-1 px-6 py-2 rounded-lg ${
-    loading || !licenseKey || !bearerToken
-      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-      : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
-  } transition-all duration-300 font-medium`}
->
-  Delete License
-</button>
-                <button
-                  onClick={handleReset}
-                  disabled={loading || !licenseKey || !bearerToken}
-                  className={`flex-1 px-6 py-2 rounded-lg ${
-                    loading || !licenseKey || !bearerToken
-                      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                      : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white'
-                  } transition-all duration-300 font-medium`}
-                >
-                  Reset IP
-                </button>
-              </div>
+                </div>
+              )}
+           
             </CardContent>
           </Card>
         </div>
-
+        
         <Card>
-          <CardHeader>
-            <CardTitle>Discord License Search</CardTitle>
-            <CardDescription>Search for active licenses by Discord ID</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-4">
-              <input
-                type="text"
-                className="flex-1 px-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
-                placeholder="Enter Discord ID"
-                value={discordId}
-                onChange={(e) => setDiscordId(e.target.value)}
-              />
-              <button
-                onClick={handleDiscordSearch}
-                disabled={searchLoading || !discordId || !bearerToken}
-                className={`px-6 py-2 rounded-lg flex items-center gap-2 ${
-                  searchLoading || !discordId || !bearerToken
-                    ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                    : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20'
-                } transition-all duration-300 font-medium`}
-              >
-                <Search className="w-4 h-4" />
-                {searchLoading ? 'Searching...' : 'Search'}
-              </button>
-            </div>
-
-            {activeKeys.length > 0 && (
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium text-zinc-400">Active Licenses</h4>
-                <div className="space-y-2">
-                {activeKeys.map((license) => (
-                    <LicenseCard
-                      key={license.key}
-                      license={license}
-                      onSelect={setLicenseKey}
-                      expanded={expandedLicenses.has(license.key)}
-                      onToggle={() => toggleLicenseExpanded(license.key)}
-                      onDelete={(license) => setDeleteConfirmation({ isOpen: true, license })}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center">
+          <CardHeader className="flex flex-row justify-between items-center">
             <div>
-              <CardTitle>All Licenses</CardTitle>
-              <CardDescription>View and manage all licenses in the system</CardDescription>
+              <CardTitle>License Database</CardTitle>
+              <CardDescription>View and manage all licenses</CardDescription>
             </div>
-            <div className="flex gap-4 mt-4 sm:mt-0">
+            <div className="flex items-center gap-2">
               <div className="relative">
-                <Search className="w-4 h-4 absolute top-1/2 transform -translate-y-1/2 left-3 text-zinc-500" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-500 pointer-events-none" size={16} />
                 <input
                   type="text"
-                  className="pl-10 pr-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300 w-full sm:w-60"
                   placeholder="Search licenses..."
                   value={licenseSearchTerm}
-                  onChange={(e) => {
-                    setLicenseSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
+                  onChange={(e) => setLicenseSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 bg-black/40 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300 w-60"
                 />
               </div>
               <button
                 onClick={fetchAllLicenses}
-                disabled={loadingAllLicenses || !bearerToken}
+                disabled={!bearerToken || loadingAllLicenses}
                 className={`px-4 py-2 rounded-lg ${
-                  loadingAllLicenses || !bearerToken
+                  !bearerToken || loadingAllLicenses
                     ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                    : 'bg-blue-500/10 text-blue-400 hover:bg-blue-500/20'
-                } transition-all duration-300 font-medium flex items-center gap-2`}
+                    : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                } transition-colors flex items-center justify-center`}
               >
                 {loadingAllLicenses ? 'Loading...' : 'Refresh'}
               </button>
@@ -939,83 +997,96 @@ const LicenseManager = () => {
           </CardHeader>
           <CardContent>
             {loadingAllLicenses ? (
-              <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-              </div>
-            ) : allLicenses.length === 0 ? (
-              <div className="text-center py-12 text-zinc-400">
-                <p>No licenses found. Please authenticate to view licenses.</p>
-              </div>
-            ) : currentLicenses.length === 0 ? (
-              <div className="text-center py-12 text-zinc-400">
-                <p>No licenses match your search criteria.</p>
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
               </div>
             ) : (
-              <div className="space-y-4">
-                <div className="space-y-4">
-                  {currentLicenses.map((license) => (
-                    <LicenseCard
-                      key={license.key} 
-                      license={license}
-                      onSelect={setLicenseKey}
-                      expanded={expandedLicenses.has(license.key)}
-                      onToggle={() => toggleLicenseExpanded(license.key)}
-                      onDelete={(license) => setDeleteConfirmation({ isOpen: true, license })}
-                    />
-                  ))}
-                </div>
-                
-                {totalPages > 1 && (
-                  <div className="flex justify-between items-center pt-4 border-t border-zinc-800">
-                    <div className="text-sm text-zinc-400">
-                      Showing {indexOfFirstLicense + 1} to {Math.min(indexOfLastLicense, filteredLicenses.length)} of {filteredLicenses.length} licenses
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={prevPage}
-                        disabled={currentPage === 1}
-                        className={`p-2 rounded-lg ${
-                          currentPage === 1
-                            ? 'text-zinc-600 cursor-not-allowed'
-                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                        }`}
-                      >
-                        <ChevronLeft className="w-5 h-5" />
-                      </button>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1)
-                        .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
-                        .map((page, idx, arr) => (
-                          <React.Fragment key={page}>
-                            {idx > 0 && arr[idx - 1] !== page - 1 && (
-                              <span className="p-2 text-zinc-600">...</span>
-                            )}
-                            <button
-                              onClick={() => paginate(page)}
-                              className={`px-3 py-1 rounded-lg ${
-                                currentPage === page
-                                  ? 'bg-blue-500/20 text-blue-400'
-                                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                              }`}
-                            >
-                              {page}
-                            </button>
-                          </React.Fragment>
-                        ))}
-                      <button
-                        onClick={nextPage}
-                        disabled={currentPage === totalPages}
-                        className={`p-2 rounded-lg ${
-                          currentPage === totalPages
-                            ? 'text-zinc-600 cursor-not-allowed'
-                            : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                        }`}
-                      >
-                        <ChevronRight className="w-5 h-5" />
-                      </button>
-                    </div>
+              <>
+                {currentLicenses.length === 0 ? (
+                  <div className="py-8 text-center">
+                    <p className="text-zinc-400">No licenses found</p>
+                    {!bearerToken && (
+                      <p className="text-sm text-zinc-500 mt-2">Please authenticate to view licenses</p>
+                    )}
                   </div>
+                ) : (
+                  <>
+                    <div className="space-y-4">
+                      {currentLicenses.map((license) => (
+                        <LicenseCard
+                          key={license._id || license.key}
+                          license={license}
+                          onSelect={(key) => setLicenseKey(key)}
+                          expanded={expandedLicenses.has(license.key)}
+                          onToggle={() => toggleLicenseExpanded(license.key)}
+                          onDelete={(license) => setDeleteConfirmation({ isOpen: true, license })}
+                        />
+                      ))}
+                    </div>
+                    
+                    {filteredLicenses.length > licensesPerPage && (
+                      <div className="flex items-center justify-between mt-6">
+                        <p className="text-sm text-zinc-400">
+                          Showing {indexOfFirstLicense + 1}-{Math.min(indexOfLastLicense, filteredLicenses.length)} of {filteredLicenses.length} licenses
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={prevPage}
+                            disabled={currentPage === 1}
+                            className={`p-2 rounded-lg ${
+                              currentPage === 1
+                                ? 'text-zinc-700 cursor-not-allowed'
+                                : 'text-zinc-400 hover:bg-zinc-800'
+                            }`}
+                          >
+                            <ChevronLeft className="w-5 h-5" />
+                          </button>
+                          
+                          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            // Show pages around current page
+                            let pageNum;
+                            if (totalPages <= 5) {
+                              pageNum = i + 1;
+                            } else if (currentPage <= 3) {
+                              pageNum = i + 1;
+                            } else if (currentPage >= totalPages - 2) {
+                              pageNum = totalPages - 4 + i;
+                            } else {
+                              pageNum = currentPage - 2 + i;
+                            }
+                            
+                            return (
+                              <button
+                                key={i}
+                                onClick={() => paginate(pageNum)}
+                                className={`w-8 h-8 flex items-center justify-center rounded-md ${
+                                  currentPage === pageNum
+                                    ? 'bg-blue-500/20 text-blue-400'
+                                    : 'text-zinc-400 hover:bg-zinc-800'
+                                }`}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          })}
+                          
+                          <button
+                            onClick={nextPage}
+                            disabled={currentPage === totalPages}
+                            className={`p-2 rounded-lg ${
+                              currentPage === totalPages
+                                ? 'text-zinc-700 cursor-not-allowed'
+                                : 'text-zinc-400 hover:bg-zinc-800'
+                            }`}
+                          >
+                            <ChevronRight className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
-              </div>
+              </>
             )}
           </CardContent>
         </Card>
