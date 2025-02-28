@@ -134,7 +134,7 @@ export default function KeySystem() {
       }
       
       turnstileWidgetId.current = window.turnstile.render('#turnstileContainer', {
-        sitekey: "1x00000000000000000000AA",
+        sitekey: "0x4AAAAAAA4tVIa8BO3ZNLCH",
         theme: 'dark',
         callback: (token) => {
           setTurnstileToken(token);
