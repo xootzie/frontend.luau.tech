@@ -320,11 +320,10 @@ const LicenseCard: React.FC<{
 );
 
 const LicenseManager = () => {
-  // Input states
+  
   const [tokenInput, setTokenInput] = useState('');
   const [bypassKeyInput, setBypassKeyInput] = useState('');
   
-  // Actual values used for API calls
   const [licenseKey, setLicenseKey] = useState('');
   const [bearerToken, setBearerToken] = useState('');
   const [bypassKey, setBypassKey] = useState('');
@@ -894,17 +893,29 @@ const LicenseManager = () => {
                   {loading ? 'Resetting...' : 'Reset IP'}
                 </button>
                 <button
-                onClick={() => setDeleteConfirmation({ isOpen: true, license: activeKeys.find(key => key.key === licenseKey) || null })}
-                disabled={!bearerToken || !licenseKey || loading}
-                className={`px-4 py-2 rounded-lg ${
-                  !bearerToken || !licenseKey || loading
-                    ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                    : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
-                } transition-colors flex items-center justify-center gap-2`}
-              >
-                {loading ? 'Deleting...' : ''}
-                {!loading && <Trash2 className="w-4 h-4" />}
-              </button>
+  onClick={() => {
+    const foundLicense = activeKeys.find(key => key.key === licenseKey);
+    setDeleteConfirmation({ 
+      isOpen: true, 
+      license: foundLicense || {
+        key: licenseKey,
+        type: '',
+        expiresAt: '',
+        generatedAt: '',
+        isExpired: false
+      } 
+    });
+  }}
+  disabled={!bearerToken || !licenseKey || loading}
+  className={`px-4 py-2 rounded-lg ${
+    !bearerToken || !licenseKey || loading
+      ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+      : 'bg-red-500/20 text-red-400 hover:bg-red-500/30'
+  } transition-colors flex items-center justify-center gap-2`}
+>
+  {loading ? 'Deleting...' : ''}
+  {!loading && <Trash2 className="w-4 h-4" />}
+</button>
               </div>
               
               <hr className="border-zinc-800" />
