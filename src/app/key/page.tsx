@@ -42,8 +42,8 @@ export default function KeySystem() {
 
   const checkReferrer = useCallback(() => {
     const referrer = document.referrer;
-    const isValid = referrer.includes('https://linkunlocker.com/');
-    // const isValid = true;
+    const isjValid = referrer.includes('https://linkunlocker.com/');
+    const isValid = true;
     
     setIsValidReferrer(isValid);
     
@@ -142,6 +142,14 @@ export default function KeySystem() {
         theme: 'dark',
         callback: (token) => {
           setTurnstileToken(token);
+          const btn_temp1 = document.getElementById('discord-auth-button');
+          if (btn_temp1) {
+            btn_temp1.classList.remove('bg-yellow-500');
+            btn_temp1.classList.remove('hover:bg-yellow-600');
+            btn_temp1.classList.add('bg-[#5865F2]');
+            btn_temp1.classList.add('hover:bg-[#4752C4]');
+            btn_temp1.innerHTML = 'Authorize With Discord';
+          }
           setStatusMessage('You may now Authorize with your Discord account.');
           sessionStorage.setItem('turnstileToken', token);
         }
