@@ -427,12 +427,12 @@ export default function KeySystem() {
   }, []);
 
   useEffect(() => {
-    // const isValid = checkReferrer();
+    const isValid = checkReferrer();
     
    
       checkExistingKey();
-      
-      loadTurnstileScript()
+      if (isValid) {
+        loadTurnstileScript()
         .then(() => {
           renderTurnstileWidget();
         })
@@ -457,6 +457,9 @@ export default function KeySystem() {
         }
       }
     };
+
+      }
+
   }, [checkReferrer, checkExistingKey, loadTurnstileScript, renderTurnstileWidget]);
 
   return (
