@@ -42,8 +42,8 @@ export default function KeySystem() {
 
   const checkReferrer = useCallback(() => {
     const referrer = document.referrer;
-    const isjValid = referrer.includes('https://linkunlocker.com/');
-    const isValid = true;
+    const isValid = referrer.includes('https://linkunlocker.com/');
+    // const isValid = true;
     
     setIsValidReferrer(isValid);
     
