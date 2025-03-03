@@ -177,7 +177,7 @@ export default function LicenseValidationPage() {
       
       {result && (
         <div className="mt-6 p-4 border rounded">
-          <h2 className="text-xl font-semibold mb-2">Result</h2>
+          <h2 className="text-white text-xl font-semibold mb-2">Result</h2>
           {result.error ? (
             <div className="text-red-600">Error: {result.error}</div>
           ) : (
