@@ -159,21 +159,30 @@ export default function LicenseValidationPage() {
     return iv;
   }
 
+  interface ParsedResponse {
+    status: string;
+    sessionId: string;
+    timestamp: number;
+    clientIpHash: string;
+    verificationToken: string;
+  }
+  
   const verifyResponseIntegrity = (
-    parsedResponse: any, 
-    licenseKey: string, 
-    clientIP: string, 
-    serverSecret: string
-  ) => {
+      parsedResponse: ParsedResponse, 
+      licenseKey: string, 
+      clientIP: string, 
+      serverSecret: string
+    ) => {
     try {
-      // Extract verification data
+    
+      const parsed = parsedResponse;
       const { 
         status, 
         sessionId, 
         timestamp, 
         clientIpHash, 
         verificationToken 
-      } = parsedResponse;
+      } = parsed;
 
       addDebugLog('Verifying response integrity');
       
@@ -290,7 +299,6 @@ export default function LicenseValidationPage() {
       
       addDebugLog('Response integrity verified successfully');
       
-      // Check the license status using the obfuscated values
       let status = false;
       if (parsedResponse.status === LICENSE_VALID) {
         addDebugLog('Valid license detected');
