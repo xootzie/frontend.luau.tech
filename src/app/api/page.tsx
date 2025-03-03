@@ -57,7 +57,6 @@ export default function LicenseValidationPage() {
   const [clientIP, setClientIP] = useState('');
   const [debugLog, setDebugLog] = useState<string[]>([]);
 
-  // Helper function to add to debug log
   const addDebugLog = (message: string) => {
     const timestamp = new Date().toLocaleTimeString();
     const logMessage = `[${timestamp}] ${message}`;
