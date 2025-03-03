@@ -14,7 +14,7 @@ async function validateLicenseAction(
   
 
   try {
-    const response = await fetch('https://backend.luau.tech/api/auth/license/validate', {
+    const response = await fetch('https://backend.luau.tech/api/api', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
