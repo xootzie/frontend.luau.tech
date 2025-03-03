@@ -3,6 +3,10 @@
 import { useState, useEffect } from 'react';
 import * as crypto from 'crypto';
 
+// Same obfuscated values as server
+const LICENSE_VALID = "4a7c9d3b2e1f5a8c6b";
+const LICENSE_INVALID = "3e7d8c9b5a2f1e6d4c";
+
 async function validateLicenseAction(
   licenseKey: string, 
   clientIP: string, 
@@ -50,13 +54,30 @@ async function validateLicenseAction(
   }
 }
 
+// Generate a secure hash matching the server's implementation
+function generateSecureHash(value: string, salt: string): string {
+  return crypto.createHash('sha256').update(value + salt).digest('hex').substring(0, 16);
+}
+
 export default function LicenseValidationPage() {
   const [licenseKey, setLicenseKey] = useState('');
-  const [result, setResult] = useState<{ error?: string; status?: boolean; type?: string; expiryDate?: string; serverNonce?: string }>({});
+  const [result, setResult] = useState<{ 
+    error?: string; 
+    status?: boolean; 
+    type?: string; 
+    expiryDate?: string; 
+    serverNonce?: string;
+    clientIpHash?: string;
+    sessionId?: string;
+    timestamp?: number;
+    verificationToken?: string;
+    verificationStatus?: string;
+  }>({});
   const [loading, setLoading] = useState(false);
   const [clientIP, setClientIP] = useState('');
   const [debugLog, setDebugLog] = useState<string[]>([]);
 
+  // Helper function to add to debug log
   const addDebugLog = (message: string) => {
     const timestamp = new Date().toLocaleTimeString();
     const logMessage = `[${timestamp}] ${message}`;
@@ -138,6 +159,56 @@ export default function LicenseValidationPage() {
     return iv;
   }
 
+  const verifyResponseIntegrity = (
+    parsedResponse: any, 
+    licenseKey: string, 
+    clientIP: string, 
+    serverSecret: string
+  ) => {
+    try {
+      // Extract verification data
+      const { 
+        status, 
+        sessionId, 
+        timestamp, 
+        clientIpHash, 
+        verificationToken 
+      } = parsedResponse;
+
+      addDebugLog('Verifying response integrity');
+      
+      // First verify IP hash
+      const expectedIpHash = generateSecureHash(clientIP, sessionId);
+      const ipVerified = expectedIpHash === clientIpHash;
+      addDebugLog(`IP hash verification: ${ipVerified ? 'PASSED' : 'FAILED'}`);
+      
+      // Then verify the full verification token
+      const isValid = status === LICENSE_VALID;
+      const expectedVerificationToken = generateSecureHash(
+        licenseKey + clientIP + timestamp.toString() + (isValid ? '1' : '0'),
+        serverSecret.substring(0, 16)
+      );
+      
+      const tokenVerified = expectedVerificationToken === verificationToken;
+      addDebugLog(`Verification token: ${tokenVerified ? 'PASSED' : 'FAILED'}`);
+      
+      // Check if response is too old (optional, increase window if needed)
+      const maxAgeMs = 60000; // 1 minute
+      const ageVerified = Date.now() - timestamp < maxAgeMs;
+      addDebugLog(`Age verification (${Date.now() - timestamp}ms): ${ageVerified ? 'PASSED' : 'FAILED'}`);
+      
+      return {
+        verified: ipVerified && tokenVerified && ageVerified,
+        ipVerified,
+        tokenVerified,
+        ageVerified
+      };
+    } catch (e) {
+      addDebugLog(`Verification error: ${e instanceof Error ? e.message : String(e)}`);
+      return { verified: false, ipVerified: false, tokenVerified: false, ageVerified: false };
+    }
+  };
+
   const handleValidation = async () => {
     try {
       setLoading(true);
@@ -200,16 +271,47 @@ export default function LicenseValidationPage() {
       const parsedResponse = JSON.parse(decryptedResponse);
       addDebugLog(`Parsed response: ${JSON.stringify(parsedResponse, null, 2)}`);
       
-      if (parsedResponse.status === "eurt") {
-        addDebugLog('Detected reversed "true" status, converting to boolean true');
-        parsedResponse.status = true;
-      } else if (parsedResponse.status === "eslaf") {
-        addDebugLog('Detected reversed "false" status, converting to boolean false');
-        parsedResponse.status = false;
+      // Verify the response integrity
+      const verificationResult = verifyResponseIntegrity(
+        parsedResponse,
+        licenseKey,
+        clientIP,
+        SERVER_SECRET
+      );
+      
+      if (!verificationResult.verified) {
+        addDebugLog('Response verification failed! Possible tampering detected.');
+        setResult({ 
+          error: 'Response verification failed. The license information may have been tampered with.',
+          verificationStatus: 'Failed: ' + JSON.stringify(verificationResult)
+        });
+        return;
       }
       
-      addDebugLog(`Final result: ${JSON.stringify(parsedResponse, null, 2)}`);
-      setResult(parsedResponse);
+      addDebugLog('Response integrity verified successfully');
+      
+      // Check the license status using the obfuscated values
+      let status = false;
+      if (parsedResponse.status === LICENSE_VALID) {
+        addDebugLog('Valid license detected');
+        status = true;
+      } else if (parsedResponse.status === LICENSE_INVALID) {
+        addDebugLog('Invalid license detected');
+        status = false;
+      } else {
+        addDebugLog(`Unknown status value: ${parsedResponse.status}`);
+        setResult({ error: 'Invalid license status format' });
+        return;
+      }
+      
+      const finalResult = {
+        ...parsedResponse,
+        status,
+        verificationStatus: 'Passed'
+      };
+      
+      addDebugLog(`Final result: ${JSON.stringify(finalResult, null, 2)}`);
+      setResult(finalResult);
     } catch (error) {
       console.error('Validation error:', error);
       addDebugLog(`Validation error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
@@ -264,11 +366,19 @@ export default function LicenseValidationPage() {
               {result.type && <p className="mb-1">License Type: {result.type}</p>}
               {result.expiryDate && (
                 <p className="mb-1">
-                  Expiry Date: {new Date(result.expiryDate).toLocaleDateString()}
+                  Expiry Date: {new Date(Number(result.expiryDate)).toLocaleDateString()}
                 </p>
               )}
               <p className="text-sm text-gray-600 mt-2">
                 Server Nonce: {result.serverNonce}
+              </p>
+              <p className="text-sm text-gray-600">
+                Session ID: {result.sessionId?.substring(0, 8)}...
+              </p>
+              <p className="text-sm text-gray-600">
+                Verification: <span className={result.verificationStatus?.includes('Failed') ? 'text-red-600' : 'text-green-600'}>
+                  {result.verificationStatus}
+                </span>
               </p>
             </div>
           )}
