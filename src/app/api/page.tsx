@@ -7,6 +7,9 @@ import * as crypto from 'crypto';
 const LICENSE_VALID = "4a7c9d3b2e1f5a8c6b";
 const LICENSE_INVALID = "3e7d8c9b5a2f1e6d4c";
 
+// Client-side encryption key secret (to be shared securely)
+const CLIENT_ENCRYPTION_SECRET = "B3A9C5E2F1D6B8A4C7E3D5F2B9A6C1E8D4F7B2";
+
 async function validateLicenseAction(
   licenseKey: string, 
   clientIP: string, 
@@ -73,7 +76,6 @@ export default function LicenseValidationPage() {
   const [clientIP, setClientIP] = useState('');
   const [debugLog, setDebugLog] = useState<string[]>([]);
 
-  // Helper function to add to debug log
   const addDebugLog = (message: string) => {
     const timestamp = new Date().toLocaleTimeString();
     const logMessage = `[${timestamp}] ${message}`;
@@ -136,290 +138,299 @@ export default function LicenseValidationPage() {
       return decrypted;
     } 
     catch (error) {
-        addDebugLog(`Decryption error: ${error instanceof Error ? error.message : String(error)}`);
-        console.error('Decryption error:', error);
-        throw new Error('Failed to decrypt data');
+      addDebugLog(`Decryption error: ${error instanceof Error ? error.message : String(error)}`);
+      console.error('Decryption error:', error);
+      throw new Error('Failed to decrypt data');
+    }
+  }
+
+  function generateSecureKey(ip: string, secret: string): string {
+    addDebugLog(`Generating secure key from IP and secret`);
+    const key = crypto.createHash('sha256').update(ip + secret).digest('hex');
+    addDebugLog(`Secure key generated: ${key.substring(0, 8)}...`);
+    return key;
+  }
+
+  function generateIV(): string {
+    addDebugLog('Generating random IV');
+    const iv = crypto.randomBytes(16).toString('hex');
+    addDebugLog(`IV generated: ${iv.substring(0, 8)}...`);
+    return iv;
+  }
+
+  function generateSecureHash(value: string, salt: string): string {
+    return crypto.createHash('sha256').update(value + salt).digest('hex').substring(0, 16);
+  }
+
+  const verifyResponseIntegrity = (
+    parsedResponse: { 
+      status: string; 
+      sessionId: string; 
+      timestamp: number; 
+      clientIpHash: string; 
+      verificationToken: string; 
+    }, 
+    licenseKey: string, 
+    clientIP: string, 
+    serverSecret: string
+  ) => {
+    try {
+      const { 
+        status, 
+        sessionId, 
+        timestamp, 
+        clientIpHash, 
+        verificationToken 
+      } = parsedResponse;
+
+      addDebugLog('Verifying response integrity');
+      
+      const expectedIpHash = generateSecureHash(clientIP, sessionId);
+      const ipVerified = expectedIpHash === clientIpHash;
+      addDebugLog(`IP hash verification: ${ipVerified ? 'PASSED' : 'FAILED'}`);
+      
+      // Then verify the full verification token
+      const isValid = status === LICENSE_VALID;
+      const expectedVerificationToken = generateSecureHash(
+        licenseKey + clientIP + timestamp.toString() + (isValid ? '1' : '0'),
+        serverSecret.substring(0, 16)
+      );
+      
+      const tokenVerified = expectedVerificationToken === verificationToken;
+      addDebugLog(`Verification token: ${tokenVerified ? 'PASSED' : 'FAILED'}`);
+      
+      // Check if response is too old (optional, increase window if needed)
+      const maxAgeMs = 60000; // 1 minute
+      const ageVerified = Date.now() - timestamp < maxAgeMs;
+      addDebugLog(`Age verification (${Date.now() - timestamp}ms): ${ageVerified ? 'PASSED' : 'FAILED'}`);
+      
+      return {
+        verified: ipVerified && tokenVerified && ageVerified,
+        ipVerified,
+        tokenVerified,
+        ageVerified
+      };
+    } catch (e) {
+      addDebugLog(`Verification error: ${e instanceof Error ? e.message : String(e)}`);
+      return { verified: false, ipVerified: false, tokenVerified: false, ageVerified: false };
+    }
+  };
+
+  const handleValidation = async () => {
+    try {
+      setLoading(true);
+      setDebugLog([]);
+      addDebugLog(`Starting license validation for key: ${licenseKey.substring(0, 4)}...`);
+      
+      const SERVER_SECRET = "7F4D8EE2A91C3B5609D7EC5F2A8B6C0E1F3D2A5B8C9E7F6D3A2B1C0E9F8D7A6";
+      addDebugLog('Using server secret (first 8 chars): ' + SERVER_SECRET.substring(0, 8) + '...');
+      
+      const clientNonce = crypto.randomBytes(16).toString('hex');
+      const timestamp = Date.now().toString();
+      addDebugLog(`Generated client nonce: ${clientNonce.substring(0, 8)}... and timestamp: ${timestamp}`);
+      
+      const encryptionKey = generateSecureKey(clientIP, SERVER_SECRET);
+      
+      const iv = generateIV();
+      const payloadData = JSON.stringify({ licenseKey });
+      addDebugLog(`Payload to encrypt: ${payloadData}`);
+      
+      // First, encrypt with server key
+      const serverEncryptedPayload = encrypt(payloadData, encryptionKey, iv);
+      
+      // Then, add another layer of encryption with client-side key
+      const clientEncryptionKey = generateSecureKey(clientIP, CLIENT_ENCRYPTION_SECRET);
+      const clientIV = generateIV();
+      const fullyEncryptedPayload = encrypt(serverEncryptedPayload, clientEncryptionKey, clientIV);
+      
+      const signature = generateSignature(fullyEncryptedPayload + clientNonce + timestamp, SERVER_SECRET);
+      
+      addDebugLog('Calling validateLicenseAction with server');
+      const responseData = await validateLicenseAction(
+        licenseKey,
+        clientIP,
+        clientNonce,
+        timestamp,
+        fullyEncryptedPayload,
+        signature
+      );
+      
+      addDebugLog(`Server response received: ${JSON.stringify(responseData, null, 2)}`);
+      
+      if (responseData.error) {
+        addDebugLog(`Error in response: ${responseData.error}`);
+        setResult({ error: responseData.error });
+        return;
       }
-    }
-  
-    function generateSecureKey(ip: string, secret: string): string {
-      addDebugLog(`Generating secure key from IP and secret`);
-      const key = crypto.createHash('sha256').update(ip + secret).digest('hex');
-      addDebugLog(`Secure key generated: ${key.substring(0, 8)}...`);
-      return key;
-    }
-  
-    function generateIV(): string {
-      addDebugLog('Generating random IV');
-      const iv = crypto.randomBytes(16).toString('hex');
-      addDebugLog(`IV generated: ${iv.substring(0, 8)}...`);
-      return iv;
-    }
-  
-    // Generate a secure hash matching the server's implementation
-    function generateSecureHash(value: string, salt: string): string {
-      return crypto.createHash('sha256').update(value + salt).digest('hex').substring(0, 16);
-    }
-  
-    const handleValidation = async () => {
-      try {
-        setLoading(true);
-        setDebugLog([]);
-        addDebugLog(`Starting license validation for key: ${licenseKey.substring(0, 4)}...`);
-        
-        const SERVER_SECRET = "7F4D8EE2A91C3B5609D7EC5F2A8B6C0E1F3D2A5B8C9E7F6D3A2B1C0E9F8D7A6";
-        addDebugLog('Using server secret (first 8 chars): ' + SERVER_SECRET.substring(0, 8) + '...');
-        
-        const clientNonce = crypto.randomBytes(16).toString('hex');
-        const timestamp = Date.now().toString();
-        addDebugLog(`Generated client nonce: ${clientNonce.substring(0, 8)}... and timestamp: ${timestamp}`);
-        
-        const encryptionKey = generateSecureKey(clientIP, SERVER_SECRET);
-        
-        const iv = generateIV();
-        const payloadData = JSON.stringify({ licenseKey });
-        addDebugLog(`Payload to encrypt: ${payloadData}`);
-        
-        const encryptedPayload = encrypt(payloadData, encryptionKey, iv);
-        
-        const signature = generateSignature(encryptedPayload + clientNonce + timestamp, SERVER_SECRET);
-        
-        addDebugLog('Calling validateLicenseAction with server');
-        const responseData = await validateLicenseAction(
-          licenseKey,
-          clientIP,
-          clientNonce,
-          timestamp,
-          encryptedPayload,
-          signature
-        );
-        
-        addDebugLog(`Server response received: ${JSON.stringify(responseData, null, 2)}`);
-        
-        if (responseData.error) {
-          addDebugLog(`Error in response: ${responseData.error}`);
-          setResult({ error: responseData.error });
-          return;
-        }
-        
-        const { payload: encryptedResponse, signature: responseSignature } = responseData;
-        addDebugLog(`Encrypted response received, length: ${encryptedResponse?.length || 0}`);
-        addDebugLog(`Response signature: ${responseSignature?.substring(0, 8) || 'none'}...`);
-        
-        const expectedSignature = generateSignature(encryptedResponse + clientNonce, SERVER_SECRET);
-        
-        if (responseSignature !== expectedSignature) {
-          addDebugLog(`Signature validation failed!`);
-          addDebugLog(`Expected: ${expectedSignature}`);
-          addDebugLog(`Received: ${responseSignature}`);
-          setResult({ error: 'Invalid server signature' });
-          return;
-        }
-        
-        addDebugLog('Signature validated successfully, decrypting response');
-        const decryptedResponse = decrypt(encryptedResponse, encryptionKey);
-        addDebugLog(`Decrypted response: ${decryptedResponse}`);
-        
-        const parsedResponse = JSON.parse(decryptedResponse);
-        addDebugLog(`Parsed response: ${JSON.stringify(parsedResponse, null, 2)}`);
-        
-        // Verify the response integrity
-        const verificationResult = verifyResponseIntegrity(
-          parsedResponse,
-          licenseKey,
-          clientIP,
-          SERVER_SECRET
-        );
-        
-        if (!verificationResult.verified) {
-          addDebugLog('Response verification failed! Possible tampering detected.');
-          setResult({ 
-            error: 'Response verification failed. The license information may have been tampered with.',
-            verificationStatus: 'Failed: ' + JSON.stringify(verificationResult)
-          });
-          return;
-        }
-        
-        addDebugLog('Response integrity verified successfully');
-        
-        let status = false;
-        if (parsedResponse.status === LICENSE_VALID) {
-          addDebugLog('Valid license detected');
-          status = true;
-        } else if (parsedResponse.status === LICENSE_INVALID) {
-          addDebugLog('Invalid license detected');
-          status = false;
-        } else {
-          addDebugLog(`Unknown status value: ${parsedResponse.status}`);
-          setResult({ error: 'Invalid license status format' });
-          return;
-        }
-        
-        const finalResult = {
-          ...parsedResponse,
-          status,
-          verificationStatus: 'Passed'
-        };
-        
-        addDebugLog(`Final result: ${JSON.stringify(finalResult, null, 2)}`);
-        setResult(finalResult);
-      } catch (error) {
-        console.error('Validation error:', error);
-        addDebugLog(`Validation error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
-        setResult({ error: error instanceof Error ? error.message : 'Unknown error occurred' });
-      } finally {
-        setLoading(false);
+      
+      const { payload: encryptedResponse, signature: responseSignature } = responseData;
+      addDebugLog(`Encrypted response received, length: ${encryptedResponse?.length || 0}`);
+      addDebugLog(`Response signature: ${responseSignature?.substring(0, 8) || 'none'}...`);
+      
+      const expectedSignature = generateSignature(encryptedResponse + clientNonce, SERVER_SECRET);
+      
+      if (responseSignature !== expectedSignature) {
+        addDebugLog(`Signature validation failed!`);
+        addDebugLog(`Expected: ${expectedSignature}`);
+        addDebugLog(`Received: ${responseSignature}`);
+        setResult({ error: 'Invalid server signature' });
+        return;
       }
-    };
-  
-    const verifyResponseIntegrity = (
-      parsedResponse: { 
-        status: string; 
-        sessionId: string; 
-        timestamp: number; 
-        clientIpHash: string; 
-        verificationToken: string; 
-      }, 
-      licenseKey: string, 
-      clientIP: string, 
-      serverSecret: string
-    ) => {
-      try {
-        const { 
-          status, 
-          sessionId, 
-          timestamp, 
-          clientIpHash, 
-          verificationToken 
-        } = parsedResponse;
-  
-        addDebugLog('Verifying response integrity');
-        
-        const expectedIpHash = generateSecureHash(clientIP, sessionId);
-        const ipVerified = expectedIpHash === clientIpHash;
-        addDebugLog(`IP hash verification: ${ipVerified ? 'PASSED' : 'FAILED'}`);
-        
-        // Then verify the full verification token
-        const isValid = status === LICENSE_VALID;
-        const expectedVerificationToken = generateSecureHash(
-          licenseKey + clientIP + timestamp.toString() + (isValid ? '1' : '0'),
-          serverSecret.substring(0, 16)
-        );
-        
-        const tokenVerified = expectedVerificationToken === verificationToken;
-        addDebugLog(`Verification token: ${tokenVerified ? 'PASSED' : 'FAILED'}`);
-        
-        // Check if response is too old (optional, increase window if needed)
-        const maxAgeMs = 60000; // 1 minute
-        const ageVerified = Date.now() - timestamp < maxAgeMs;
-        addDebugLog(`Age verification (${Date.now() - timestamp}ms): ${ageVerified ? 'PASSED' : 'FAILED'}`);
-        
-        return {
-          verified: ipVerified && tokenVerified && ageVerified,
-          ipVerified,
-          tokenVerified,
-          ageVerified
-        };
-      } catch (e) {
-        addDebugLog(`Verification error: ${e instanceof Error ? e.message : String(e)}`);
-        return { verified: false, ipVerified: false, tokenVerified: false, ageVerified: false };
+      
+      addDebugLog('Signature validated successfully, decrypting response');
+      
+      // First, decrypt with client-side key
+      const clientDecryptedResponse = decrypt(encryptedResponse, generateSecureKey(clientIP, CLIENT_ENCRYPTION_SECRET));
+      addDebugLog(`Client-side decrypted response: ${clientDecryptedResponse}`);
+      
+      // Then, decrypt with server key
+      const fullyDecryptedResponse = decrypt(clientDecryptedResponse, generateSecureKey(clientIP, SERVER_SECRET));
+      addDebugLog(`Fully decrypted response: ${fullyDecryptedResponse}`);
+      
+      const parsedResponse = JSON.parse(fullyDecryptedResponse);
+      addDebugLog(`Parsed response: ${JSON.stringify(parsedResponse, null, 2)}`);
+      
+      // Verify the response integrity
+      const verificationResult = verifyResponseIntegrity(
+        parsedResponse,
+        licenseKey,
+        clientIP,
+        SERVER_SECRET
+      );
+      
+      if (!verificationResult.verified) {
+        addDebugLog('Response verification failed! Possible tampering detected.');
+        setResult({ 
+          error: 'Response verification failed. The license information may have been tampered with.',
+          verificationStatus: 'Failed: ' + JSON.stringify(verificationResult)
+        });
+        return;
       }
-    };
-  
-  
-    return (
-      <div className="container mx-auto p-6 max-w-lg">
-        <h1 className="text-2xl font-bold mb-6">License Validation Test</h1>
-        
-        <div className="mb-4">
-          <p className="mb-2">Your IP: {clientIP || 'Loading...'}</p>
-        </div>
-        
-        <div className="mb-6">
-          <label htmlFor="licenseKey" className="block mb-2 font-medium">
-            License Key
-          </label>
-          <input
-            id="licenseKey"
-            type="text"
-            value={licenseKey}
-            onChange={(e) => setLicenseKey(e.target.value)}
-            className="w-full p-2 border rounded"
-            placeholder="Enter your license key"
-          />
-        </div>
-        
-        <button
-          onClick={handleValidation}
-          disabled={!licenseKey || loading || !clientIP}
-          className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
-        >
-          {loading ? 'Validating...' : 'Validate License'}
-        </button>
-        
-        {result && (
-          <div className="mt-6 p-4 border rounded">
-            <h2 className="text-white text-xl font-semibold mb-2">Result</h2>
-            {result.error ? (
-              <div className="text-red-600">Error: {result.error}</div>
-            ) : (
-              <div>
+      
+      addDebugLog('Response integrity verified successfully');
+      
+      let status = false;
+      if (parsedResponse.status === LICENSE_VALID) {
+        addDebugLog('Valid license detected');
+        status = true;
+      } else if (parsedResponse.status === LICENSE_INVALID) {
+        addDebugLog('Invalid license detected');
+        status = false;
+      } else {
+        addDebugLog(`Unknown status value: ${parsedResponse.status}`);
+        setResult({ error: 'Invalid license status format' });
+        return;
+      }
+      
+      const finalResult = {
+        ...parsedResponse,
+        status,
+        verificationStatus: 'Passed'
+      };
+      
+      addDebugLog(`Final result: ${JSON.stringify(finalResult, null, 2)}`);
+      setResult(finalResult);
+    } catch (error) {
+      console.error('Validation error:', error);
+      addDebugLog(`Validation error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
+      setResult({ error: error instanceof Error ? error.message : 'Unknown error occurred' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="container mx-auto p-6 max-w-lg">
+      <h1 className="text-2xl font-bold mb-6">License Validation Test</h1>
+      
+      <div className="mb-4">
+        <p className="mb-2">Your IP: {clientIP || 'Loading...'}</p>
+      </div>
+      
+      <div className="mb-6">
+        <label htmlFor="licenseKey" className="block mb-2 font-medium">
+          License Key
+        </label>
+        <input
+          id="licenseKey"
+          type="text"
+          value={licenseKey}
+          onChange={(e) => setLicenseKey(e.target.value)}
+          className="w-full p-2 border rounded"
+          placeholder="Enter your license key"
+        />
+      </div>
+      
+      <button
+        onClick={handleValidation}
+        disabled={!licenseKey || loading || !clientIP}
+        className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
+      >
+        {loading ? 'Validating...' : 'Validate License'}
+      </button>
+      
+      {result && (
+        <div className="mt-6 p-4 border rounded">
+          <h2 className="text-white text-xl font-semibold mb-2">Result</h2>
+          {result.error ? (
+            <div className="text-red-600">Error: {result.error}</div>
+          ) : (
+            <div>
+              <p className="text-white mb-1">
+                Status: <span className={result.status ? 'text-green-600' : 'text-red-600'}>
+                  {result.status ? 'Valid' : 'Invalid'}
+                </span>
+              </p>
+              {result.type && <p className="text-white mb-1">License Type: {result.type}</p>}
+              {result.expiryDate && (
                 <p className="text-white mb-1">
-                  Status: <span className={result.status ? 'text-green-600' : 'text-red-600'}>
-                    {result.status ? 'Valid' : 'Invalid'}
-                  </span>
+                  Expiry Date: {new Date(Number(result.expiryDate)).toLocaleDateString()}
                 </p>
-                {result.type && <p className="text-white mb-1">License Type: {result.type}</p>}
-                {result.expiryDate && (
-                  <p className="text-white mb-1">
-                    Expiry Date: {new Date(Number(result.expiryDate)).toLocaleDateString()}
-                  </p>
-                )}
-                {result.reason && (
-                  <p className="mb-1 text-gray-600">
-                    Reason: {result.reason}
-                  </p>
-                )}
-                <p className="text-sm text-gray-600 mt-2">
-                  Server Nonce: {result.serverNonce}
+              )}
+              {result.reason && (
+                <p className="mb-1 text-gray-600">
+                  Reason: {result.reason}
                 </p>
-                <p className="text-sm text-gray-600">
-                  Session ID: {result.sessionId?.substring(0, 8)}...
-                </p>
-                <p className="text-sm text-gray-600">
-                  Verification: <span className={result.verificationStatus?.includes('Failed') ? 'text-red-600' : 'text-green-600'}>
-                    {result.verificationStatus}
-                  </span>
-                </p>
+              )}
+              <p className="text-sm text-gray-600 mt-2">
+                Server Nonce: {result.serverNonce}
+              </p>
+              <p className="text-sm text-gray-600">
+                Session ID: {result.sessionId?.substring(0, 8)}...
+              </p>
+              <p className="text-sm text-gray-600">
+                Verification: <span className={result.verificationStatus?.includes('Failed') ? 'text-red-600' : 'text-green-600'}>
+                  {result.verificationStatus}
+                </span>
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Debug Log Display */}
+      <div className="mt-6">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-lg font-semibold">Debug Log</h2>
+          <button 
+            onClick={() => setDebugLog([])} 
+            className="text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Clear Log
+          </button>
+        </div>
+        <div className="bg-gray-900 text-green-400 p-4 rounded h-64 overflow-y-auto font-mono text-sm">
+          {debugLog.length > 0 ? (
+            debugLog.map((log, index) => (
+              <div key={index} className="mb-1">
+                {log}
               </div>
-            )}
-          </div>
-        )}
-        
-        {/* Debug Log Display */}
-        <div className="mt-6">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-semibold">Debug Log</h2>
-            <button 
-              onClick={() => setDebugLog([])} 
-              className="text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-            >
-              Clear Log
-            </button>
-          </div>
-          <div className="bg-gray-900 text-green-400 p-4 rounded h-64 overflow-y-auto font-mono text-sm">
-            {debugLog.length > 0 ? (
-              debugLog.map((log, index) => (
-                <div key={index} className="mb-1">
-                  {log}
-                </div>
-              ))
-            ) : (
-              <div className="text-gray-500 italic">No logs yet. Validate a license to see debug information.</div>
-            )}
-          </div>
+            ))
+          ) : (
+            <div className="text-gray-500 italic">No logs yet. Validate a license to see debug information.</div>
+          )}
         </div>
       </div>
-    );
-  }
-  
+    </div>
+  );
+}
