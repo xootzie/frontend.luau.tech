@@ -364,14 +364,14 @@ export default function LicenseValidationPage() {
               <div className="text-red-600">Error: {result.error}</div>
             ) : (
               <div>
-                <p className="mb-1">
+                <p className="text-white mb-1">
                   Status: <span className={result.status ? 'text-green-600' : 'text-red-600'}>
                     {result.status ? 'Valid' : 'Invalid'}
                   </span>
                 </p>
-                {result.type && <p className="mb-1">License Type: {result.type}</p>}
+                {result.type && <p className="text-white mb-1">License Type: {result.type}</p>}
                 {result.expiryDate && (
-                  <p className="mb-1">
+                  <p className="text-white mb-1">
                     Expiry Date: {new Date(Number(result.expiryDate)).toLocaleDateString()}
                   </p>
                 )}
