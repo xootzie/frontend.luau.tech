@@ -7,7 +7,7 @@ export const games: GameData[] = [
     image: "/images/dr_banner.webp",
     title: "Dead Rails",
     status: "Unreleased",
-    statusColor: "green",
+    statusColor: "blue",
     url: "https://www.roblox.com/games/116495829188952",
     features: [
       "Teleport to Containers 👑", "Teleport to Building", "Convert Dead to Fuel 👑", "Teleport to Train", "Ride Train 👑",
