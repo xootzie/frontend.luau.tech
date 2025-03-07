@@ -56,13 +56,13 @@ const Footer: React.FC = () => {
           <div className="flex flex-col items-end space-y-4">
             <div className="flex space-x-6">
               <a
-                href="#"
+                href="https://github.com/Starry-Proj"
                 className="text-gray-400 hover:text-white transition-colors duration-300"
               >
                 <Github className="w-6 h-6" />
               </a>
               <a
-                href="#"
+                href="https://discord.gg/luau"
                 className="text-gray-400 hover:text-white transition-colors duration-300"
               >
                 <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current">

@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Home, CreditCard, Code, Key, Menu, X, LucideIcon, Newspaper } from "lucide-react";
+import { Home, CreditCard, Code, Key, Menu, X, LucideIcon } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -15,7 +15,7 @@ interface NavLinkProps {
 
 interface NavItem {
   href: string;
-  label: string;
+  label: React.ReactNode;
   icon: LucideIcon;
 }
 
@@ -53,9 +53,9 @@ const Navigation: React.FC = () => {
 
   const navItems: NavItem[] = [
     { href: "/", label: "Home", icon: Home },
-    { href: "/pricing", label: "Pricing", icon: CreditCard },
+    { href: "/pricing", label: <span className="font-bold italic">Premium</span>, icon: CreditCard },
     { href: "/executors", label: "Executors", icon: Code },
-    { href: "/changelog", label: "Changelog", icon: Newspaper },
+    // { href: "/changelog", label: "Changelog", icon: Newspaper },
   ];
 
   const closeMenu = () => setIsMenuOpen(false);

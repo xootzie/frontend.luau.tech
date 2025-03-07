@@ -45,8 +45,8 @@ const GameCard = ({
       style={{ backgroundImage: `url(${image})` }} 
     >
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-      {isPremium && <PremiumBadge message="This game requires a premium license to use" />}
-      {!isPremium && hasPremiumFeatures && <PremiumFeaturesBadge message="This game has some features that require premium" />}
+      {isPremium && <PremiumBadge message="This game requires a Premium license to use" />}
+      {!isPremium && hasPremiumFeatures && <PremiumFeaturesBadge message="Some features for this require Premium" />}
     </div>
     <p className={`text-sm mb-3 flex items-center gap-2 ${statusColor === 'green' ? 'text-emerald-400' : 'text-blue-400'}`}>
       <span className={`w-2 h-2 rounded-full ${statusColor === 'green' ? 'bg-emerald-400' : 'bg-blue-400'} animate-pulse`} />

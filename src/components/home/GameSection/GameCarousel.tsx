@@ -35,7 +35,7 @@ const GameCarousel = ({ games }: GameCarouselProps) => {
   };
 
   return (
-    <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12">
       <div className="mb-12">
         <h2 className="text-4xl font-medium mb-4">Our Games ✨</h2>
         <div className="flex items-center justify-between">
@@ -98,8 +98,7 @@ const GameCarousel = ({ games }: GameCarouselProps) => {
                   <span className={`w-2 h-2 rounded-full bg-${selectedGame.statusColor}-500 animate-pulse`} />
                   {selectedGame.status}
                 </p>
-                <h3 className="text-2xl font-medium">{selectedGame.title}</h3>
-                <p className="text-gray-400 text-sm">We&apos;re working on providing each game a proper status..</p>
+                <h3 className="text-2xl font-medium bold">{selectedGame.title}</h3>
               </div>
               <button
                 onClick={handleCloseModal}
