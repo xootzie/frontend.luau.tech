@@ -277,7 +277,7 @@ const HeroSection: React.FC = () => {
       />
       
       <div
-        className={`relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center transform transition-all duration-1000 ${
+        className={`relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center transform transition-all duration-1000 z-20 ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}
       >
@@ -288,21 +288,21 @@ const HeroSection: React.FC = () => {
           onMouseLeave={() => setIsHovering(false)}
         >
           <h1 
-            ref={titleRef}
-            className="text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight mb-6 transition-transform duration-300 ease-in-out cursor-default"
-            style={{
-              background: 'linear-gradient(135deg, white 0%, rgba(59, 130, 246, 0.6) 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-             
-              lineHeight: '1.4',
-              transform: isHovering ? 'scale(1.05)' : 'scale(1)',
-              pointerEvents: 'auto',
-              position: 'relative',
-              zIndex: 100
-            }}
+        ref={titleRef}
+        className="text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight mb-6 transition-transform duration-300 ease-in-out cursor-default"
+        style={{
+          background: 'linear-gradient(135deg, white 0%, rgba(59, 130, 246, 0.6) 100%)',
+          backgroundClip: 'text',
+          WebkitBackgroundClip: 'text',
+         
+          lineHeight: '1.4',
+          transform: isHovering ? 'scale(1.05)' : 'scale(1)',
+          pointerEvents: 'auto',
+          position: 'relative',
+          zIndex: 100
+        }}
           >
-            Experience More using Starry
+        Experience More using Starry
           </h1>
         </div>
         
@@ -310,14 +310,14 @@ const HeroSection: React.FC = () => {
           Meet the next generation of Roblox exploiting. Powerful features, seamless performance, available now for free.
         </p>
         
-        <div className="mt-10 flex flex-wrap gap-4 justify-center">
+        <div className="mt-10 flex flex-wrap gap-4 justify-center relative z-50">
           <button 
-            onClick={handleButtonClick}
-            className={`px-6 sm:px-8 py-2.5 sm:py-3 rounded-md bg-blue-600 text-white text-sm sm:text-base font-medium hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 transform hover:translate-y-[-2px] active:translate-y-[1px] shadow-lg shadow-blue-600/20 ${isClicked ? 'translate-y-[1px]' : ''}`}
-            aria-haspopup="dialog"
+        onClick={handleButtonClick}
+        className={`px-6 sm:px-8 py-2.5 sm:py-3 rounded-md bg-blue-600 text-white text-sm sm:text-base font-medium hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 transform hover:translate-y-[-2px] active:translate-y-[1px] shadow-lg shadow-blue-600/20 z-50 ${isClicked ? 'translate-y-[1px]' : ''}`}
+        aria-haspopup="dialog"
           >
-            <span className="relative">View Script</span>
-            <Code className="w-4 h-4 sm:w-5 sm:h-5 relative transition-transform group-hover:translate-x-1" />
+        <span className="relative">View Script</span>
+        <Code className="w-4 h-4 sm:w-5 sm:h-5 relative transition-transform group-hover:translate-x-1" />
           </button>
         </div>
       </div>
