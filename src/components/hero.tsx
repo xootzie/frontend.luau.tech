@@ -12,8 +12,22 @@ const CodeModal: React.FC<CodeModalProps> = ({ isOpen, onClose, isClosing }) => 
   const [selectedTab, setSelectedTab] = useState<'script' | 'guide'>('script');
   const modalRef = useRef<HTMLDivElement>(null);
   
-  const loadstring = `skipGameCheck = false;
-loadstring(game:HttpGet("https://luau.tech/build"))()`;
+  const loadstring = `
+  -- Starry's Stable Ed. | User Build | Using Latest Ver. --
+skipGameCheck = false; -- Change to "true" when desiring Universal-only!
+local project = "luau.tech";
+loadstring(request({
+Url = \`https://{project}/build\`,
+Method = "GET"
+}).Body)();
+-- Purchase Premium & skip keys @ luau.tech/pricing --
+-- Starry produced by Suno & Zade ✨ --
+
+
+
+
+
+`;
 
   const handleCopy = useCallback(async () => {
     try {
@@ -103,9 +117,21 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
                   <div className="p-4 bg-zinc-800/80 rounded-md border border-white/5 group-hover:border-white/10 transition-colors">
                     <pre className="text-sm text-blue-400 font-mono whitespace-pre overflow-x-auto">
                     <code>
-                    <span className="text-blue-300">skipGameCheck</span> <span className="text-gray-400">=</span> <span className="text-red-400">false;</span>
-                    <span className="text-purple-400">{"\n"}loadstring</span>(<span className="text-blue-300">game</span><span className="text-gray-400">:</span><span className="text-yellow-400">HttpGet</span>(<span className="text-green-400">&quot;https://luau.tech/build&quot;</span>))()
-                    </code>
+  <span className="text-green-400">{"\n"}-- Starry's Stable Ed. | User Build | Using Latest Ver. --</span>
+  <span className="text-blue-300">{"\n"}skipGameCheck</span> <span className="text-white">=</span> <span className="text-orange-400">false</span><span className="text-white">;</span> <span className="text-green-400">-- Change to "true" when desiring Universal-only!</span>
+  <span className="text-cyan-300">{"\n"}local</span> <span className="text-blue-300">project</span> <span className="text-white">=</span> <span className="text-orange-300">"luau.tech"</span><span className="text-white">;</span>
+  <span className="text-blue-300">{"\n"}loadstring</span><span className="text-white">(</span><span className="text-blue-300">request</span><span className="text-white">(</span><span className="text-white">{'{'}</span>
+  <span className="text-cyan-300">{"\n"}  Url</span> <span className="text-white">=</span> <span className="text-white">\`</span><span className="text-orange-400">https://{'{'}project{'}'}/build</span><span className="text-white">\`</span><span className="text-white">,</span>
+  <span className="text-cyan-300">{"\n"}  Method</span> <span className="text-white">=</span> <span className="text-orange-400">"GET"</span>
+  <span className="text-white">{"\n"}{'}'}</span><span className="text-white">)</span><span className="text-white">.</span><span className="text-cyan-300">Body</span><span className="text-white">)()</span><span className="text-white">;</span>
+  <span className="text-green-400">{"\n"}-- Purchase Premium & skip keys @ luau.tech/pricing --</span>
+  <span className="text-green-400">{"\n"}-- Starry produced by Suno & Zade ✨ --</span>
+  <span className="text-white">{"\n"}</span>
+  <span className="text-white">{"\n"}</span>
+  <span className="text-white">{"\n"}</span>
+  <span className="text-white">{"\n"}</span>
+  <span className="text-white">{"\n"}</span>
+</code>
                     </pre>
                   </div>
                   
