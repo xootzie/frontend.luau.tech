@@ -116,22 +116,25 @@ Method = "GET"
                 <div className="relative group">
                   <div className="p-4 bg-zinc-800/80 rounded-md border border-white/5 group-hover:border-white/10 transition-colors">
                     <pre className="text-sm text-blue-400 font-mono whitespace-pre overflow-x-auto">
+
+
                     <code>
-  <span className="text-green-400">{"\n"}-- Starry's Stable Ed. | User Build | Using Latest Ver. --</span>
-  <span className="text-blue-300">{"\n"}skipGameCheck</span> <span className="text-white">=</span> <span className="text-orange-400">false</span><span className="text-white">;</span> <span className="text-green-400">-- Change to "true" when desiring Universal-only!</span>
-  <span className="text-cyan-300">{"\n"}local</span> <span className="text-blue-300">project</span> <span className="text-white">=</span> <span className="text-orange-300">"luau.tech"</span><span className="text-white">;</span>
+  <span className="text-green-400">{"\n"}-- Starry&apos;s Stable Ed. | User Build | Using Latest Ver. --</span>
+  <span className="text-blue-300">{"\n"}skipGameCheck</span> <span className="text-white">=</span> <span className="text-orange-400">false</span><span className="text-white">;</span> <span className="text-green-400">-- Change to &quot;true&quot; when desiring Universal-only!</span>
+  <span className="text-cyan-300">{"\n"}local</span> <span className="text-blue-300">project</span> <span className="text-white">=</span> <span className="text-orange-300">&quot;luau.tech&quot;</span><span className="text-white">;</span>
   <span className="text-blue-300">{"\n"}loadstring</span><span className="text-white">(</span><span className="text-blue-300">request</span><span className="text-white">(</span><span className="text-white">{'{'}</span>
   <span className="text-cyan-300">{"\n"}  Url</span> <span className="text-white">=</span> <span className="text-white">\`</span><span className="text-orange-400">https://{'{'}project{'}'}/build</span><span className="text-white">\`</span><span className="text-white">,</span>
-  <span className="text-cyan-300">{"\n"}  Method</span> <span className="text-white">=</span> <span className="text-orange-400">"GET"</span>
+  <span className="text-cyan-300">{"\n"}  Method</span> <span className="text-white">=</span> <span className="text-orange-400">&quot;GET&quot;</span>
   <span className="text-white">{"\n"}{'}'}</span><span className="text-white">)</span><span className="text-white">.</span><span className="text-cyan-300">Body</span><span className="text-white">)()</span><span className="text-white">;</span>
-  <span className="text-green-400">{"\n"}-- Purchase Premium & skip keys @ luau.tech/pricing --</span>
-  <span className="text-green-400">{"\n"}-- Starry produced by Suno & Zade ✨ --</span>
+  <span className="text-green-400">{"\n"}-- Purchase Premium &amp; skip keys @ luau.tech/pricing --</span>
+  <span className="text-green-400">{"\n"}-- Starry produced by Suno &amp; Zade ✨ --</span>
   <span className="text-white">{"\n"}</span>
   <span className="text-white">{"\n"}</span>
   <span className="text-white">{"\n"}</span>
   <span className="text-white">{"\n"}</span>
   <span className="text-white">{"\n"}</span>
 </code>
+
                     </pre>
                   </div>
                   
