@@ -4,12 +4,10 @@ import Link from 'next/link';
 import { Github } from 'lucide-react';
 import GradientDivider from '@/components/ui/divider';
 
-
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-
     <footer className="w-full bg-black relative">
       <GradientDivider />
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-background to-transparent pointer-events-none" />
@@ -17,7 +15,6 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col md:flex-row justify-between items-start mb-12">
           <div className="mb-8 md:mb-0 max-w-md">
-
             <Link href="/" className="flex items-center space-x-3 mb-4">
               <Image
                 src="/images/brand/icon.png"
@@ -80,22 +77,40 @@ const Footer: React.FC = () => {
             &copy; {currentYear} Starry. All rights reserved.
           </span>
 
-          <a
-            href="https://vercel.com?utm_source=starry&utm_campaign=oss"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-400 hover:text-white transition-colors duration-300"
-          >
-            <Image
-              src="/images/brand/_vercel/vercel.svg"
-              alt="Powered by Vercel"
-              width={100}
-              height={32}
-              className="w-auto h-8 filter hover:drop-shadow-2xl transition-all duration-300"
-            />
-          </a>
+          <div className="flex items-center space-x-4">
+            <a 
+              href="//www.dmca.com/Protection/Status.aspx?ID=9e1fede6-dc1d-4e22-a41a-4b7863cf510b" 
+              title="DMCA.com Protection Status" 
+              className="dmca-badge inline-block"
+            >
+              <img 
+                src="https://images.dmca.com/Badges/dmca-badge-w100-5x1-09.png?ID=9e1fede6-dc1d-4e22-a41a-4b7863cf510b" 
+                alt="DMCA.com Protection Status" 
+                className="w-24 h-auto opacity-80 hover:opacity-100 transition-opacity duration-300"
+              />
+            </a>
+            <a
+              href="https://vercel.com?utm_source=starry&utm_campaign=oss"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors duration-300"
+            >
+              <Image
+                src="/images/brand/_vercel/vercel.svg"
+                alt="Powered by Vercel"
+                width={100}
+                height={32}
+                className="w-auto h-8 filter hover:drop-shadow-2xl transition-all duration-300"
+              />
+            </a>
+          </div>
         </div>
       </div>
+      <script 
+        src="https://images.dmca.com/Badges/DMCABadgeHelper.min.js" 
+        async 
+        defer
+      />
     </footer>
   );
 };
