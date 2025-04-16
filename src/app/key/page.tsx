@@ -42,7 +42,7 @@ export default function KeySystem() {
 
   const checkReferrer = useCallback(() => {
     const referrer = document.referrer;
-    const isValid = referrer.includes('https://linkunlocker.com/');
+    const isValid = referrer.includes('https://lootdest.org/'); // hey hacker man, I know this is easy to bypass please don't :(
     // const isValid = true;
     
     setIsValidReferrer(isValid);
