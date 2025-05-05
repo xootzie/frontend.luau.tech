@@ -2,35 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-/* .custom-cursor, 
-.custom-cursor * {
-  cursor: url('/cursors/default.cur'), auto !important;
+.bg-grid-starlight {
+  background-image: 
+    linear-gradient(to right, rgba(251, 151, 198, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(251, 151, 198, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
 }
 
-.custom-cursor a,
-.custom-cursor button:not(.opacity-50):not(.cursor-not-allowed),
-.custom-cursor [role="button"]:not(.opacity-50):not(.cursor-not-allowed) {
-  cursor: url('/cursors/pointer.cur'), pointer !important;
+.stars-small {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(1px 1px at 40px 70px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(1px 1px at 50px 160px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(1.5px 1.5px at 170px 90px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(1px 1px at 210px 220px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(1px 1px at 300px 120px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(1px 1px at 350px 180px, #ffc1df, rgba(0, 0, 0, 0)),
+                    radial-gradient(1.5px 1.5px at 400px 70px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(2px 2px at 450px 190px, #ffc1df, rgba(0, 0, 0, 0)),
+                    radial-gradient(1px 1px at 500px 100px, #ffffff, rgba(0, 0, 0, 0));
+  background-repeat: repeat;
+  background-size: 550px 550px;
+  opacity: 0.25;
+  animation: stars-small-animation 150s linear infinite;
 }
 
-.custom-cursor input[type="text"],
-.custom-cursor textarea {
-  cursor: url('/cursors/text.cur'), text !important;
+.stars-medium {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(2px 2px at 100px 150px, #ffc1df, rgba(0, 0, 0, 0)),
+                    radial-gradient(2px 2px at 200px 250px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(2px 2px at 300px 350px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(2px 2px at 400px 150px, #ffc1df, rgba(0, 0, 0, 0)),
+                    radial-gradient(2px 2px at 500px 250px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(2px 2px at 50px 350px, #ffc1df, rgba(0, 0, 0, 0)),
+                    radial-gradient(2px 2px at 150px 450px, #ffffff, rgba(0, 0, 0, 0)),
+                    radial-gradient(2px 2px at 250px 550px, #ffffff, rgba(0, 0, 0, 0));
+  background-repeat: repeat;
+  background-size: 600px 600px;
+  opacity: 0.15;
+  animation: stars-medium-animation 200s linear infinite;
 }
 
-.custom-cursor .loading {
-  cursor: url('/cursors/wait.ani'), wait !important;
+@keyframes stars-small-animation {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-550px);
+  }
 }
 
-.custom-cursor .opacity-50.cursor-not-allowed,
-.custom-cursor button.opacity-50.cursor-not-allowed,
-.custom-cursor [role="button"].opacity-50.cursor-not-allowed {
-  cursor: url('/cursors/not-allowed.cur'), not-allowed !important;
-} */
-
-
+@keyframes stars-medium-animation {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-600px);
+  }
+}
 
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -68,10 +100,10 @@
   animation: slideDown 0.2s ease-out;
 }
 
-  .bg-grid-pattern {
-    background-size: 30px 30px;
-    background-image: 
-      linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
-    mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
-  }
+.bg-grid-pattern {
+  background-size: 30px 30px;
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
+}

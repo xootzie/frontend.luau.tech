@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Code, Copy, Check, Sparkles, ExternalLink, ChevronDown } from "lucide-react";
+import { Code, Copy, Check, Sparkles, ExternalLink, ChevronDown, Star, Shield, Zap, Lock } from "lucide-react";
+import Image from 'next/image';
 
 interface CodeModalProps {
   isOpen: boolean;
@@ -53,106 +54,145 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
       role="dialog"
     >
       <div 
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/80 backdrop-blur-md"
         onClick={onClose}
       />
       
       <div 
         ref={modalRef}
         tabIndex={-1}
-        className={`relative bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 border border-white/10 rounded-lg w-full max-w-lg 
-          backdrop-blur-sm transform transition-all duration-200 shadow-xl
+        className={`relative bg-black/70 border border-[#fb97c6]/30 rounded-2xl w-full max-w-lg overflow-hidden
+          backdrop-blur-xl transform transition-all duration-300 shadow-2xl
           ${isClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative p-6">
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent rounded-t-lg" />
-          
-          <div className="relative">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-medium">Starry Script</h3>
-              <div className="flex space-x-1 bg-zinc-800/80 rounded-md p-1">
-                <button 
-                  onClick={() => setSelectedTab('script')}
-                  className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                    selectedTab === 'script' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  Script
-                </button>
-                <button 
-                  onClick={() => setSelectedTab('guide')}
-                  className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                    selectedTab === 'guide' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  Guide
-                </button>
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-[#fb97c6]/10 blur-3xl"></div>
+          <div className="absolute -bottom-32 -left-32 w-72 h-72 rounded-full bg-[#fb97c6]/5 blur-3xl"></div>
+        </div>
+        
+        <div className="relative p-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#fb97c6] to-[#d671a0] flex items-center justify-center">
+                <Star className="w-5 h-5 text-white" fill="white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-white to-[#fb97c6]/80">Starlight Script</h3>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="text-xs px-2 py-0.5 rounded-full bg-[#fb97c6]/20 text-[#fb97c6]">Premium</div>
+                  <div className="text-xs text-gray-400">$4.99/month</div>
+                </div>
               </div>
             </div>
             
-            {selectedTab === 'script' ? (
-              <>
-                <p className="text-gray-400 text-sm mb-4">Copy our code below to use Starry today ♥️</p>
-                
-                <div className="relative group">
-                  <div className="p-4 bg-zinc-800/80 rounded-md border border-white/5 group-hover:border-white/10 transition-colors">
-                    <pre className="text-sm text-blue-400 font-mono whitespace-pre overflow-x-auto">
-                    <code>
-                    <span className="text-blue-300">skipGameCheck</span> <span className="text-gray-400">=</span> <span className="text-red-400">false;</span>
-                    <span className="text-purple-400">{"\n"}loadstring</span>(<span className="text-blue-300">game</span><span className="text-gray-400">:</span><span className="text-yellow-400">HttpGet</span>(<span className="text-green-400">&quot;https://luau.tech/build&quot;</span>))()
-                    </code>
-                    </pre>
-                  </div>
-                  
-                  <button
-                    onClick={handleCopy}
-                    className="absolute right-2 top-2 p-2 rounded-md hover:bg-white/10 transition-colors"
-                    aria-label={isCopied ? "Copied" : "Copy to clipboard"}
-                  >
-                    {isCopied ? (
-                      <Check className="w-5 h-5 text-green-500" />
-                    ) : (
-                      <Copy className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
-                    )}
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div className="space-y-4 text-sm text-gray-300">
-                <p><strong className="text-white">Step 1:</strong> Copy the script from the Script tab</p>
-                <p><strong className="text-white">Step 2:</strong> Open your Roblox executor of choice</p>
-                <p><strong className="text-white">Step 3:</strong> Paste the script into your executor.</p>
-                <p><strong className="text-white">Step 4:</strong> Execute the script while in-game</p>
-               
-                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-md">
-                  <p className="text-blue-300 flex items-start gap-2">
-                    <span className="mt-1"><Sparkles className="w-4 h-4" /></span>
-                    <span>Need help? Join our Discord community for support and updates!</span>
-                  </p>
-                </div>
-              </div>
-            )}
-            
-            <div className="mt-6 flex justify-between">
-              <a
-                href="/d?invite=luau"
-                className="px-4 py-2 rounded-md bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 transition-colors text-sm font-medium flex items-center gap-2"
+            <div className="flex bg-black/50 rounded-xl p-1 border border-white/10">
+              <button 
+                onClick={() => setSelectedTab('script')}
+                className={`px-4 py-2 text-sm rounded-lg transition-all duration-200 ${
+                  selectedTab === 'script' 
+                    ? 'bg-[#fb97c6] text-white shadow-lg' 
+                    : 'text-gray-400 hover:text-white'
+                }`}
               >
-                <ExternalLink className="w-4 h-4" />
-                Discord
-              </a>
-              <button
-                onClick={onClose}
-                className="px-4 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors text-sm font-medium"
+                Script
+              </button>
+              <button 
+                onClick={() => setSelectedTab('guide')}
+                className={`px-4 py-2 text-sm rounded-lg transition-all duration-200 ${
+                  selectedTab === 'guide' 
+                    ? 'bg-[#fb97c6] text-white shadow-lg' 
+                    : 'text-gray-400 hover:text-white'
+                }`}
               >
-                Close
+                Guide
               </button>
             </div>
+          </div>
+          
+          {selectedTab === 'script' ? (
+            <>
+              <p className="text-gray-400 text-sm mb-5">Copy our code below to activate your Starlight premium subscription ♥️</p>
+              
+              <div className="relative group">
+                <div className="p-5 bg-black/50 rounded-xl border border-[#fb97c6]/20 group-hover:border-[#fb97c6]/40 transition-all duration-300">
+                  <pre className="text-sm font-mono whitespace-pre overflow-x-auto">
+                  <code>
+                  <span className="text-[#ffc1df]">skipGameCheck</span> <span className="text-gray-400">=</span> <span className="text-red-400">false;</span>
+                  <span className="text-purple-400">{"\n"}loadstring</span>(<span className="text-[#ffc1df]">game</span><span className="text-gray-400">:</span><span className="text-yellow-400">HttpGet</span>(<span className="text-green-400">&quot;https://luau.tech/build&quot;</span>))()
+                  </code>
+                  </pre>
+                </div>
+                
+                <button
+                  onClick={handleCopy}
+                  className="absolute right-3 top-3 p-2 rounded-lg bg-black/30 hover:bg-[#fb97c6]/20 transition-all duration-300"
+                  aria-label={isCopied ? "Copied" : "Copy to clipboard"}
+                >
+                  {isCopied ? (
+                    <Check className="w-5 h-5 text-green-400" />
+                  ) : (
+                    <Copy className="w-5 h-5 text-[#fb97c6]" />
+                  )}
+                </button>
+              </div>
+              
+              <div className="mt-4 p-3 bg-[#fb97c6]/10 border border-[#fb97c6]/20 rounded-lg">
+                <p className="text-xs text-gray-300">
+                  Note: This script requires an active Starlight subscription ($4.99/month). 
+                  Visit our site to purchase if you haven't already.
+                </p>
+              </div>
+            </>
+          ) : (
+            <div className="space-y-5 text-sm">
+              <div className="flex gap-4 p-4 bg-black/30 rounded-xl border border-white/5">
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#fb97c6]/20 flex items-center justify-center text-[#fb97c6]">1</div>
+                <div>
+                  <h4 className="font-medium text-white mb-1">Purchase subscription</h4>
+                  <p className="text-gray-400">Get your Starlight premium access for only $4.99/month</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-4 p-4 bg-black/30 rounded-xl border border-white/5">
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#fb97c6]/20 flex items-center justify-center text-[#fb97c6]">2</div>
+                <div>
+                  <h4 className="font-medium text-white mb-1">Copy the script</h4>
+                  <p className="text-gray-400">Switch to the Script tab and copy the provided code</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-4 p-4 bg-black/30 rounded-xl border border-white/5">
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#fb97c6]/20 flex items-center justify-center text-[#fb97c6]">3</div>
+                <div>
+                  <h4 className="font-medium text-white mb-1">Execute in-game</h4>
+                  <p className="text-gray-400">Paste the script and run it while in-game</p>
+                </div>
+              </div>
+              
+              <div className="p-4 bg-[#fb97c6]/10 border border-[#fb97c6]/30 rounded-xl">
+                <p className="text-white flex items-start gap-2">
+                  <span className="mt-1"><Sparkles className="w-4 h-4 text-[#fb97c6]" /></span>
+                  <span>Need help with your subscription? Join our Discord for support!</span>
+                </p>
+              </div>
+            </div>
+          )}
+          
+          <div className="mt-8 flex justify-between">
+            <a
+              href="/d?invite=luau"
+              className="px-5 py-3 rounded-xl bg-[#fb97c6]/10 text-[#fb97c6] hover:bg-[#fb97c6]/20 transition-all duration-300 text-sm font-medium flex items-center gap-2 border border-[#fb97c6]/20"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Discord
+            </a>
+            <button
+              onClick={onClose}
+              className="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-all duration-300 text-sm font-medium border border-white/10"
+            >
+              Close
+            </button>
           </div>
         </div>
       </div>
@@ -161,38 +201,14 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
 };
 
 const HeroSection: React.FC = () => {
-  const [isVisible] = useState(true);
   const [isClicked, setIsClicked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const [isHovering, setIsHovering] = useState(false);
-  const [scrollButtonVisible, setScrollButtonVisible] = useState(true);
-  const sectionRef = useRef<HTMLElement>(null);
+  const [scrollIndicatorVisible, setScrollIndicatorVisible] = useState(true);
   
-  const [stars, setStars] = useState<Array<{
-    id: number, 
-    x: number, 
-    y: number, 
-    size: number, 
-    opacity: number, 
-    duration: number,
-    delay: number
-  }>>([]);
-
-  useEffect(() => {
-    const newStars = Array.from({ length: 120 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2 + 0.5,
-      opacity: Math.random() * 0.7 + 0.3,
-      duration: Math.random() * 15 + 15,
-      delay: Math.random() * -30
-    }));
-    setStars(newStars);
-  }, []);
-
+  // For the star field effect
+  const starsRef = useRef<HTMLDivElement>(null);
+  
   const handleButtonClick = useCallback(() => {
     setIsClicked(true);
     setShowModal(true);
@@ -204,9 +220,8 @@ const HeroSection: React.FC = () => {
     setTimeout(() => {
       setShowModal(false);
       setIsClosing(false);
-    }, 200);
+    }, 300);
   }, []);
-
   
   const scrollDown = () => {
     window.scrollTo({
@@ -218,223 +233,283 @@ const HeroSection: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {
-        setScrollButtonVisible(false);
+        setScrollIndicatorVisible(false);
       } else {
-        setScrollButtonVisible(true);
+        setScrollIndicatorVisible(true);
       }
     };
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+  
+  // Mouse parallax effect
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!starsRef.current) return;
+      
+      const mouseX = e.clientX / window.innerWidth - 0.5;
+      const mouseY = e.clientY / window.innerHeight - 0.5;
+      
+      const moveFactor = 25; // How much the stars move
+      
+      starsRef.current.style.transform = `translate(${mouseX * -moveFactor}px, ${mouseY * -moveFactor}px)`;
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
-    <section 
-      ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      style={{ 
-        background: 'linear-gradient(to bottom, #000000, #050322)'
-      }}
-    >
-      <div className="absolute inset-0 overflow-hidden">
-        {stars.map(star => (
-          <div
-            key={star.id}
-            className="absolute rounded-full bg-white"
-            style={{
-              left: `${star.x}%`,
-              top: `${star.y}%`,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-              opacity: star.opacity,
-              boxShadow: `0 0 ${star.size * 2}px rgba(255, 255, 255, 0.8)`,
-              animation: `float-star ${star.duration}s linear infinite`,
-              animationDelay: `${star.delay}s`,
-              willChange: 'transform'
-            }}
-          />
-        ))}
-      </div>
-      
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background */}
       <div 
-        className="absolute opacity-10 w-96 h-96 rounded-full filter blur-3xl"
-        style={{
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, rgba(0, 0, 0, 0) 70%)',
-          top: '10%',
-          right: '15%',
-          animation: 'nebula-pulse 8s ease-in-out infinite alternate'
-        }}
+        className="absolute inset-0 bg-gradient-to-b from-black via-[#150015] to-[#1c0023] z-0"
       />
       
+      {/* Star field */}
       <div 
-        className="absolute opacity-10 w-64 h-64 rounded-full filter blur-3xl"
-        style={{
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(0, 0, 0, 0) 70%)',
-          bottom: '20%',
-          left: '10%',
-          animation: 'nebula-pulse 10s ease-in-out infinite alternate-reverse'
-        }}
-      />
-      
-      <div
-        className={`relative w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center transform transition-all duration-1000 ${
-          isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-        }`}
+        ref={starsRef}
+        className="absolute inset-0 z-0 transition-transform duration-300 ease-out"
       >
-      
-        <div 
-          className="mx-auto inline-block"
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
-        >
-          <h1 
-            ref={titleRef}
-            className="text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight mb-6 transition-transform duration-300 ease-in-out cursor-default"
-            style={{
-              background: 'linear-gradient(135deg, white 0%, rgba(59, 130, 246, 0.6) 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-             
-              lineHeight: '1.4',
-              transform: isHovering ? 'scale(1.05)' : 'scale(1)',
-              pointerEvents: 'auto',
-              position: 'relative',
-              zIndex: 100
-            }}
-          >
-            Experience More using Starry
-          </h1>
-        </div>
-        
-        <p className="mt-6 text-base sm:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed font-light">
-          Meet the next generation of Roblox exploiting. Powerful features, seamless performance, available now for free.
-        </p>
-        
-        <div className="mt-10 flex flex-wrap gap-4 justify-center">
-          <button 
-            onClick={handleButtonClick}
-            className={`px-6 sm:px-8 py-2.5 sm:py-3 rounded-md bg-blue-600 text-white text-sm sm:text-base font-medium hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 transform hover:translate-y-[-2px] active:translate-y-[1px] shadow-lg shadow-blue-600/20 ${isClicked ? 'translate-y-[1px]' : ''}`}
-            aria-haspopup="dialog"
-          >
-            <span className="relative">View Script</span>
-            <Code className="w-4 h-4 sm:w-5 sm:h-5 relative transition-transform group-hover:translate-x-1" />
-          </button>
-        </div>
-      </div>
-
-      <div className=" lg:block">
-        {[1, 2, 3].map((i) => (
+       
+        {Array.from({ length: 100 }).map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full opacity-20 mix-blend-screen filter blur-xl"
+            className="absolute rounded-full bg-white"
             style={{
-              background: i === 1 ? 'radial-gradient(circle, #3b82f6, transparent 70%)' :
-                        i === 2 ? 'radial-gradient(circle, #8b5cf6, transparent 70%)' :
-                        'radial-gradient(circle, #06b6d4, transparent 70%)',
-              width: `${i * 100 + 150}px`,
-              height: `${i * 100 + 150}px`,
-              left: `${i === 1 ? 20 : i === 2 ? 65 : 40}%`,
-              top: `${i === 1 ? 70 : i === 2 ? 30 : 50}%`,
-              animation: `orb-float ${8 + i * 2}s ease-in-out infinite alternate`,
-              animationDelay: `${i * -2}s`
+              width: `${Math.random() * 2 + 1}px`,
+              height: `${Math.random() * 2 + 1}px`,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              opacity: Math.random() * 0.7 + 0.3,
+              boxShadow: `0 0 ${Math.random() * 4 + 2}px rgba(255, 255, 255, 0.8)`,
             }}
           />
         ))}
       </div>
-
+      
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute top-1/4 right-1/4 w-[40vw] h-[40vw] rounded-full opacity-20 bg-[#fb97c6]/40 blur-[120px]" />
+        <div className="absolute bottom-1/3 left-1/4 w-[30vw] h-[30vw] rounded-full opacity-15 bg-[#d671a0]/30 blur-[100px]" />
+      </div>
+      
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-12 py-20">
+       
+        <div className="w-full md:w-1/2 space-y-8 text-center md:text-left">
+        
+          <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#fb97c6]/10 border border-[#fb97c6]/20 text-[#fb97c6] text-sm">
+            <Star className="w-3.5 h-3.5 mr-2" fill="#fb97c6" />
+            <span>Starlight Released!</span>
+          </div>
+          
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
+            <span className="block">Elevate Your</span>
+            <span className="bg-gradient-to-r from-white via-[#fb97c6] to-[#d671a0] bg-clip-text text-transparent">Exploiting Experience</span>
+          </h1>
+          
+          <p className="text-lg text-gray-300 max-w-xl">
+            The next evolution in Roblox enhancement. Powerful premium features with stunning performance, available for just $4.99/month.
+          </p>
+          
+          <div className="flex items-center justify-center md:justify-start gap-2 bg-[#fb97c6]/10 rounded-xl p-4 border border-[#fb97c6]/20 max-w-md">
+            <div className="p-2 rounded-lg bg-[#fb97c6]/20">
+              <Sparkles className="w-6 h-6 text-[#fb97c6]" />
+            </div>
+            <div className="text-left">
+              <div className="text-xl font-bold text-white flex items-center">
+                $4.99 <span className="text-gray-400 text-sm font-normal ml-1">/month</span>
+              </div>
+              <div className="text-sm text-gray-300">Premium access to all features</div>
+            </div>
+          </div>
+          
+          <div className="flex flex-wrap gap-4 pt-4 justify-center md:justify-start">
+            <button 
+              onClick={handleButtonClick}
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-xl bg-[#fb97c6] px-8 py-4 font-bold text-white transition-all duration-300 hover:bg-[#d671a0] focus:outline-none focus:ring-2 focus:ring-[#fb97c6]/70 focus:ring-offset-2 z-10"
+            >
+              <span className="relative flex items-center gap-2">
+                Get Premium Script
+                <Code className="w-5 h-5 transition-transform" />
+              </span>
+            </button>
+            
+            <a 
+              href="/d?invite=luau" 
+              className="inline-flex items-center justify-center rounded-xl bg-transparent px-8 py-4 font-bold text-white transition-all duration-300 hover:bg-white/5 border border-white/20 hover:border-white/40 gap-2"
+            >
+              Join Discord
+              <ExternalLink className="w-5 h-5" />
+            </a>
+          </div>
+          
+          <div className="flex items-center justify-center md:justify-start gap-8 pt-2">
+            <div className="flex -space-x-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div 
+                  key={i}
+                  className="w-8 h-8 rounded-full border-2 border-[#0f0f15] bg-gradient-to-br from-gray-600 to-gray-800"
+                />
+              ))}
+            </div>
+            <div className="text-sm text-gray-400">
+              <span className="text-white font-bold">4,500+</span> premium users
+            </div>
+          </div>
+        </div>
+        
+        {/* Right side - 3D mockup/illustration */}
+        <div className="w-full md:w-1/2 flex justify-center">
+          <div className="relative max-w-lg">
+            {/* Premium badge */}
+            <div className="absolute -top-4 -right-4 z-20 bg-gradient-to-r from-[#fb97c6] to-[#d671a0] rounded-full px-4 py-1 text-white text-sm font-semibold shadow-lg flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5" />
+              Premium
+            </div>
+            
+            {/* Card with glow effect */}
+            <div className="relative w-[320px] h-[480px] rounded-2xl bg-gradient-to-br from-[#fb97c6]/40 to-[#fc4caa]/20 p-1 backdrop-blur-xl shadow-2xl rotate-1 transform transition-all duration-500 hover:rotate-3 hover:scale-105">
+              <div className="absolute inset-0 rounded-2xl overflow-hidden bg-black/50">
+                <div className="absolute inset-0 opacity-30">
+                  {/* Grid pattern */}
+                  <div className="absolute inset-0" 
+                    style={{
+                      backgroundImage: 'radial-gradient(circle, #fb97c6 1px, transparent 1px)',
+                      backgroundSize: '24px 24px',
+                    }}
+                  />
+                </div>
+                
+                {/* Faint glow spots */}
+                <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-[#fb97c6]/40 blur-3xl"></div>
+                <div className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full bg-[#d671a0]/30 blur-3xl"></div>
+                
+                <div className="relative h-full flex flex-col p-6">
+                  {/* Card content */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#fb97c6] to-[#d671a0] flex items-center justify-center">
+                      <Star className="w-5 h-5 text-white" fill="white" />
+                    </div>
+                    <div>
+                      <span className="text-xl font-bold text-white">Starlight</span>
+                      <div className="text-xs text-[#fb97c6]">Premium Experience</div>
+                    </div>
+                  </div>
+                  
+                  {/* Price tag */}
+                  <div className="bg-black/30 rounded-xl p-4 border border-[#fb97c6]/20 mb-6">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400">Monthly cost</span>
+                      <span className="text-2xl font-bold text-white">$4.99</span>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">Billed monthly • Cancel anytime</div>
+                  </div>
+                  
+                  <div className="space-y-4 flex-grow">
+                    {/* Feature items */}
+                    <div className="space-y-3">
+                      {[
+                        { icon: Shield, name: "Premium Features", desc: "Exclusive premium modules" },
+                        { icon: Zap, name: "Priority Updates", desc: "Get updates first" },
+                        { icon: Star, name: "VIP Support", desc: "Dedicated assistance" },
+                      ].map((feature, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-7 h-7 rounded-md bg-[#fb97c6]/20 flex items-center justify-center mt-0.5">
+                            <feature.icon className="w-4 h-4 text-[#fb97c6]" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium text-white">{feature.name}</div>
+                            <div className="text-xs text-gray-400">{feature.desc}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Code preview */}
+                    <div className="p-3 bg-black/50 rounded-lg border border-[#fb97c6]/20 mt-6">
+                      <pre className="text-xs font-mono text-[#fb97c6] overflow-hidden">
+                        <code>loadstring(game:HttpGet(...))</code>
+                      </pre>
+                    </div>
+                  </div>
+                  
+                    <button 
+                    onClick={() => window.location.href = '/pricing'}
+                    className="mt-6 w-full py-3 rounded-xl bg-[#fb97c6] hover:bg-[#d671a0] text-white font-medium transition-colors flex items-center justify-center gap-2"
+                    >
+                    <span>Subscribe Now</span>
+                    <Lock className="w-4 h-4" />
+                    </button>
+                </div>
+              </div>
+              
+              {/* Reflection effect */}
+              <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent opacity-10" />
+              </div>
+            </div>
+            
+            {/* Floating elements around the card */}
+            <div className="absolute -top-8 -left-8 w-16 h-16 rounded-xl bg-gradient-to-br from-[#fb97c6]/80 to-[#d671a0] p-0.5 shadow-lg rotate-12 animate-float-slow">
+              <div className="bg-black/70 w-full h-full rounded-[inherit] flex items-center justify-center text-white">
+                <Sparkles className="w-6 h-6" />
+              </div>
+            </div>
+            
+            <div className="absolute -bottom-12 -right-10 w-24 h-24 rounded-lg bg-gradient-to-br from-[#fb97c6]/60 to-[#d671a0]/60 p-0.5 shadow-lg -rotate-6 animate-float-slow-reverse backdrop-blur-sm">
+              <div className="bg-black/70 w-full h-full rounded-[inherit] flex flex-col items-center justify-center p-3">
+                <span className="text-[#fb97c6] text-xs">User Rating</span>
+                <div className="flex mt-1">
+                  {Array(5).fill(0).map((_, i) => (
+                    <Star key={i} className="w-3 h-3 text-[#fb97c6]" fill="#fb97c6" />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Scroll indicator */}
       <div 
-        className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 transition-opacity duration-300 z-30 ${
-          scrollButtonVisible ? 'opacity-100' : 'opacity-0'
+        className={`absolute bottom-10 left-1/2 transform -translate-x-1/2 transition-all duration-500 z-20 ${
+          scrollIndicatorVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
         <button 
           onClick={scrollDown}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center animate-bounce transition-all duration-300"
+          className="group flex flex-col items-center gap-2"
         >
-          Scroll Down
-          <ChevronDown className="ml-2 w-5 h-5" />
+          <span className="text-sm text-gray-400 group-hover:text-white transition-colors">Explore More</span>
+          <div className="w-8 h-12 rounded-full border-2 border-[#fb97c6]/30 flex justify-center pt-2">
+            <div className="w-1.5 h-3 bg-[#fb97c6] rounded-full animate-bounce"></div>
+          </div>
         </button>
       </div>
-
-      <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 25 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: `${Math.random() * 2 + 1}px`,
-              height: `${Math.random() * 2 + 1}px`,
-              background: Math.random() > 0.7 
-                ? 'rgba(59, 130, 246, 0.7)' 
-                : Math.random() > 0.5 
-                  ? 'rgba(139, 92, 246, 0.7)' 
-                  : 'rgba(255, 255, 255, 0.7)',
-              left: `${Math.random() * 100}%`,
-              bottom: `${-Math.random() * 10}%`,
-              animation: `float-particle ${Math.random() * 30 + 30}s linear infinite`,
-              animationDelay: `${Math.random() * -30}s`
-            }}
-          />
-        ))}
-      </div>
-
+      
+      {/* Custom animations */}
       <style jsx>{`
-        @keyframes float-star {
-          0% {
-            transform: translateY(0);
-            opacity: ${(props: { opacity: number; }) => props.opacity};
-          }
-          100% {
-            transform: translateY(-100vh);
-            opacity: ${(props: { opacity: number; }) => props.opacity};
-          }
+        @keyframes float-slow {
+          0%, 100% { transform: translateY(0) rotate(12deg); }
+          50% { transform: translateY(-15px) rotate(12deg); }
         }
         
-        @keyframes float-particle {
-          0% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 0;
-          }
-          5% {
-            opacity: 0.7;
-          }
-          95% {
-            opacity: 0.7;
-          }
-          100% {
-            transform: translateY(-100vh) rotate(360deg);
-            opacity: 0;
-          }
+        @keyframes float-slow-reverse {
+          0%, 100% { transform: translateY(0) rotate(-6deg); }
+          50% { transform: translateY(-15px) rotate(-6deg); }
         }
         
-        @keyframes nebula-pulse {
-          0% {
-            opacity: 0.05;
-            transform: scale(1);
-          }
-          100% {
-            opacity: 0.15;
-            transform: scale(1.1);
-          }
+        .animate-float-slow {
+          animation: float-slow 5s ease-in-out infinite;
         }
         
-        @keyframes orb-float {
-          0% {
-            transform: translate(-50%, -50%) translateY(0);
-            opacity: 0.15;
-          }
-          100% {
-            transform: translate(-50%, -50%) translateY(-30px);
-            opacity: 0.25;
-          }
+        .animate-float-slow-reverse {
+          animation: float-slow-reverse 6s ease-in-out infinite;
         }
       `}</style>
 
-      <CodeModal 
-        isOpen={showModal} 
-        onClose={closeModal} 
-        isClosing={isClosing} 
-      />
+      <CodeModal isOpen={showModal} onClose={closeModal} isClosing={isClosing} />
     </section>
   );
 };

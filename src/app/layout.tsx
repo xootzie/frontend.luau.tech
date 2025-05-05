@@ -54,20 +54,20 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Starry ✨",
-  description: "Official Starry Website for Starry Script Hub.",
+  title: "Starlight ✨",
+  description: "Official Starlight Website for Starlight Premium.",
   icons: {
     icon: "/favicon.ico",
   },
   openGraph: {
-    title: "Starry ✨",
-    description: "Official Website for Starry!",
+    title: "Starlight ✨",
+    description: "Official Website for Starlight Premium!",
     images: [
       {
         url: "/images/screenshots/temp_screenshot2.png",
         width: 1200,
         height: 630,
-        alt: "luau.tech homepage screenshot"
+        alt: "Starlight Premium homepage screenshot"
       }
     ],
     type: "website",
@@ -75,8 +75,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Starry ✨",
-    description: "Official Website for Starry!",
+    title: "Starlight ✨",
+    description: "Official Website for Starlight Premium!",
     images: ["/images/screenshots/temp_screenshot2.png"]
   }
 };
@@ -88,15 +88,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <head>
-     
-      </head>
-      <body className="bg-zinc-950 antialiased min-h-screen">
+      <body className="antialiased min-h-screen relative">
+        {/* Starlight Background Elements */}
+        <div className="fixed inset-0 z-[-2] overflow-hidden">
+          {/* Deep background */}
+          <div className="absolute inset-0 bg-[#0a0010]"></div>
+          
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-[#120014] to-[#0a000f]"></div>
+          
+          {/* Subtle grid pattern */}
+          <div className="absolute inset-0 bg-grid-starlight opacity-20"></div>
+          
+          {/* Stars/dots patterns */}
+          <div className="stars-small"></div>
+          <div className="stars-medium"></div>
+          
+          {/* Pink accent glows */}
+          <div className="absolute top-[10%] -left-[10%] w-[40%] h-[30%] bg-[#fb97c6] opacity-[0.03] blur-[150px] rounded-full"></div>
+          <div className="absolute bottom-[5%] right-[5%] w-[35%] h-[40%] bg-[#fb97c6] opacity-[0.02] blur-[180px] rounded-full"></div>
+        </div>
         
-        <main>{children}</main>
-        <CustomContextMenu />
+        <main className="relative z-0">{children}</main>
+        
+        {/* Add your context menu component if it exists */}
+        {typeof CustomContextMenu !== 'undefined' && <CustomContextMenu />}
       </body>
     </html>
   );
 }
-

@@ -1,7 +1,7 @@
 'use client';
 
 import { GameData } from "@/types/GameData";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Star } from "lucide-react";
 
 interface GameCardProps extends GameData {
   onShowFeatures: () => void;
@@ -9,9 +9,10 @@ interface GameCardProps extends GameData {
 
 const PremiumBadge = ({ message }: { message: string }) => (
   <div className="group relative">
-    <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black backdrop-blur-sm text-xs font-semibold cursor-help shadow-lg">
+    <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-gradient-to-r from-[#fb97c6] to-[#d671a0] text-white backdrop-blur-sm text-xs font-semibold cursor-help shadow-lg flex items-center gap-1.5">
+      <Star className="w-3 h-3" fill="white" />
       Premium
-      <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-12 right-0 px-3 py-2 rounded-lg bg-black/95 backdrop-blur-sm text-white text-xs whitespace-nowrap border border-yellow-500/20">
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-12 right-0 px-3 py-2 rounded-lg bg-black/95 backdrop-blur-sm text-white text-xs whitespace-nowrap border border-[#fb97c6]/20">
         {message}
       </div>
     </div>
@@ -20,9 +21,10 @@ const PremiumBadge = ({ message }: { message: string }) => (
 
 const PremiumFeaturesBadge = ({ message }: { message: string }) => (
   <div className="group relative">
-    <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/90 backdrop-blur-sm text-xs font-semibold border border-yellow-500/50 text-yellow-400 cursor-help shadow-lg">
+    <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/90 backdrop-blur-sm text-xs font-semibold border border-[#fb97c6]/50 text-[#fb97c6] cursor-help shadow-lg flex items-center gap-1.5">
+      <Star className="w-3 h-3" fill="#fb97c6" />
       Premium Features
-      <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-12 right-0 px-3 py-2 rounded-lg bg-black/95 backdrop-blur-sm text-white text-xs whitespace-nowrap border border-yellow-500/20">
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-12 right-0 px-3 py-2 rounded-lg bg-black/95 backdrop-blur-sm text-white text-xs whitespace-nowrap border border-[#fb97c6]/20">
         {message}
       </div>
     </div>
@@ -39,17 +41,17 @@ const GameCard = ({
   hasPremiumFeatures,
   onShowFeatures 
 }: GameCardProps) => (
-  <div className="min-w-[385px] bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 rounded-xl p-6 border border-white/5 snap-start hover:border-white/20 transition-all duration-300 group backdrop-blur-sm shadow-xl">
+  <div className="min-w-[385px] bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 rounded-xl p-6 border border-[#fb97c6]/10 snap-start hover:border-[#fb97c6]/30 transition-all duration-300 group backdrop-blur-sm shadow-xl hover:shadow-[#fb97c6]/5 hover:shadow-lg">
     <div 
       className="relative h-48 rounded-lg mb-6 bg-cover bg-center transform group-hover:scale-[1.02] transition-all duration-300 shadow-lg overflow-hidden" 
       style={{ backgroundImage: `url(${image})` }} 
     >
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-      {isPremium && <PremiumBadge message="This game requires a premium license to use" />}
-      {!isPremium && hasPremiumFeatures && <PremiumFeaturesBadge message="This game has some features that require premium" />}
+      {isPremium && <PremiumBadge message="Included in your Starlight premium subscription" />}
+      {!isPremium && hasPremiumFeatures && <PremiumFeaturesBadge message="Some features require your Starlight premium subscription" />}
     </div>
-    <p className={`text-sm mb-3 flex items-center gap-2 ${statusColor === 'green' ? 'text-emerald-400' : 'text-blue-400'}`}>
-      <span className={`w-2 h-2 rounded-full ${statusColor === 'green' ? 'bg-emerald-400' : 'bg-blue-400'} animate-pulse`} />
+    <p className={`text-sm mb-3 flex items-center gap-2 ${statusColor === 'green' ? 'text-[#fb97c6]' : 'text-[#fb97c6]'}`}>
+      <span className={`w-2 h-2 rounded-full ${statusColor === 'green' ? 'bg-[#fb97c6]' : 'bg-[#fb97c6]'} animate-pulse`} />
       {status}
     </p>
     <div className="flex items-center justify-between">
@@ -57,14 +59,14 @@ const GameCard = ({
       <div className="flex items-center gap-2">
         <button 
           onClick={onShowFeatures}
-          className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium"
+          className="px-4 py-2 rounded-lg bg-[#fb97c6]/10 hover:bg-[#fb97c6]/20 transition-colors text-sm font-medium text-[#fb97c6]"
         >
           Features
         </button>
         <a 
           href={url} 
           target="_blank" 
-          className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+          className="p-2 rounded-lg bg-[#fb97c6]/10 hover:bg-[#fb97c6]/20 transition-colors text-[#fb97c6]"
         >
           <ArrowUpRight className="w-4 h-4" />
         </a>

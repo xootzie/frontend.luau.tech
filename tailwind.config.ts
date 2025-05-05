@@ -11,8 +11,10 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        accent: "#7ea1f2",
-        midnight: "#191F2D"
+        accent: "#fb97c6",
+        "accent-light": "#ffc1df",
+        "accent-dark": "#d671a0",
+        midnight: "#150015"
       },
       keyframes: {
         slideIn: {
