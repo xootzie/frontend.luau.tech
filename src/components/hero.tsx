@@ -1,6 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Code, Copy, Check, Sparkles, ExternalLink, ChevronDown, Star, Shield, Zap, Lock } from "lucide-react";
-import Image from 'next/image';
+import { Code, Copy, Check, Sparkles, ExternalLink, Star, Shield, Zap, Lock } from "lucide-react";
 
 interface CodeModalProps {
   isOpen: boolean;
@@ -140,7 +139,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
               <div className="mt-4 p-3 bg-[#fb97c6]/10 border border-[#fb97c6]/20 rounded-lg">
                 <p className="text-xs text-gray-300">
                   Note: This script requires an active Starlight subscription ($4.99/month). 
-                  Visit our site to purchase if you haven't already.
+                  Visit our site to purchase if you haven&apos;t already.
                 </p>
               </div>
             </>
@@ -201,7 +200,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
 };
 
 const HeroSection: React.FC = () => {
-  const [isClicked, setIsClicked] = useState(false);
+  const [, setIsClicked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [scrollIndicatorVisible, setScrollIndicatorVisible] = useState(true);

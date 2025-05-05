@@ -8,7 +8,7 @@ import GameCarousel from '@/components/home/GameSection/GameCarousel';
 import ScreenshotGallery from '@/components/home/ScreenShotGallery';
 
 import GradientDivider from '@/components/ui/divider';
-import { games, socials } from '@/lib/data';
+import { games } from '@/lib/data';
 
 const HomePage = () => {
   return (
