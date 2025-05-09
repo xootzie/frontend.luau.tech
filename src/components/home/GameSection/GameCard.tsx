@@ -11,7 +11,7 @@ const PremiumBadge = ({ message }: { message: string }) => (
   <div className="group relative">
     <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-gradient-to-r from-[#fb97c6] to-[#d671a0] text-white backdrop-blur-sm text-xs font-semibold cursor-help shadow-lg flex items-center gap-1.5">
       <Star className="w-3 h-3" fill="white" />
-      Premium
+      
       <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-12 right-0 px-3 py-2 rounded-lg bg-black/95 backdrop-blur-sm text-white text-xs whitespace-nowrap border border-[#fb97c6]/20">
         {message}
       </div>
