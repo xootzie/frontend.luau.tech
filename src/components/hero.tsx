@@ -111,7 +111,7 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
           
           {selectedTab === 'script' ? (
             <>
-              <p className="text-gray-400 text-sm mb-5">Copy our code below to activate your Starlight premium subscription ♥️</p>
+              <p className="text-gray-400 text-sm mb-5">Activate your subscription using your license key! ♥️</p>
               
               <div className="relative group">
                 <div className="p-5 bg-black/50 rounded-xl border border-[#fb97c6]/20 group-hover:border-[#fb97c6]/40 transition-all duration-300">
@@ -180,11 +180,11 @@ loadstring(game:HttpGet("https://luau.tech/build"))()`;
           
           <div className="mt-8 flex justify-between">
             <a
-              href="/d?invite=luau"
+              href="/pricing?product=starlight"
               className="px-5 py-3 rounded-xl bg-[#fb97c6]/10 text-[#fb97c6] hover:bg-[#fb97c6]/20 transition-all duration-300 text-sm font-medium flex items-center gap-2 border border-[#fb97c6]/20"
             >
               <ExternalLink className="w-4 h-4" />
-              Discord
+              Purchase
             </a>
             <button
               onClick={onClose}
@@ -342,30 +342,13 @@ const HeroSection: React.FC = () => {
               <ExternalLink className="w-5 h-5" />
             </a>
           </div>
-          
-          <div className="flex items-center justify-center md:justify-start gap-8 pt-2">
-            <div className="flex -space-x-2">
-              {[1, 2, 3, 4].map((i) => (
-                <div 
-                  key={i}
-                  className="w-8 h-8 rounded-full border-2 border-[#0f0f15] bg-gradient-to-br from-gray-600 to-gray-800"
-                />
-              ))}
-            </div>
-            <div className="text-sm text-gray-400">
-              <span className="text-white font-bold">4,500+</span> premium users
-            </div>
-          </div>
+         
         </div>
         
         {/* Right side - 3D mockup/illustration */}
         <div className="w-full md:w-1/2 flex justify-center">
           <div className="relative max-w-lg">
-            {/* Premium badge */}
-            <div className="absolute -top-4 -right-4 z-20 bg-gradient-to-r from-[#fb97c6] to-[#d671a0] rounded-full px-4 py-1 text-white text-sm font-semibold shadow-lg flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5" />
-              Premium
-            </div>
+           
             
             {/* Card with glow effect */}
             <div className="relative w-[320px] h-[480px] rounded-2xl bg-gradient-to-br from-[#fb97c6]/40 to-[#fc4caa]/20 p-1 backdrop-blur-xl shadow-2xl rotate-1 transform transition-all duration-500 hover:rotate-3 hover:scale-105">
@@ -410,8 +393,10 @@ const HeroSection: React.FC = () => {
                     <div className="space-y-3">
                       {[
                         { icon: Shield, name: "Premium Features", desc: "Exclusive premium modules" },
-                        { icon: Zap, name: "Priority Updates", desc: "Get updates first" },
-                        { icon: Star, name: "VIP Support", desc: "Dedicated assistance" },
+                        { icon: Zap, name: "Fast Updates", desc: "Lightning fast updates" },
+                        { icon: Star, name: "Fast Support", desc: "Dedicated assistance" },
+                        { icon: Lock, name: "Secure Access", desc: "Always undetected" },
+                        { icon: ExternalLink, name: "Exclusive Content", desc: "Access to popular games" },
                       ].map((feature, i) => (
                         <div key={i} className="flex items-start gap-3">
                           <div className="flex-shrink-0 w-7 h-7 rounded-md bg-[#fb97c6]/20 flex items-center justify-center mt-0.5">
@@ -425,21 +410,10 @@ const HeroSection: React.FC = () => {
                       ))}
                     </div>
                     
-                    {/* Code preview */}
-                    <div className="p-3 bg-black/50 rounded-lg border border-[#fb97c6]/20 mt-6">
-                      <pre className="text-xs font-mono text-[#fb97c6] overflow-hidden">
-                        <code>loadstring(game:HttpGet(...))</code>
-                      </pre>
-                    </div>
+                    
                   </div>
                   
-                    <button 
-                    onClick={() => window.location.href = '/pricing'}
-                    className="mt-6 w-full py-3 rounded-xl bg-[#fb97c6] hover:bg-[#d671a0] text-white font-medium transition-colors flex items-center justify-center gap-2"
-                    >
-                    <span>Subscribe Now</span>
-                    <Lock className="w-4 h-4" />
-                    </button>
+                   
                 </div>
               </div>
               

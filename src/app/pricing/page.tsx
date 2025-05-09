@@ -7,8 +7,6 @@ import LoadingScreen from '@/components/loadingScreen';
 import Image from 'next/image';
 import PricingHero from '@/components/pricinghero';
 
-
-
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -35,7 +33,6 @@ interface PaymentIconProps {
   alt: string;
   className?: string;
 }
-
 
 interface PricingCardProps {
   tier: PricingTier;
@@ -117,17 +114,17 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative bg-zinc-900 p-8 rounded-lg shadow-xl text-center max-w-md w-full mx-4">
+      <div className="relative bg-[#0f0a14] p-8 rounded-lg shadow-xl text-center max-w-md w-full mx-4 border border-accent/20">
         <div className="mb-6">
           <div className="relative w-16 h-16 mx-auto">
-            <Loader2 className="w-16 h-16 animate-spin absolute top-0 left-0 text-blue-500 opacity-75" />
+            <Loader2 className="w-16 h-16 animate-spin absolute top-0 left-0 text-accent opacity-75" />
           </div>
         </div>
         <p className="text-gray-300 mb-4 text-lg font-medium">Please complete your payment in the new window.</p>
         <p className="text-gray-400 text-sm">You can close this overlay while completing your payment.</p>
         <button
           onClick={onClose}
-          className="mt-6 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
+          className="mt-6 px-6 py-2 bg-accent text-white rounded-lg hover:bg-accent-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-[#0f0a14]"
         >
           Close Overlay
         </button>
@@ -135,7 +132,6 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
     </div>
   );
 };
-
 
 const PaymentMethods = () => {
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
@@ -156,7 +152,7 @@ const PaymentMethods = () => {
 
   const PaymentIcon: React.FC<PaymentIconProps> = ({ src, alt, className = "" }) => (
     <div className="relative group/payment">
-      <div className="bg-zinc-800 p-2 rounded w-8 h-8 flex items-center justify-center">
+      <div className="bg-[#1a1420] p-2 rounded w-8 h-8 flex items-center justify-center">
         <Image 
           src={src} 
           alt={alt} 
@@ -165,14 +161,14 @@ const PaymentMethods = () => {
           className={className}
         />
       </div>
-      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 px-2 py-1 rounded text-xs opacity-0 group-hover/payment:opacity-100 transition-opacity whitespace-nowrap z-10">
+      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1a1420] px-2 py-1 rounded text-xs opacity-0 group-hover/payment:opacity-100 transition-opacity whitespace-nowrap z-10">
         {alt}
       </div>
     </div>
   );
 
   return (
-    <div className="mt-4 pt-4 border-t border-zinc-800">
+    <div className="mt-4 pt-4 border-t border-accent/20">
       <div className="flex flex-wrap gap-3 items-center justify-center">
         <PaymentIcon 
           src="/images/brand/icons/mastercard-4d8844094130711885b5e41b28c9848f.svg" 
@@ -196,7 +192,7 @@ const PaymentMethods = () => {
         />
         
         <div className="relative group/payment">
-          <div className="bg-zinc-800 p-2 rounded w-8 h-8 flex items-center justify-center relative">
+          <div className="bg-[#1a1420] p-2 rounded w-8 h-8 flex items-center justify-center relative">
             {cards.map((card, index) => (
               <Image
                 key={card.src}
@@ -210,7 +206,7 @@ const PaymentMethods = () => {
               />
             ))}
           </div>
-          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-800 px-2 py-1 rounded text-xs opacity-0 group-hover/payment:opacity-100 transition-opacity whitespace-nowrap z-10">
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1a1420] px-2 py-1 rounded text-xs opacity-0 group-hover/payment:opacity-100 transition-opacity whitespace-nowrap z-10">
             {cards[currentCardIndex].alt}
           </div>
         </div>
@@ -219,26 +215,27 @@ const PaymentMethods = () => {
   );
 };
 
-
-
 const PricingCard: React.FC<PricingCardProps> = ({ tier, onSelect }) => {
- 
-
   const getBackground = () => {
-    if (tier.isPopular) return 'bg-gradient-to-b from-zinc-900 to-zinc-800';
-    return 'bg-zinc-900';
+    if (tier.isPopular) return 'bg-gradient-to-b from-[#0f0a14] to-[#1a1420]';
+    return 'bg-[#0f0a14]';
+  };
+
+  const getBorderClass = () => {
+    if (tier.isPopular) return 'border border-accent/30';
+    return 'border border-white/10';
   };
 
   return (
-    <div className={`relative group/card transition-all duration-300 hover:scale-105 border-solid`}>
+    <div className={`relative group/card transition-all duration-300 hover:scale-105`}>
       <div
         className={`h-full ${getBackground()} rounded-lg p-8 flex flex-col
-          transition-transform duration-300 relative overflow-hidden
+          transition-transform duration-300 relative overflow-hidden ${getBorderClass()}
           ${tier.disabled ? 'opacity-75' : ''}
         `}
       >
         {tier.isPopular && (
-          <div className="absolute top-0 right-0 bg-blue-500 text-white px-4 py-1 rounded-bl-lg rounded-tr-lg text-sm font-medium">
+          <div className="absolute top-0 right-0 bg-accent text-white px-4 py-1 rounded-bl-lg rounded-tr-lg text-sm font-medium">
             Most Popular
           </div>
         )}
@@ -247,15 +244,15 @@ const PricingCard: React.FC<PricingCardProps> = ({ tier, onSelect }) => {
           <h3 className="text-white text-2xl font-bold">{tier.name}</h3>
           <div className="space-y-2">
             <div className="text-3xl text-white font-bold">{tier.price}</div>
-            <p className="text-zinc-400 text-sm">{tier.description}</p>
+            <p className="text-gray-400 text-sm">{tier.description}</p>
           </div>
         </div>
 
         <ul className="space-y-4 flex-grow mb-8">
           {tier.features.map((feature, idx) => (
-            <li key={idx} className="flex items-center text-zinc-300">
+            <li key={idx} className="flex items-center text-gray-300">
               {feature.included ? (
-                <Check className="w-5 h-5 text-blue-500 mr-3 flex-shrink-0" />
+                <Check className="w-5 h-5 text-accent mr-3 flex-shrink-0" />
               ) : (
                 <X className="w-5 h-5 text-red-500 mr-3 flex-shrink-0" />
               )}
@@ -272,10 +269,10 @@ const PricingCard: React.FC<PricingCardProps> = ({ tier, onSelect }) => {
           onClick={() => !tier.disabled && onSelect(tier)}
           className={`w-full rounded-md py-3 px-6 text-sm font-semibold transition-all duration-200
             ${tier.disabled
-              ? 'bg-zinc-800 cursor-not-allowed opacity-50'
+              ? 'bg-[#1a1420] cursor-not-allowed opacity-50'
               : tier.isPopular
-                ? 'bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-500/20'
-                : 'bg-zinc-800 hover:bg-zinc-700 text-white'
+                ? 'bg-accent hover:bg-accent-dark text-white shadow-lg shadow-accent/20'
+                : 'bg-[#1a1420] hover:bg-[#251b2d] text-white border border-white/10'
             }
           `}
           disabled={tier.disabled}
@@ -289,65 +286,51 @@ const PricingCard: React.FC<PricingCardProps> = ({ tier, onSelect }) => {
 
 const PricingPage: React.FC = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-
-const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
+  const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
   const [, setIsLoading] = useState(true);
 
   const pricingTiers = [
     {
-      name: 'Basic',
-      price: 'Free',
-      description: 'Get started with essential features',
+      name: 'Starlight Lifetime',
+      price: '$14.99',
+      description: 'One-time payment',
       features: [
-        { text: 'Basic Game Support', included: true },
-        { text: '48 Hour License Key', included: true },
-        { text: 'Basic Features', included: true },
-        { text: 'Priority Support', included: false },
-        { text: 'Exclusive Features', included: false }
-      ],
-      buttonText: 'Current Plan',
-      disabled: true
-    },
-    {
-      name: 'Discord Boost',
-      price: '1 Boost',
-      description: 'Unlock premium with Discord',
-      features: [
-        { text: 'Exclusive Features', included: true },
-        { text: 'Exclusive Game Support', included: true },
-        { text: 'Lifetime License Key', included: true },
-        { text: 'Priority Support', included: true },
-        { text: 'Exclusive Discord Roles', included: true }
-      ],
-      buttonText: 'Boost Server',
-      disabled: false
-    },
-    {
-      name: 'Premium',
-      price: '$5.49',
-      description: 'Lifetime access',
-      features: [
-        { text: 'All Basic Features', included: true },
-        { text: 'Exclusive Game Support', included: true },
+        { text: 'All Monthly Features', included: true },
+        { text: 'Lifetime Updates', included: true },
         { text: 'Lifetime License Key', included: true },
         { text: 'Priority Support', included: true },
         { text: 'Exclusive Discord Role', included: true }
       ],
-      buttonText: 'Get Premium',
+      buttonText: 'Get Lifetime',
+      disabled: false,
+      paymentMethods: <PaymentMethods />
+    },
+    {
+      name: 'Starlight Monthly',
+      price: '$4.99/mo',
+      description: 'Monthly subscription',
+      features: [
+        { text: 'All Starlight Features', included: true },
+        { text: 'Exclusive Game Support', included: true },
+        { text: 'Monthly License Key', included: true },
+        { text: 'Priority Support', included: true },
+        { text: 'Exclusive Discord Role', included: true }
+      ],
+      buttonText: 'Get Monthly',
       isPopular: true,
       disabled: false,
       paymentMethods: <PaymentMethods />
     },
+    
     {
       name: 'YouTuber Benefits',
       price: 'Free',
       description: 'For content creators',
       features: [
         { text: 'Keys To Give Away', included: true },
-        { text: 'Daily License Keys', included: true },
         { text: 'Priority Support', included: true },
-        { text: 'Alpha Access', included: true },
-        { text: 'Channel Promotion', included: true }
+        { text: 'Channel Promotion', included: true },
+        { text: 'Life-Time Key', included: false }
       ],
       buttonText: 'Apply Now',
       disabled: true
@@ -356,12 +339,12 @@ const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
 
   const faqs = [
     {
-      question: 'How do I claim my Premium access?',
-      answer: 'After your purchase, you\'ll receive a license key to activate Premium features in your email'
+      question: 'How do I claim my Starlight access?',
+      answer: 'After your purchase, you\'ll receive a license key to activate Starlight features in your email'
     },
     {
-      question: 'Is Premium a one-time purchase?',
-      answer: 'Yes, when you purchase Premium directly, it\'s a lifetime access. Server boost and content creator access depend on ongoing activity.'
+      question: 'What\'s the difference between monthly and lifetime?',
+      answer: 'Monthly subscription renews at $4.99/month, while lifetime is a one-time payment of $14.99 with no recurring charges.'
     },
     {
       question: 'What payment methods are accepted?',
@@ -378,27 +361,26 @@ const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
   };
 
   return (
-    <div className=" text-white antialiased">
+    <div className="text-white antialiased bg-[#0f0a14]">
       <Navbar />
       <LoadingScreen onComplete={handleLoadingComplete} />
       <PricingHero />
       
-      <section className=" min-h-screen py-16">
+      <section className="min-h-screen py-16">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-medium text-white">Pricing Plans</h2>
-            <p className="mt-4 text-zinc-400">Choose the perfect plan for your needs</p>
+            <p className="mt-4 text-gray-400">Choose the perfect plan for your needs</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-5xl">
           {pricingTiers.map((tier) => (
               <PricingCard
                 key={tier.name}
                 tier={tier}
                 onSelect={(selectedTier: PricingTier) => {
-             
                   setSelectedTier(selectedTier);
-                  if (selectedTier.name === 'Premium') {
+                  if (selectedTier.name === 'Starlight Monthly' || selectedTier.name === 'Starlight Lifetime') {
                     setIsPaymentModalOpen(true);
                   }
                 }}
@@ -407,19 +389,19 @@ const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
             ))}
           </div>
 
-          <div className="mt-8">
-            <div className="bg-zinc-900 rounded-lg p-8">
+          <div className="mt-16 max-w-5xl mx-auto">
+            <div className="bg-[#0f0a14] rounded-lg p-8 border border-accent/20">
               <div className="flex flex-col md:flex-row items-center justify-between">
                 <div className="mb-6 md:mb-0">
                   <h3 className="text-white text-2xl font-semibold mb-2">
                     Custom Enterprise Solution
                   </h3>
-                  <p className="text-zinc-400">
+                  <p className="text-gray-400">
                     Need a custom solution? Let&apos;s create a plan that works for you.
                   </p>
                 </div>
                 <button
-                  className="opacity-50 cursor-not-allowed w-full md:w-auto px-8 bg-blue-500 text-white rounded-md py-3"
+                  className="opacity-50 cursor-not-allowed w-full md:w-auto px-8 bg-accent text-white rounded-md py-3"
                   disabled
                 >
                   Contact Us
@@ -430,7 +412,7 @@ const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
         </div>
       </section>
 
-      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <section className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <h2 className="text-3xl font-medium mb-12">Frequently Asked Questions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {faqs.map((faq, index) => (

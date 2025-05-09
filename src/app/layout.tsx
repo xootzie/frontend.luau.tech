@@ -54,7 +54,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Starlight ✨",
+  title: "Starlight 🌸",
   description: "Official Starlight Website for Starlight Premium.",
   icons: {
     icon: "/favicon.ico",
